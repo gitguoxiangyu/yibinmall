@@ -6,11 +6,11 @@
 				</view>
 				<view class="goodsInfo">
 					<view class="goodsDes">
-						<view class="goodsStar">{{details.star}}星</view>
+						<view v-show="details.star > 0" class="goodsStar">{{details.star}}星</view>
 						<view class="goodsTxt">
 							{{details.mallName}}通用{{details.money}}元消费券
 						</view>
-					</view> 
+					</view>
 					<view class="goodsSale">
 						<view style="color: #000000;">
 							共青价：
@@ -18,7 +18,7 @@
 						鲜豆
 						<view class="saleBean">
 							{{details.bean}}
-						</view> 
+						</view>
 					</view>
 					<view class="goodsSaleInfo">
 						市场价：￥{{details.markPrice}}
@@ -75,7 +75,7 @@
 				鲜豆
 				<view class="saleBean">
 					{{details.bean}}
-				</view> 
+				</view>
 			</view>
 			<button type="default">立即兑换</button>
 		</view>
@@ -96,7 +96,7 @@
 			console.log(this.details)
 		},
 		methods: {
-			
+
 		}
 	}
 </script>
@@ -112,7 +112,7 @@
 			height: 100vh;
 			.goods{
 				width: 100vw;
-				height: 60vh;
+				// height: 60vh; // 取消固定高度，防止内容溢出
 				background-color: #FFFFFF;
 				.goodsPic{
 					height: 46vh;
@@ -123,40 +123,41 @@
 					}
 				}
 				.goodsInfo{
-					height: 12vh;
+					// height: 12vh;
 					padding-left: 0.5vw;
 					padding-top: 0.5vh;
 					.goodsDes{
 						position: relative;
+						white-space: normal;   //使文本多行显示
+						text-overflow: ellipsis;  //多余的部分用省略号来代替
+						overflow: hidden;      // 隐藏多余的部分
+						display: -webkit-box;       //浮动布局
+						-webkit-line-clamp: 2;      //显示的行数
+						-webkit-box-orient: vertical;   //垂直排列
 						.goodsStar{
-							position: absolute;
-							top: 0.35vh;
-							left: 0.4vw;
-							width: 8vw;
-							height: 2vh;
-							line-height: 2vh;
+							display: inline-block;
+							padding: 1px 4px;
+							margin-left: 3px;
+							margin-right: 6px;
+							transform: translateY(-2px);
+							vertical-align: middle;
 							text-align: center;
 							background-color: red;
 							border-radius: 5px;
-							font-size: 8px;
+							font-size: 10px;
 							color: #FFFFFF;
 						}
 						.goodsTxt{
-							text-indent: 2.2em;      //段前空格
 							white-space: normal;   //使文本多行显示
-							text-overflow: ellipsis;  //多余的部分用省略号来代替
-							overflow: hidden;      // 隐藏多余的部分
-							display: -webkit-box;       //浮动布局
-							-webkit-line-clamp: 2;      //显示的行数
-							-webkit-box-orient: vertical;   //垂直排列
 							font-weight: bold;
+							display: inline;
 						}
 					}
 					.goodsSaleInfo{
 						margin-top: 1vh;
 						display: flex;
-							font-size: 8px;
-							color: #999999;
+						font-size: 14px; // 原本的8px太小了
+						color: #999999;
 					}
 					.goodsSale{
 						margin-top: 1vh;
@@ -164,6 +165,7 @@
 						display: flex;
 						align-items:flex-end;
 						color: red;
+						font-size: 14px;
 						.saleBean,.salePrice{
 							font-size: 22px;
 						}
@@ -192,7 +194,7 @@
 							margin-left: 3vw;
 						}
 						.right{
-							margin-right: 3vw;	
+							margin-right: 3vw;
 						}
 					}
 					.attention{
