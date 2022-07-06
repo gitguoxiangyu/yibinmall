@@ -27,6 +27,24 @@
             }
             
         }
+        ,{
+            "path" : "pages/ticketExchange/ticketExchange",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "优惠券兑换",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/ticketHistory/ticketHistory",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "兑换记录",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

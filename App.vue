@@ -1,5 +1,9 @@
 <script>
 	export default {
+		globalData: {
+			goodsDetail: null,
+			ticketDetail: null,
+		},
 		onLaunch: function() {
 			console.log('App Launch')
 		},

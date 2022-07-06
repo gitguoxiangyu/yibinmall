@@ -92,8 +92,12 @@
 		onLoad(option) {
 			// console.log(option.details)
 			// decodeURIComponent 解密传过来的对象字符串
-			this.details = JSON.parse(decodeURIComponent(option.details));
-			console.log(this.details)
+			// this.details = JSON.parse(decodeURIComponent(option.details));
+			// console.log(this.details)
+			this.details = getApp().globalData.ticketDetail;
+			if(this.details == null) {
+				console.error("无法读取优惠券数据");
+			}
 		},
 		methods: {
 			

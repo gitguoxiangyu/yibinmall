@@ -1,5 +1,6 @@
 <template>
 	<view class="body">
+		<!-- 顶栏 -->
 		<view class="header">
 			<view class="headerBac"><image src="../../static/img/headerBac.png"></image></view>
 			<view class="usr">
@@ -26,7 +27,7 @@
 					</view>
 					<view class="beanFooter">有240个3.31到期 <uni-icons type="arrowright" size="12"></uni-icons></view>
 				</view>
-				<view class="ticket">
+				<view class="ticket" @click="toTicketHistory()">
 					<view class="ticketHeader">
 						<view class="ticketIcon"><uni-icons type="shop" size="22" color="red"></uni-icons></view>
 						<view class="ticketName">兑换记录</view>
@@ -35,16 +36,19 @@
 				</view>
 			</view>
 		</view>
+		<!-- 第一导航栏 -->
 		<view class="nav">
 			<view :class="{navActive:item.active}" v-for="(item,index) in navArr" :key="index" @click="changeNavActive(index,navArr)">
 				{{item.name}}
 			</view>
 		</view>
+		<!-- 第二导航栏 -->
 		<view class="subNav">
 			<view :class="{subNavActive:item.active}" v-for="(item,index) in subNavArr" :key="index" @click="changeNavActive(index,subNavArr)">
 				{{item.name}}
 			</view>
 		</view>
+		<!-- 商品列表 -->
 		<view class="content">
 			<view class="hot" v-if="navArr[0].active == true">
 				<view class="goods" v-for="(item,index) in goods" :key="index" @click="toGoodsDetails(item)">
@@ -54,7 +58,7 @@
 						</view>
 						<view class="goodsInfo">
 							<view class="goodsDes">
-								<view class="goodsStar">{{item.star}}星</view>
+								<view v-show="item.star > 0" class="goodsStar">{{item.star}}星</view>
 								<view class="goodsTxt">
 									{{item.describe}}
 								</view>
@@ -198,7 +202,7 @@
 						markPrice:999,
 						bean:108,
 						num:3,
-						star:3,
+						star:0,
 						isFlashSale:1,//是否为限时抢购
 						flashTime:'2022-04-16 18:00:00',
 						exchangeDDL:'2022-04-28 18:00:00',
@@ -274,6 +278,10 @@
 			}
 		},
 		methods: {
+			/** 修改第一/第二导航栏的活动视图
+			 * @param {number} index
+			 * @param {Object} item 
+			 */
 			changeNavActive(index,item){
 				for (var i = 0; i < item.length; i++) {
 					item[i].active = false
@@ -282,19 +290,39 @@
 					}
 				}
 			},
+			/** 导航到商品详情页面
+			 * @param {Object} item
+			 */
 			toGoodsDetails(item){
-				// console.log("跳转")
-				// 加密传递的对象数据
-				let details = encodeURIComponent(JSON.stringify(item))
-				// console.log(item)
+				// // console.log("跳转")
+				// // 加密传递的对象数据
+				// let details = encodeURIComponent(JSON.stringify(item))
+				// // console.log(item)
+				// uni.navigateTo({
+				// 	url:'../goodsDetails/goodsDetails?details='+details
+				// })
+				
+				getApp().globalData.goodsDetail = item;
 				uni.navigateTo({
-					url:'../goodsDetails/goodsDetails?details='+details
+					url:"../goodsDetails/goodsDetails",
 				})
 			},
+			/** 导航到优惠券详情页面
+			 * @param {Object} item
+			 */
 			toTicketDetails(item){
-				let details = encodeURIComponent(JSON.stringify(item))
+				// let details = encodeURIComponent(JSON.stringify(item))
+				// uni.navigateTo({
+				// 	url:'../ticketDetails/ticketDetails?details='+details
+				// })
+				getApp().globalData.ticketDetail = item;
 				uni.navigateTo({
-					url:'../ticketDetails/ticketDetails?details='+details
+					url:'../ticketDetails/ticketDetails',
+				})
+			},
+			toTicketHistory() {
+				uni.navigateTo({
+					url:"../ticketHistory/ticketHistory"
 				})
 			}
 		}
@@ -521,10 +549,11 @@
 					}
 					.goods{
 						width: 45vw;
-						height: 32vh;
+						// height: 32vh;
 						background-color: #FFFFFF;
-						border-radius: 5px;
+						border-radius: 8px;
 						margin-top: 1vh;
+						overflow: hidden;
 						.goodsPic{
 							width: 45vw;
 							height: 20vh;
@@ -544,40 +573,43 @@
 						}
 						.goodsInfo{
 							width: 45vw;
-							height: 10vh;
-							padding-left: 0.5vw;
-							padding-top: 0.5vh;
+							// height: 10vh;
+							padding: 6px;
 							.goodsDes{
 								position: relative;
-								.goodsStar{
-									position: absolute;
-									top: 0.35vh;
-									left: 0.4vw;
-									width: 8vw;
-									height: 2vh;
-									line-height: 2vh;
-									text-align: center;
-									background-color: red;
-									border-radius: 5px;
-									font-size: 8px;
-									color: #FFFFFF;
-								}
-								.goodsTxt{
-									text-indent: 2.2em;      //段前空格
-									white-space: normal;   //使文本多行显示
 									text-overflow: ellipsis;  //多余的部分用省略号来代替
 									overflow: hidden;      // 隐藏多余的部分
 									display: -webkit-box;       //浮动布局
 									-webkit-line-clamp: 2;      //显示的行数
 									-webkit-box-orient: vertical;   //垂直排列
+								.goodsStar{
+									// position: absolute;
+									// top: 0.35vh;
+									// left: 0.4vw;
+									// width: 8vw;
+									// height: 2vh;
+									// line-height: 2vh;
+									// text-align: center;
+									display: inline;
+									padding: 1px 4px;
+									margin-right: 6px;
+									background-color: red;
+									border-radius: 5px;
+									font-size: 10px;
+									color: #FFFFFF;
+								}
+								.goodsTxt{
+									// text-indent: 2.2em;      //段前空格
+									white-space: normal;   //使文本多行显示
 									font-weight: bold;
+									display: inline;
 								}
 							}
 							.goodsSaleInfo{
 								margin-top: 0.5vh;
 								.flashTime,.goodsNum{
 									display: flex;
-									font-size: 8px;
+									font-size: 12px; // 原本是8px，太小了
 									color: #999999;
 								}
 							}
@@ -587,8 +619,9 @@
 								display: flex;
 								align-items:flex-end;
 								color: red;
+								font-weight: bold;
 								.saleBean,.salePrice{
-									font-size: 22px;
+									font-size: 20px;
 								}
 							}
 						}
