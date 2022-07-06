@@ -19,7 +19,7 @@
 				</view>
 			</view>
 			<view class="wallet">
-				<view class="bean" >
+				<view class="bean" @click="toBeanDetails">
 					<view class="beanHeader">
 						<view class="beanName">鲜豆</view>
 						<view class="beanNum">1240</view>
@@ -295,6 +295,12 @@
 				let details = encodeURIComponent(JSON.stringify(item))
 				uni.navigateTo({
 					url:'../ticketDetails/ticketDetails?details='+details
+				})
+			},
+			toBeanDetails(item){
+				let details = encodeURIComponent(JSON.stringify(item))
+				uni.navigateTo({
+					url:'../beanDetails/beanDetails?details='+details
 				})
 			}
 		}

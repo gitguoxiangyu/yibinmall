@@ -59,7 +59,7 @@
 					{{details.price}}
 				</view>
 			</view>
-			<button type="default">立即兑换</button>
+			<button type="default" @click="buy">立即兑换</button>
 		</view>
 	</view>
 </template>
@@ -72,13 +72,19 @@
 			}
 		},
 		onLoad(option) {
-			// console.log(option.details)
-			// decodeURIComponent 解密传过来的对象字符串
-			this.details = JSON.parse(decodeURIComponent(option.details));
-			console.log(this.details)
+			if (option.details){
+				// decodeURIComponent 解密传过来的对象字符串
+				this.details = JSON.parse(decodeURIComponent(option.details));
+				console.log(this.details)
+			}
 		},
 		methods: {
-			
+			buy(){
+				let details = encodeURIComponent(JSON.stringify(this.details))
+				uni.navigateTo({
+					url:'../orderDetails/orderDetails?details='+details
+				})
+			}
 		}
 	}
 </script>

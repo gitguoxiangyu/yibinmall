@@ -27,6 +27,24 @@
             }
             
         }
+		,{
+		    "path" : "pages/orderDetails/orderDetails",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "订单详情",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		}
+		,{
+		    "path" : "pages/beanDetails/beanDetails",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "鲜豆收支明细",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		}
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
