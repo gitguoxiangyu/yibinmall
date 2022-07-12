@@ -592,16 +592,18 @@
 									color: #FFFFFF;
 								}
 								.goodsTxt{
+									font-size: 12px;
 									white-space: normal;   //使文本多行显示
 									font-weight: bold;
 									display: inline; // 适配无星级要求的商品
 								}
 							}
 							.goodsSaleInfo{
+								font-size: 12px;
 								margin-top: 0.5vh;
 								.flashTime,.goodsNum{
 									display: flex;
-									font-size: 12px; // 原本是8px，太小了
+									font-size: 10px; // 原本是8px，太小了
 									color: #999999;
 								}
 							}
@@ -611,9 +613,10 @@
 								display: flex;
 								align-items:flex-end;
 								color: red;
+								font-size: 10px;
 								font-weight: bold;
 								.saleBean,.salePrice{
-									font-size: 20px;
+									font-size: 15px;
 								}
 							}
 						}
