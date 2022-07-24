@@ -48,7 +48,7 @@
 			<view style="color: red; font-weight: bold;">
 				鲜豆{{details.bean}}
 			</view>
-			<view class="btn"><button class="btn">立即支付</button></view>
+			<view class="btn"><button class="btn" @click="buy">立即支付</button></view>
 		</view>
 	</view>
 </template>
@@ -73,12 +73,24 @@
 			}
 		},
 		methods: {
-			// buy(){
-			// 	let details = encodeURIComponent(JSON.stringify(this.details))
-			// 	uni.navigateTo({
-			// 		url:'../orderDetails/orderDetails?details='+details
-			// 	})
-			// }
+			buy(){
+				let details = encodeURIComponent(JSON.stringify(this.details))
+				uni.showModal({
+					title: '',
+					content: '购买成功',
+					showCancel: true,
+					cancelText: '',
+					confirmText: '',
+					success: res => {},
+					fail: () => {},
+					complete: () => {
+						
+					}
+				});
+				uni.navigateTo({
+					url:'../mall/mall'
+				})
+			}
 		}
 	}
 </script>
