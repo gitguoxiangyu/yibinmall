@@ -5,13 +5,13 @@
 		</view>
 		<view class="body">
 			<form @submit="formSubmit">
-				<view class="cardWord">工行社保卡
-					<input type="number" name="ICBC_card_num">
+				<view class="cardWord">
+					<input type="number" name="ICBC_card_num" placeholder="请输入社保卡号" placeholder-style="font-size:26rpx;color:white;">
 				</view>
-				<view class="identifyWord">身份证号
-					<input type="text" name="idCard">
+				<view class="identifyWord">
+					<input type="text" name="idCard" placeholder="请输入身份证号" placeholder-style="font-size:26rpx;color:white;">
 				</view>
-				<button form-type="submit">登入</button>
+				<button form-type="submit" class="login" >登入</button>
 			</form>
 		</view>
 	</view>
@@ -19,15 +19,17 @@
 </template>
 
 <script>
+	import crypto from "crypto-js"
 	export default {
 		data() {
 			return {
-				
+				key:'',
 			}
 		},
 		methods: {
 			formSubmit(data){
 				//正则校验社保卡号前六位是否为621721
+				//51253419720212703X
 				let reg = /^621721/
 				let app = getApp()
 				//请求体
@@ -43,8 +45,25 @@
 						dataType: "json",
 						sslVerify: false, 
 						success: res => {
-							console.log("成功")
 							console.log(res)
+							app.globalData.hasUserInfo = 1
+							app.globalData.UserInfo = res.data.data
+							// const decryptDes = (message, key) => {
+							// 	var keyHex = Crypto.enc.Utf8.parse(key)
+							// 	var decrypted = cryptoJs.DES.decrypt(
+							// 		{
+							// 		ciphertext: cryptoJs.enc.Hex.parse(message)
+							// 		},
+							// 		keyHex,
+							// 		{
+							// 		mode: cryptoJs.mode.ECB,
+							// 		padding: cryptoJs.pad.Pkcs7
+							// 		}
+							// 	)
+							// 	return decrypted.toString(cryptoJs.enc.Utf8)
+							// }
+							// var mobile = decryptDes(res.data.data.mobile,msg.token)
+							// console.log(mobile)
 						},
 						fail: err => {
 							uni.hideLoading()
@@ -85,6 +104,7 @@
 					//将token存入全局变量中
 					let app = getApp()
 					app.globalData.token = res.data.data
+					this.key = res.data.data
 				},
 				fail: err => {
 					uni.showToast({
@@ -101,14 +121,26 @@
 	.main{
 		height: 100vh;
 		padding: 10vh 5vw;
+		background-image: url(../../static/img/login.jpg);
 	}
 	.head{
 		text-align: center;
 		color: red;
 		font-size: 30px;
 		font-weight: bolder;
+		margin-bottom: 10vh;
 	}
 	input{
+		height: 5vh;
+		width: 74vw;
+		padding: 0 3vw;
+		margin: 3vh auto;
 		border: 1px rgb(200, 200, 200) solid;
+		border-radius: 3%;
 	}
+		
+	.login{
+		width: 80vw;
+	}
+	
 </style>

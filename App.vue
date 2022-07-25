@@ -2,6 +2,8 @@
 	export default {
 		globalData: {  
 		    toekn:"",
+			hasUserInfo:0,
+			UserInfo:{}
 		}, 
 		onLaunch: function() {
 			console.log('App Launch')

@@ -1,7 +1,7 @@
 <template>
 	<view class="body">
 		<!-- 顶栏 -->
-		<view class="header">
+		<view class="header" v-if="hasUserInfo">
 			<view class="headerBac"><image src="../../static/img/headerBac.png"></image></view>
 			<view class="usr">
 				<view class="headPortait"><image src="../../static/img/headPortrait.png"></image></view>
@@ -33,6 +33,29 @@
 						<view class="ticketName">兑换记录</view>
 					</view>
 					<view class="ticketFooter">有2张3.31到期 <uni-icons type="arrowright" size="12"></uni-icons></view>
+				</view>
+			</view>
+		</view>
+		<!-- 未登录 -->
+		<view class="header" v-if="!hasUserInfo">
+			<view class="headerBac">
+				<image src="../../static/img/headerBac.png"></image>
+				<view class="login" @click="toLogin">登录</view>	
+			</view>
+			<view class="wallet">
+				<view class="bean" @click="toBeanDetails">
+					<view class="beanHeader">
+						<view class="beanName">鲜豆</view>
+						<view class="beanNum">0</view>
+					</view>
+					<view class="beanFooter">有0个12.31到期 <uni-icons type="arrowright" size="12"></uni-icons></view>
+				</view>
+				<view class="ticket" @click="toTicketHistory()">
+					<view class="ticketHeader">
+						<view class="ticketIcon"><uni-icons type="shop" size="22" color="red"></uni-icons></view>
+						<view class="ticketName">兑换记录</view>
+					</view>
+					<view class="ticketFooter">有0张12.31到期 <uni-icons type="arrowright" size="12"></uni-icons></view>
 				</view>
 			</view>
 		</view>
@@ -132,6 +155,8 @@
 		components:{"uni-icons":icons},
 		data() {
 			return {
+				hasUserInfo:getApp().globalData.hasUserInfo,
+				UserInfo:getApp().globalData.UserInfo,
 				starRate:20,
 				navArr:[
 					{
@@ -321,7 +346,15 @@
 				uni.navigateTo({
 					url:'../beanDetails/beanDetails?details='+details
 				})
+			},
+			toLogin(){
+				uni.navigateTo({
+					url:'../login/login'
+				})
 			}
+		},
+		onShow(){
+			
 		}
 	}
 </script>
@@ -348,6 +381,21 @@
 						height: 100%;
 					}
 				}
+				.login{
+					font-size: 18px;
+					color: #f57b6f;
+					height: 5vh;
+					line-height: 5vh;
+					width: 40vw;
+					position: absolute;
+					top: 4vh;
+					left: 30vw;
+					text-align: center;
+					// border: #FFFFFF 1px solid;
+				}
+				.login:hover{
+					color: #e22618;
+				}
 				.usr{
 					position: absolute;
 					top: 4vh;
@@ -366,6 +414,7 @@
 							height: 100%;
 						}
 					}
+					
 					.usrInfo{
 						width: 60vw;
 						margin-left: 4vw;
