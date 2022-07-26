@@ -3,7 +3,8 @@
 		globalData: {  
 		    toekn:"",
 			hasUserInfo:0,
-			UserInfo:{}
+			UserInfo:{},
+			Authorization:"",
 		}, 
 		onLaunch: function() {
 			console.log('App Launch')

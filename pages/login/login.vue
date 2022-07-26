@@ -19,7 +19,7 @@
 </template>
 
 <script>
-	import crypto from "crypto-js"
+
 	export default {
 		data() {
 			return {
@@ -45,25 +45,45 @@
 						dataType: "json",
 						sslVerify: false, 
 						success: res => {
-							console.log(res)
 							app.globalData.hasUserInfo = 1
-							app.globalData.UserInfo = res.data.data
-							// const decryptDes = (message, key) => {
-							// 	var keyHex = Crypto.enc.Utf8.parse(key)
-							// 	var decrypted = cryptoJs.DES.decrypt(
-							// 		{
-							// 		ciphertext: cryptoJs.enc.Hex.parse(message)
-							// 		},
-							// 		keyHex,
-							// 		{
-							// 		mode: cryptoJs.mode.ECB,
-							// 		padding: cryptoJs.pad.Pkcs7
-							// 		}
-							// 	)
-							// 	return decrypted.toString(cryptoJs.enc.Utf8)
-							// }
-							// var mobile = decryptDes(res.data.data.mobile,msg.token)
-							// console.log(mobile)
+							//重新封装属性名，发向服务器
+							app.globalData.UserInfo = {
+								id: res.data.data.id,
+								real_name: res.data.data.realname,
+								card_num: res.data.data.cardNum,
+								card_type: res.data.data.cardType,
+								ICBC_card_num: data.detail.value.ICBC_card_num,
+								avatar: res.data.data.avatar,
+								mobile: res.data.data.mobile,
+								beans: res.data.data.score,
+								star: res.data.data.certificate,
+							}
+							console.log(app.globalData.UserInfo)
+							
+							uni.request({
+								url: 'http://yibinmall.chenglee.top:8080/user_info',//开发者服务器接口地址
+								method: "POST",
+								data: app.globalData.UserInfo,//请求的参数
+								header: {
+									'Authorization':"Bearer "+app.globalData.Authorization,
+								},//请求头
+			
+								dataType: "json",
+								sslVerify: false, 
+								success: res => {
+									console.log(res)
+									uni.navigateTo({
+										url: '../mall/mall'
+									})
+								},
+								fail: err => {
+									console.log(err)
+									uni.showToast({
+										icon: 'none',
+										title: '错误'
+									});
+								}
+							})
 						},
 						fail: err => {
 							uni.hideLoading()
@@ -103,8 +123,31 @@
 				success: res => {
 					//将token存入全局变量中
 					let app = getApp()
+					
 					app.globalData.token = res.data.data
-					this.key = res.data.data
+				},
+				fail: err => {
+					uni.showToast({
+						icon: 'none',
+						title: "获取token失败，请重试！"
+					});
+				}
+			})
+			
+			let msg = {
+				username: "admin",
+				password: "admin123"
+			}
+			uni.request({
+				url: 'http://yibinmall.chenglee.top:8080/get_token',//开发者服务器接口地址
+				method: "POST",
+				data: msg,//请求的参数
+				dataType: "json",
+				sslVerify: false, 
+				success: res => {
+					//将token存入全局变量中
+					let app = getApp()
+					app.globalData.Authorization = res.data
 				},
 				fail: err => {
 					uni.showToast({
