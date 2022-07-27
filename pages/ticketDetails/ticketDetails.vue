@@ -2,31 +2,28 @@
 	<view class="body">
 		<view class="goods">
 				<view class="goodsPic">
-					<image class="goodsImg" :src="details.url"></image>
+					<image class="goodsImg" :src="'http://yibinmall.chenglee.top:8080' + details.main_picture"></image>
 				</view>
 				<view class="goodsInfo">
 					<view class="goodsDes">
 						<view v-show="details.star > 0" class="goodsStar">{{details.star}}星</view>
 						<view class="goodsTxt">
-							{{details.mallName}}通用{{details.money}}元消费券
+							{{details.coupon_name}}
 						</view>
 					</view>
 					<view class="goodsSale">
 						<view style="color: #000000;">
 							共青价：
 						</view>
-						鲜豆
-						<view class="saleBean">
-							{{details.bean}}
-						</view>
+						鲜豆  {{details.coupon_price}}
 					</view>
 					<view class="goodsSaleInfo">
-						市场价：￥{{details.markPrice}}
+						市场价：￥{{details.market_price}}
 					</view>
 					<view class="goodsSaleInfo">
 						兑换截止日期：
 						<view style="color: red">
-							{{details.exchangeDDL}}
+							{{details.exchange_deadline}}
 						</view>
 					</view>
 				</view>
@@ -41,7 +38,7 @@
 						使用时间
 					</view>
 					<view class="right">
-						{{details.useTime}}
+						{{details.available_time}}
 					</view>
 				</view>
 				<view class="address">
@@ -49,7 +46,7 @@
 						使用地址
 					</view>
 					<view class="right">
-						{{details.mallName}}所有商家
+						{{details.place_of_use}}所有商家
 					</view>
 				</view>
 				<view class="attention">
@@ -72,10 +69,7 @@
 				<view style="color: #000000;">
 					共青价：
 				</view>
-				鲜豆
-				<view class="saleBean">
-					{{details.bean}}
-				</view>
+				鲜豆  {{details.coupon_price}}
 			</view>
 			<button type="default">立即兑换</button>
 		</view>
@@ -92,7 +86,7 @@
 		onLoad(option) {
 			// console.log(option.details)
 			// decodeURIComponent 解密传过来的对象字符串
-			this.details = JSON.parse(decodeURIComponent(option.details));
+			this.details = JSON.parse(decodeURIComponent(option.details))
 			console.log(this.details)
 		},
 		methods: {
@@ -181,7 +175,7 @@
 					color: #cccccc;
 				}
 				.details{
-					height: 20vh;
+					height: 30vh;
 					background-color: #FFFFFF;
 					padding-top: 1.5vh;
 					.useTime,.address,.attention{

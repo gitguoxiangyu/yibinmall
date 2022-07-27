@@ -67,7 +67,6 @@
 								header: {
 									'Authorization':"Bearer "+app.globalData.Authorization,
 								},//请求头
-			
 								dataType: "json",
 								sslVerify: false, 
 								success: res => {
