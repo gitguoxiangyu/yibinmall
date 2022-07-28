@@ -3,10 +3,10 @@
 		<view class="ticketWrapper">
 			<view class="top">
 				<img :src="ticketDetails.brandImg" alt="">
-				<view class="ticketName">{{ticketDetails.name}}</view>
+				<view class="ticketName">{{detail.coupon_name}}</view>
 				<!-- <u-qrcode canvasId="qrcode" :value="ticketDetails.code"></u-qrcode> -->
 				<canvas id="qrcode" canvas-id="qrcode"></canvas>
-				<view class="code">核销码: {{ticketDetails.code}}</view>
+				<view class="code">核销码: {{detail.coupon_id}}</view>
 			</view>
 			<view class="dividerWrapper">
 				<view class="divider"></view>
@@ -17,19 +17,19 @@
 				<view class="title">优惠券详情</view>
 				<view class="item">
 					<view class="itemTitle">兑奖期限</view>
-					<view class="itemContent period">{{ticketDetails.period}}</view>
+					<view class="itemContent period">{{detail.exchange_deadline}}</view>
 				</view>
 				<view class="item">
 					<view class="itemTitle">可用时段</view>
-					<view class="itemContent">{{ticketDetails.periodInWeek}}</view>
+					<view class="itemContent">{{detail.available_time}}</view>
 				</view>
 				<view class="item">
 					<view class="itemTitle">门店地址</view>
-					<view class="itemContent">{{ticketDetails.address}}</view>
+					<view class="itemContent">{{detail.place_of_use}}</view>
 				</view>
 				<view class="item">
 					<view class="itemTitle">使用须知</view>
-					<view class="notice">{{ticketDetails.notice}}</view>
+					<view class="notice">{{detail.notice}}</view>
 				</view>
 			</view>
 			<view class="dividerWrapper">
@@ -37,7 +37,7 @@
 			</view>
 			<view class="bottom">
 				<view class="telTitle">客服电话</view>
-				<view class="tel" id="tel">{{ticketDetails.tel}}</view>
+				<view class="tel" id="tel">{{detail.service_tel}}</view>
 				<view class="dividerVertical"></view>
 				<view class="telButton" @click="onTelButtonClicked"></view>
 			</view>
@@ -50,6 +50,7 @@
 	export default {
 		data() {
 			return {
+				detail: {},
 				ticketDetails: {
 					code: "YBGQ5251251",
 					name: "100元通用消费券",
@@ -86,20 +87,27 @@
 			}
 		},
 		onReady() {
+			
+		},
+		onLoad(item) {
+			this.detail = JSON.parse(decodeURIComponent(item.details))
+			console.log(this.detail)
+			
 			// 根据核销码生成二维码
 			const ctx = uni.createCanvasContext("qrcode");
 			const uqrcode = new uQRCode({
-				text: this.ticketDetails.code,
+				text: "http://yibinmall.chenglee.top:8080/" + this.detail.coupon_id,
 				size: 120,
 			}, ctx);
 			uqrcode.make();
 			uqrcode.draw();
-		}
+		},
 	}
 </script>
 
 <style lang="scss">
 	.ticket {
+		height: 100vh;
 		background-color: #b30600;
 		padding: 12px 16px;
 

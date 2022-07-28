@@ -2,36 +2,28 @@
 	<view class="body">
 		<view class="goods">
 				<view class="goodsPic">
-					<image class="goodsImg" :src="details.url"></image>
+					<image class="goodsImg" :src="'http://yibinmall.chenglee.top:8080' + details.goods_main_picture"></image>
 				</view>
 				<view class="goodsInfo">
 					<view class="goodsDes">
 						<view v-show="details.star > 0" class="goodsStar">{{details.star}}星</view>
 						<view class="goodsTxt">
-							{{details.describe}}
+							{{details.goods_name}}
 						</view>
 					</view>
 					<view class="goodsSale">
 						<view style="color: #000000;">
 							共青价：
 						</view>
-						鲜豆
-						<view class="saleBean">
-							{{details.bean}}
-						</view>
-						<view style="color:#000000">+</view>
-						￥
-						<view class="salePrice">
-							{{details.price}}
-						</view>
+						鲜豆  {{details.goods_price}}
 					</view>
 					<view class="goodsSaleInfo">
-						市场价：￥{{details.markPrice}}
+						市场价：￥{{details.market_price}}
 					</view>
 					<view class="goodsSaleInfo">
 						兑换截止日期：
 						<view style="color: red">
-							{{details.exchangeDDL}}
+							{{details.exchange_deadline}}
 						</view>
 					</view>
 				</view>
@@ -40,8 +32,8 @@
 			<view class="nav">
 				—— 商品详情 ——
 			</view>
-			<view class="details">
-				<image src="../../static/img/recommendReason.png"></image>
+			<view class="details" v-for="(item,index) in describe" :key="index">
+				<image :src="'http://yibinmall.chenglee.top:8080' + item"></image>
 			</view>
 		</view>
 		<view class="footer">
@@ -49,15 +41,15 @@
 				<view style="color: #000000;">
 					共青价：
 				</view>
-				鲜豆
-				<view class="saleBean">
-					{{details.bean}}
-				</view>
-				<view style="color:#000000">+</view>
+				鲜豆  {{details.goods_price}}
+				<!-- <view class="saleBean">
+					
+				</view> -->
+				<!-- <view style="color:#000000">+</view>
 				￥
 				<view class="salePrice">
 					{{details.price}}
-				</view>
+				</view> -->
 			</view>
 			<button type="default" @click="buy">立即兑换</button>
 		</view>
@@ -68,7 +60,9 @@
 	export default {
 		data() {
 			return {
-				details:{}
+				details: {},
+				item: {},
+				describe:[],
 			}
 		},
 		onLoad(option) {
@@ -76,7 +70,10 @@
 				// decodeURIComponent 解密传过来的对象字符串
 				this.details = JSON.parse(decodeURIComponent(option.details));
 				console.log(this.details)
+				this.describe = this.details.goods_describe.split(";")
+				console.log(this.describe)
 			}
+			
 		},
 		methods: {
 			buy(){
@@ -111,7 +108,7 @@
 					}
 				}
 				.goodsInfo{
-					// height: 14vh;
+					height: 20vh;
 					padding-left: 0.5vw;
 					padding-top: 0.5vh;
 					.goodsDes{
@@ -185,6 +182,7 @@
 				display: flex;
 				align-items: center;
 				flex-direction: row;
+				justify-content: space-between;
 				.goodsSale{
 					margin-left: 4vw;
 					height: 3vh;
@@ -196,7 +194,7 @@
 					}
 				}
 				button{
-					margin-left: 13vw;
+					margin-left: 25vw;
 					width: 28vw;
 					height: 3vh;
 					background-color: red;
@@ -209,3 +207,25 @@
 		}
 	}
 </style>
+
+
+// let app = getApp()
+			// uni.request({
+			// 	url: 'http://yibinmall.chenglee.top:8080/goods/' + this.details.goods_id,
+			// 	method: "GET",
+			// 	// data: msg,
+			// 	header: {
+			// 		'Authorization':"Bearer "+app.globalData.Authorization,
+			// 	},//请求头
+			// 	dataType: "json",
+			// 	sslVerify: false, 
+			// 	success: res => {
+			// 		console.log(res)
+			// 	},
+			// 	fail: err => {
+			// 		uni.showToast({
+			// 			icon: 'none',
+			// 			title: "获取商品信息失败，请重试！"
+			// 		});
+			// 	}
+			// })

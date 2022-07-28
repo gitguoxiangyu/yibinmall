@@ -3,10 +3,10 @@
 		<view class="item">
 			<view class="head">
 				<view class="container">
-					<img src="../../static/img/wanda100.jpg" alt="商品图片" class="goodImg">
+					<img :src="'http://yibinmall.chenglee.top:8080' + details.goods_main_picture" alt="商品图片" class="goodImg">
 					<view class="goodText">
-						<view class="goodDetail">{{details.describe}}</view>
-						<view class="goodPrice">共青价：<span style="color: red; font-weight: bold;" >鲜豆{{details.bean}}</span></view>
+						<view class="goodDetail">{{details.goods_name}}</view>
+						<view class="goodPrice">共青价：<span style="color: red; font-weight: bold;" >鲜豆{{details.goods_price}}</span></view>
 					</view>
 				</view>
 				<view class="deliveryWay">
@@ -14,10 +14,10 @@
 					<view class="deliver">线下商家配送（ 送货上门 ）</view>
 				</view>
 			</view>
-			<view class="body">
+			<view class="body" @click="change">
 				<view class="person">
 					<view>收货人</view>
-					<view>{{person.name}}</view>
+					<view>{{person.real_name}}</view>
 				</view>
 				<view class="tel">
 					<view>收货电话</view>
@@ -31,25 +31,42 @@
 			<view class="foot">
 				<view class="bean">
 					<view>商品鲜豆</view>
-					<view>{{details.bean}}</view>
+					<view>{{details.goods_price}}</view>
 				</view>
 				<view class="star">
 					<view>会员星级</view>
-					<view>{{details.star}}</view>
+					<view>{{details.star}}星</view>
 				</view>
 				<view class="flashTime">
-					<view>截至兑换日期</view>
-					<view>{{details.flashTime}}</view>
+					<view>市场价</view>
+					<view>{{details.market_price}}元</view>
 				</view>
-				<view class="sum"><span style="color: red; font-weight: bold;" >鲜豆{{details.bean}}</span>合计： </view>
+				<view class="sum"><span style="color: red; font-weight: bold;" >鲜豆{{details.goods_price}}</span>合计： </view>
 			</view>
 		</view>
 		<view class="pay">
 			<view style="color: red; font-weight: bold;">
-				鲜豆{{details.bean}}
+				鲜豆{{details.goods_price}}
 			</view>
 			<view class="btn"><button class="btn" @click="buy">立即支付</button></view>
 		</view>
+		
+		<!-- 弹窗 -->
+		<view v-if="showPop" class="modal"> 
+			<!-- <form @submit="formSubmit"> -->
+				<view class="inputItem">
+					收货人<input v-model="person.real_name" class="input" type="text" name="name" placeholder="请输入收货人姓名" placeholder-style="font-size:26rpx;color:grey;">
+				</view>
+				<view class="inputItem">
+					收货电话<input v-model="person.tel" class="input" type="text" name="phone" placeholder="请输入收货电话" placeholder-style="font-size:26rpx;color:grey;">
+				</view>
+				<view class="inputItem">
+					收货地址<input v-model="person.address" class="input" type="text" name="address" placeholder="请输入收货地址" placeholder-style="font-size:26rpx;color:grey;">
+				</view>
+				<button @click="closeModal()" class="login" >确定</button>
+			<!-- </form> -->
+		</view>
+
 	</view>
 </template>
 
@@ -57,12 +74,23 @@
 	export default {
 		data() {
 			return {
+				showPop: false,
 				details:{},
-				person:{
-					name:"吴青年",
-					tel:1801234578,
-					address:"宜宾市叙州区青年服务中心"
-				}
+				person: getApp().globalData.UserInfo,
+				post:{
+					order_user_id: undefined,
+					store_id: undefined,
+					goods_id: undefined,
+					coupons_id: undefined,
+					number: undefined,
+					order_status: undefined,
+					consignee_name: undefined,
+					consignee_phone: undefined,
+					consignee_address: undefined,
+					deliver_type: undefined,
+					order_time: undefined,
+					deliver_time: undefined,
+				},
 			}
 		},
 		onLoad(option) {
@@ -73,24 +101,96 @@
 			}
 		},
 		methods: {
+			
 			buy(){
-				let details = encodeURIComponent(JSON.stringify(this.details))
-				uni.showModal({
-					title: '',
-					content: '购买成功',
-					showCancel: true,
-					cancelText: '',
-					confirmText: '',
-					success: res => {},
-					fail: () => {},
-					complete: () => {
+				
+				// let details = encodeURIComponent(JSON.stringify(this.details))
+				// uni.showModal({
+				// 	title: '',
+				// 	content: '购买成功',
+				// 	showCancel: true,
+				// 	cancelText: '',
+				// 	confirmText: '',
+				// 	success: res => {},
+				// 	fail: () => {},
+				// 	complete: () => {
 						
+				// 	}
+				// });
+				if (this.person.address && this.person.tel && this.person.address){
+					this.post.order_user_id = this.person.id
+					this.post.store_id = this.details.store_id
+					this.post.goods_id = this.details.goods_id
+					this.post.coupons_id = this.details.coupons_id
+					this.post.number = 1
+					this.post.order_status = "已支付"
+					this.post.consignee_name = this.person.real_name
+					this.post.consignee_phone = this.person.tel
+					this.post.consignee_address = this.person.address
+					this.post.deliver_type = "线下厂商配送"
+					this.post.order_time = new Date().getTime()
+					this.post.deliver_time = undefined
+					
+					console.log(this.post)
+					let app = getApp()
+					let msg = {
+						username: "admin",
+						password: "admin123"
 					}
-				});
-				uni.navigateTo({
-					url:'../mall/mall'
-				})
-			}
+					uni.request({
+						url: 'http://yibinmall.chenglee.top:8080/get_token',//开发者服务器接口地址
+						method: "POST",
+						data: msg,//请求的参数
+						dataType: "json",
+						sslVerify: false, 
+						success: res => {
+							//将token存入全局变量中
+							let app = getApp()
+							app.globalData.Authorization = res.data
+							//发送购买请求
+							uni.request({
+								url: 'http://yibinmall.chenglee.top:8080/orders',
+								method: "POST",
+								data: this.post,
+								header: {
+									'Authorization':"Bearer "+app.globalData.Authorization,
+								},//请求头
+								dataType: "json",
+								sslVerify: false, 
+								success: res => {
+									console.log(res)
+								},
+								fail: err => {
+									uni.showToast({
+										icon: 'none',
+										title: "订单信息发送失败，请重试！"
+									});
+								}
+							})
+						},
+						fail: err => {
+							uni.showToast({
+								icon: 'none',
+								title: "获取token失败，请重试！"
+							});
+						}
+					})
+				}else{
+					uni.showToast({
+						icon: 'none',
+						title: "请检查收货信息是否正确"
+					});
+				}
+				// uni.navigateTo({
+				// 	url:'../mall/mall'
+				// })
+			},
+			change(){
+				this.showPop = true
+			},
+			closeModal(){
+				this.showPop = false
+			},
 		}
 	}
 </script>
@@ -237,4 +337,28 @@
 		text-align: center;
 		border-radius: 12px;
 	}
+	
+	/* 弹窗 */
+	.modal{
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%,-50%);
+		background-color: white;
+		width: 70vw;
+		border: 1px rgb(195,195,195) solid;
+		padding: 1vh 3vw;
+	}
+	.inputItem{
+		display: flex;
+		flex-direction: row;
+		font-size: 12px;
+		margin:2vh 0;
+		vertical-align: sub;
+	}
+	.input{
+		margin-left: 3vw;
+		border-bottom: 1px rgb(195,195,195) solid;
+	}
+	
 </style>

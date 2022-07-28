@@ -55,11 +55,11 @@
 					</view>
 					<view class="right">
 						<view class="first">
-							1.此消费券一经兑换，概不退回！请谨慎兑换！
+							{{details.notice}}
 						</view>
-						<view class="second">
+						<!-- <view class="second">
 							2.此消费券不兑换现金，只能才购买商品时抵扣！
-						</view>
+						</view> -->
 					</view>
 				</view>
 			</view>
@@ -71,7 +71,7 @@
 				</view>
 				鲜豆  {{details.coupon_price}}
 			</view>
-			<button type="default">立即兑换</button>
+			<button type="default" @click="buy">立即兑换</button>
 		</view>
 	</view>
 </template>
@@ -90,7 +90,12 @@
 			console.log(this.details)
 		},
 		methods: {
-
+			buy(){
+				let details = encodeURIComponent(JSON.stringify(this.details))
+				uni.navigateTo({
+					url:'../orderDetails/orderDetails?details='+details
+				})
+			}
 		}
 	}
 </script>

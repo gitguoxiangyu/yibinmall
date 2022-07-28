@@ -7,26 +7,26 @@
 			</view>
 		</view>
 		<view class="content">
-			<view class="item" v-for="(item, index) in displayItems" :key="index">
-				<img class="itemPic" height="100" :src="item.url" alt="">
+			<view class="item" v-for="(item, index) in ticket" :key="index">
+				<img class="itemPic" height="100" :src="'http://yibinmall.chenglee.top:8080' + item.main_picture" alt="">
 				<view class="itemInfo">
 					<view class="itemDescription">
 						<view v-if="item.star > 0" class="itemStar">{{item.star}}星</view>
-						<view class="itemTitle">{{item.describe}}</view>
+						<view class="itemTitle">{{item.coupon_name}}</view>
 					</view>
 					<view class="itemPriceWrapper">
 						<view class="itemPriceText1">鲜豆</view>
-						<view class="itemBean itemPriceText2">{{item.bean}}</view>
-						<view v-if="true" class="itemPrice">
+						<view class="itemBean itemPriceText2">{{item.coupon_price}}</view>
+<!-- 					<view v-if="true" class="itemPrice">
 							<view>+</view>
 							<view class="itemPriceText1">￥</view>
 							<view class="itemPriceValue itemPriceText2">{{item.price}}</view>
-						</view>
+						</view> -->
 					</view>
 					<view class="itemDateWrapper">
-						<view class="itemDate" v-if="true">兑换截止日期: {{item.exchangeDDL.split(" ")[0]}}</view>
+						<view class="itemDate" v-if="true">截止日期: {{item.exchange_deadline.split(" ")[0]}}</view>
 						<view class="itemDate" v-else>使用日期: {{item.exchangeDDL.split(" ")[0]}}</view>
-						<button class="exchangeButton" @click="onExchangeClicked">立即兑换</button>
+						<button class="exchangeButton" @click="onExchangeClicked(item)">立即兑换</button>
 					</view>
 				</view>
 			</view>
@@ -56,155 +56,62 @@
 					}
 				],
 				navActiveIndex: 0,
-				items: [{
-						describe: '（Dyson）AM07 无叶电风 扇 落地扇 强劲稳定气流 进xxxx扇 落地扇 强劲稳定气流 进扇 落地扇 强劲稳定气流 进',
-						price: 255,
-						markPrice: 999,
-						bean: 108,
-						num: 3,
-						star: 3,
-						isFlashSale: 1, //是否为限时抢购
-						flashTime: '2022-04-16 18:00:00',
-						exchangeDDL: '2022-04-28 18:00:00',
-						url: '../../static/img/goods.png',
-						recommedUrl: '../../static/img/recommendReason.png'
-					},
-					{
-						describe: '科沃斯 Ecovacs 地宝N9+ 拖地拖洗一体智能扫地机免...xxxx拖地拖洗一体智能扫地机免..拖地拖洗一体智能扫地机免..拖地拖洗一体智能扫地机免..',
-						price: 255,
-						markPrice: 999,
-						bean: 108,
-						num: 3,
-						star: 3,
-						isFlashSale: 1, //是否为限时抢购
-						flashTime: '2022-04-16 18:00:00',
-						exchangeDDL: '2022-04-28 18:00:00',
-						url: '../../static/img/goods.png',
-						recommedUrl: '../../static/img/recommendReason.png'
-					},
-					{
-						describe: '（Dyson）AM07 无叶电风 扇 落地扇 强劲稳定气流 进xxxx科沃斯 Ecovacs 地宝N9+ 拖地拖洗一体智能扫地机免...xxxx拖地拖洗一体智能扫地机免..拖地拖洗一体智能扫地机免..拖地拖洗一体智能扫地机免..',
-						price: 255,
-						markPrice: 999,
-						bean: 108,
-						num: 3,
-						star: 3,
-						isFlashSale: 1, //是否为限时抢购
-						flashTime: '2022-04-16 18:00:00',
-						exchangeDDL: '2022-04-28 18:00:00',
-						url: '../../static/img/goods.png',
-						recommedUrl: '../../static/img/recommendReason.png'
-					},
-					{
-						describe: '科沃斯 Ecovacs 地宝N9+ 拖地拖洗一体智能扫地机免...xxxx科沃斯 Ecovacs 地宝N9+ 拖地拖洗一体智能扫地机免...xxxx拖地拖洗一体智能扫地机免..拖地拖洗一体智能扫地机免..拖地拖洗一体智能扫地机免..',
-						price: 255,
-						markPrice: 999,
-						bean: 108,
-						num: 3,
-						star: 3,
-						isFlashSale: 1, //是否为限时抢购
-						flashTime: '2022-04-16 18:00:00',
-						exchangeDDL: '2022-07-28 18:00:00',
-						url: '../../static/img/goods.png',
-						recommedUrl: '../../static/img/recommendReason.png'
-					},
-					{
-						describe: '科沃斯 Ecovacs 地宝N9+ 拖地拖洗一体智能扫地机免...xxxx科沃斯 Ecovacs 地宝N9+ 拖地拖洗一体智能扫地机免...xxxx拖地拖洗一体智能扫地机免..拖地拖洗一体智能扫地机免..拖地拖洗一体智能扫地机免..',
-						price: 255,
-						markPrice: 999,
-						bean: 58,
-						num: 3,
-						star: 3,
-						isFlashSale: 1, //是否为限时抢购
-						flashTime: '2022-04-16 18:00:00',
-						exchangeDDL: '2022-09-28 18:00:00',
-						url: '../../static/img/goods.png',
-						recommedUrl: '../../static/img/recommendReason.png'
-					},
-					{
-						describe: '科沃斯 Ecovacs 地宝N9+ 拖地拖洗一体智能扫地机免...xxxx科沃斯 Ecovacs 地宝N9+ 拖地拖洗一体智能扫地机免...xxxx拖地拖洗一体智能扫地机免..拖地拖洗一体智能扫地机免..拖地拖洗一体智能扫地机免..',
-						price: 255,
-						markPrice: 999,
-						bean: 108,
-						num: 3,
-						star: 0,
-						isFlashSale: 1, //是否为限时抢购
-						flashTime: '2022-04-16 18:00:00',
-						exchangeDDL: '2022-04-28 18:00:00',
-						url: '../../static/img/goods.png',
-						recommedUrl: '../../static/img/recommendReason.png'
-					},
-				],
-				ticket: [{
-						mallName: '万达广场',
-						money: 100,
-						markPrice: 100,
-						bean: 100,
-						num: 3,
-						star: 3,
-						isFlashSale: 1, //是否为限时抢购
-						flashTime: '2022-04-16 18:00:00',
-						useTime: '2022-04-16 19:00:00-2022-04-28 18:00:00',
-						exchangeDDL: '2022-04-28 18:00:00',
-						url: '../../static/img/wanda100.jpg'
-					},
-					{
-						mallName: '莱茵春天',
-						money: 100,
-						markPrice: 100,
-						bean: 100,
-						num: 3,
-						star: 3,
-						isFlashSale: 1, //是否为限时抢购
-						flashTime: '2022-04-16 18:00:00',
-						useTime: '2022-04-16 19:00:00-2022-04-28 18:00:00',
-						exchangeDDL: '2022-04-28 18:00:00',
-						url: '../../static/img/rhine100.jpg'
-					},
-					{
-						mallName: '万达广场',
-						markPrice: 100,
-						bean: 100,
-						num: 3,
-						star: 3,
-						isFlashSale: 1, //是否为限时抢购
-						flashTime: '2022-04-16 18:00:00',
-						useTime: '2022-04-16 19:00:00-2022-04-28 18:00:00',
-						exchangeDDL: '2022-04-28 18:00:00',
-						url: '../../static/img/wanda50.jpg'
-					},
-					{
-						mallName: '莱茵春天',
-						markPrice: 100,
-						bean: 100,
-						num: 3,
-						star: 3,
-						isFlashSale: 1, //是否为限时抢购
-						flashTime: '2022-04-16 18:00:00',
-						useTime: '2022-04-16 19:00:00-2022-04-28 18:00:00',
-						exchangeDDL: '2022-04-28 18:00:00',
-						url: '../../static/img/rhine50.jpg'
-					}
-				],
-				displayItems: [],
+				goods: [],
+				ticket: [],
+				displayTicket: [],
+				displayItems:[],
 			}
 		},
 		created() {
-			this.displayItems.push(...this.items);
-			this.navArr[0].count = this.displayItems.length;
-			// 已过期
-			this.navArr[1].count = 0;
-			// 未使用
-			this.navArr[2].count = 0;
-			this.displayItems.forEach((item) => {
-				if(this.getDate(item.exchangeDDL) <= new Date()) { // 等于也算过期
-					this.navArr[1].count++;
-				} else {
-					this.navArr[2].count++;
+			let app = getApp()
+			uni.request({
+				// url: 'http://yibinmall.chenglee.top:8080/exchange/page',
+				url: 'http://yibinmall.chenglee.top:8080/exchange/byUserId/' + app.globalData.UserInfo.id,
+				method: "GET",
+				// data: msg,
+				header: {
+					'Authorization':"Bearer "+app.globalData.Authorization,
+				},//请求头
+				dataType: "json",
+				sslVerify: false, 
+				success: res => {
+					console.log(res)
+					let arr = res.data.object
+					arr.forEach((item,index) => {
+						if (item.coupons != null){
+							this.ticket.push(item.coupons)
+						}else if(item.coupons != null){
+							this.goods.push(item.goods)
+						}
+					})
+					console.log(this.ticket)
+					console.log(this.goods)
+				},
+				fail: err => {
+					uni.showToast({
+						icon: 'none',
+						title: "获取商品信息失败，请重试！"
+					});
 				}
 			})
-			// 已使用
-			this.navArr[3].count = 0;
+			// this.displayItems.push(...this.items);
+			// this.navArr[0].count = this.displayItems.length;
+			// // 已过期
+			// this.navArr[1].count = 0;
+			// // 未使用
+			// this.navArr[2].count = 0;
+			// this.displayItems.forEach((item) => {
+			// 	if(this.getDate(item.exchangeDDL) <= new Date()) { // 等于也算过期
+			// 		this.navArr[1].count++;
+			// 	} else {
+			// 		this.navArr[2].count++;
+			// 	}
+			// })
+			// // 已使用
+			// this.navArr[3].count = 0;
+		},
+		onLoad() {
+			
 		},
 		methods: {
 			onNavItemClicked(index) {
@@ -265,9 +172,10 @@
 
 				return d;
 			},
-			onExchangeClicked() {
+			onExchangeClicked(item) {
+				let details = encodeURIComponent(JSON.stringify(item))
 				uni.navigateTo({
-					url:"../ticketExchange/ticketExchange"
+					url:'../ticketExchange/ticketExchange?details=' + details
 				})
 			}
 
@@ -407,3 +315,183 @@
 		}
 	}
 </style>
+<!-- {
+	mallName: '万达广场',
+	money: 100,
+	markPrice: 100,
+	bean: 100,
+	num: 3,
+	star: 3,
+	isFlashSale: 1, //是否为限时抢购
+	flashTime: '2022-04-16 18:00:00',
+	useTime: '2022-04-16 19:00:00-2022-04-28 18:00:00',
+	exchangeDDL: '2022-04-28 18:00:00',
+	url: '../../static/img/wanda100.jpg'
+},
+{
+	mallName: '莱茵春天',
+	money: 100,
+	markPrice: 100,
+	bean: 100,
+	num: 3,
+	star: 3,
+	isFlashSale: 1, //是否为限时抢购
+	flashTime: '2022-04-16 18:00:00',
+	useTime: '2022-04-16 19:00:00-2022-04-28 18:00:00',
+	exchangeDDL: '2022-04-28 18:00:00',
+	url: '../../static/img/rhine100.jpg'
+},
+{
+	mallName: '万达广场',
+	markPrice: 100,
+	bean: 100,
+	num: 3,
+	star: 3,
+	isFlashSale: 1, //是否为限时抢购
+	flashTime: '2022-04-16 18:00:00',
+	useTime: '2022-04-16 19:00:00-2022-04-28 18:00:00',
+	exchangeDDL: '2022-04-28 18:00:00',
+	url: '../../static/img/wanda50.jpg'
+},
+{
+	mallName: '莱茵春天',
+	markPrice: 100,
+	bean: 100,
+	num: 3,
+	star: 3,
+	isFlashSale: 1, //是否为限时抢购
+	flashTime: '2022-04-16 18:00:00',
+	useTime: '2022-04-16 19:00:00-2022-04-28 18:00:00',
+	exchangeDDL: '2022-04-28 18:00:00',
+	url: '../../static/img/rhine50.jpg'
+} -->
+
+<!-- {
+	describe: '（Dyson）AM07 无叶电风 扇 落地扇 强劲稳定气流 进xxxx扇 落地扇 强劲稳定气流 进扇 落地扇 强劲稳定气流 进',
+	price: 255,
+	markPrice: 999,
+	bean: 108,
+	num: 3,
+	star: 3,
+	isFlashSale: 1, //是否为限时抢购
+	flashTime: '2022-04-16 18:00:00',
+	exchangeDDL: '2022-04-28 18:00:00',
+	url: '../../static/img/goods.png',
+	recommedUrl: '../../static/img/recommendReason.png'
+},
+{
+	describe: '科沃斯 Ecovacs 地宝N9+ 拖地拖洗一体智能扫地机免...xxxx拖地拖洗一体智能扫地机免..拖地拖洗一体智能扫地机免..拖地拖洗一体智能扫地机免..',
+	price: 255,
+	markPrice: 999,
+	bean: 108,
+	num: 3,
+	star: 3,
+	isFlashSale: 1, //是否为限时抢购
+	flashTime: '2022-04-16 18:00:00',
+	exchangeDDL: '2022-04-28 18:00:00',
+	url: '../../static/img/goods.png',
+	recommedUrl: '../../static/img/recommendReason.png'
+},
+{
+	describe: '（Dyson）AM07 无叶电风 扇 落地扇 强劲稳定气流 进xxxx科沃斯 Ecovacs 地宝N9+ 拖地拖洗一体智能扫地机免...xxxx拖地拖洗一体智能扫地机免..拖地拖洗一体智能扫地机免..拖地拖洗一体智能扫地机免..',
+	price: 255,
+	markPrice: 999,
+	bean: 108,
+	num: 3,
+	star: 3,
+	isFlashSale: 1, //是否为限时抢购
+	flashTime: '2022-04-16 18:00:00',
+	exchangeDDL: '2022-04-28 18:00:00',
+	url: '../../static/img/goods.png',
+	recommedUrl: '../../static/img/recommendReason.png'
+},
+{
+	describe: '科沃斯 Ecovacs 地宝N9+ 拖地拖洗一体智能扫地机免...xxxx科沃斯 Ecovacs 地宝N9+ 拖地拖洗一体智能扫地机免...xxxx拖地拖洗一体智能扫地机免..拖地拖洗一体智能扫地机免..拖地拖洗一体智能扫地机免..',
+	price: 255,
+	markPrice: 999,
+	bean: 108,
+	num: 3,
+	star: 3,
+	isFlashSale: 1, //是否为限时抢购
+	flashTime: '2022-04-16 18:00:00',
+	exchangeDDL: '2022-07-28 18:00:00',
+	url: '../../static/img/goods.png',
+	recommedUrl: '../../static/img/recommendReason.png'
+},
+{
+	describe: '科沃斯 Ecovacs 地宝N9+ 拖地拖洗一体智能扫地机免...xxxx科沃斯 Ecovacs 地宝N9+ 拖地拖洗一体智能扫地机免...xxxx拖地拖洗一体智能扫地机免..拖地拖洗一体智能扫地机免..拖地拖洗一体智能扫地机免..',
+	price: 255,
+	markPrice: 999,
+	bean: 58,
+	num: 3,
+	star: 3,
+	isFlashSale: 1, //是否为限时抢购
+	flashTime: '2022-04-16 18:00:00',
+	exchangeDDL: '2022-09-28 18:00:00',
+	url: '../../static/img/goods.png',
+	recommedUrl: '../../static/img/recommendReason.png'
+},
+{
+	describe: '科沃斯 Ecovacs 地宝N9+ 拖地拖洗一体智能扫地机免...xxxx科沃斯 Ecovacs 地宝N9+ 拖地拖洗一体智能扫地机免...xxxx拖地拖洗一体智能扫地机免..拖地拖洗一体智能扫地机免..拖地拖洗一体智能扫地机免..',
+	price: 255,
+	markPrice: 999,
+	bean: 108,
+	num: 3,
+	star: 0,
+	isFlashSale: 1, //是否为限时抢购
+	flashTime: '2022-04-16 18:00:00',
+	exchangeDDL: '2022-04-28 18:00:00',
+	url: '../../static/img/goods.png',
+	recommedUrl: '../../static/img/recommendReason.png'
+}, -->
+
+<!-- {
+	mallName: '万达广场',
+	money: 100,
+	markPrice: 100,
+	bean: 100,
+	num: 3,
+	star: 3,
+	isFlashSale: 1, //是否为限时抢购
+	flashTime: '2022-04-16 18:00:00',
+	useTime: '2022-04-16 19:00:00-2022-04-28 18:00:00',
+	exchangeDDL: '2022-04-28 18:00:00',
+	url: '../../static/img/wanda100.jpg'
+},
+{
+	mallName: '莱茵春天',
+	money: 100,
+	markPrice: 100,
+	bean: 100,
+	num: 3,
+	star: 3,
+	isFlashSale: 1, //是否为限时抢购
+	flashTime: '2022-04-16 18:00:00',
+	useTime: '2022-04-16 19:00:00-2022-04-28 18:00:00',
+	exchangeDDL: '2022-04-28 18:00:00',
+	url: '../../static/img/rhine100.jpg'
+},
+{
+	mallName: '万达广场',
+	markPrice: 100,
+	bean: 100,
+	num: 3,
+	star: 3,
+	isFlashSale: 1, //是否为限时抢购
+	flashTime: '2022-04-16 18:00:00',
+	useTime: '2022-04-16 19:00:00-2022-04-28 18:00:00',
+	exchangeDDL: '2022-04-28 18:00:00',
+	url: '../../static/img/wanda50.jpg'
+},
+{
+	mallName: '莱茵春天',
+	markPrice: 100,
+	bean: 100,
+	num: 3,
+	star: 3,
+	isFlashSale: 1, //是否为限时抢购
+	flashTime: '2022-04-16 18:00:00',
+	useTime: '2022-04-16 19:00:00-2022-04-28 18:00:00',
+	exchangeDDL: '2022-04-28 18:00:00',
+	url: '../../static/img/rhine50.jpg'
+} -->

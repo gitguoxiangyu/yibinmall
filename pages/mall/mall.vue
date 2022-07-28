@@ -23,9 +23,9 @@
 				<view class="bean" @click="toBeanDetails">
 					<view class="beanHeader">
 						<view class="beanName">鲜豆</view>
-						<view class="beanNum">{{UserInfo.bean}}</view>
+						<view class="beanNum">{{UserInfo.beans}}</view>
 					</view>
-					<view class="beanFooter">有240个3.31到期 <uni-icons type="arrowright" size="12"></uni-icons></view>
+					<view class="beanFooter"><uni-icons type="arrowright" size="12"></uni-icons></view>
 				</view>
 				<view class="ticket" @click="toTicketHistory()">
 					<view class="ticketHeader">
@@ -48,7 +48,7 @@
 						<view class="beanName">鲜豆</view>
 						<view class="beanNum">0</view>
 					</view>
-					<view class="beanFooter">有0个12.31到期 <uni-icons type="arrowright" size="12"></uni-icons></view>
+					<!-- <view class="beanFooter"><uni-icons type="arrowright" size="12"></uni-icons></view> -->
 				</view>
 				<view class="ticket" @click="toTicketHistory()">
 					<view class="ticketHeader">
@@ -128,7 +128,7 @@
 								<view class="goodsNum">
 									仅剩{{item.stock}}件
 								</view>
-								<view class="panic_buying_start">
+								<view class="flashTime" v-if="item.panic_buying_start">
 									抢购
 									<view style="color: red">
 										{{item.panic_buying_start}}
@@ -233,15 +233,31 @@
 				})
 			},
 			toTicketHistory() {
-				uni.navigateTo({
-					url:"../ticketHistory/ticketHistory"
-				})
+				let app = getApp()
+				if (app.globalData.hasUserInfo == 1){
+					uni.navigateTo({
+						url:"../ticketHistory/ticketHistory"
+					})
+				}else{
+					uni.showToast({
+						icon: 'none',
+						title: "请登入"
+					});
+				}
 			},
 			toBeanDetails(item){
-				let details = encodeURIComponent(JSON.stringify(item))
-				uni.navigateTo({
-					url:'../beanDetails/beanDetails?details='+details
-				})
+				let app = getApp()
+				if (app.globalData.hasUserInfo == 1){
+					let details = encodeURIComponent(JSON.stringify(item))
+					uni.navigateTo({
+						url:'../beanDetails/beanDetails?details='+details
+					})
+				}else{
+					uni.showToast({
+						icon: 'none',
+						title: "请登入"
+					});
+				}
 			},
 			toLogin(){
 				uni.navigateTo({
@@ -253,52 +269,88 @@
 			this.hasUserInfo = getApp().globalData.hasUserInfo
 			this.UserInfo = getApp().globalData.UserInfo
 			let app = getApp()
-			//获取商品信息
+			let msg = {
+				username: "admin",
+				password: "admin123"
+			}
 			uni.request({
-				url: 'http://yibinmall.chenglee.top:8080/goods/page',
-				method: "GET",
-				// data: msg,
-				header: {
-					'Authorization':"Bearer "+app.globalData.Authorization,
-				},//请求头
+				url: 'http://yibinmall.chenglee.top:8080/get_token',//开发者服务器接口地址
+				method: "POST",
+				data: msg,//请求的参数
 				dataType: "json",
 				sslVerify: false, 
 				success: res => {
-					console.log(res.data.rows)
-					this.goods = res.data.rows
+					//将token存入全局变量中
+					let app = getApp()
+					app.globalData.Authorization = res.data
+					uni.request({
+						url: 'http://yibinmall.chenglee.top:8080/goods/page',
+						method: "GET",
+						// data: msg,
+						header: {
+							'Authorization':"Bearer "+app.globalData.Authorization,
+						},//请求头
+						dataType: "json",
+						sslVerify: false, 
+						success: res => {
+							console.log(res.data.rows)
+							this.goods = res.data.rows
+							this.goods.forEach((item,index)=>{
+								item.panic_buying_start = item.panic_buying_start.substring(0,10) + " " + item.panic_buying_start.substring(11,19)
+								item.exchange_deadline = item.exchange_deadline.substring(0,10) + " " + item.exchange_deadline.substring(11,19)
+							})
+						},
+						fail: err => {
+							uni.showToast({
+								icon: 'none',
+								title: "获取商品信息失败，请重试！"
+							});
+						}
+						
+					})
+					//获取优惠券信息
+					uni.request({
+						url: 'http://yibinmall.chenglee.top:8080/coupons/page',
+						method: "GET",
+						// data: msg,
+						header: {
+							'Authorization':"Bearer "+app.globalData.Authorization,
+						},//请求头
+						dataType: "json",
+						sslVerify: false, 
+						success: res => {
+							console.log(res.data.rows)
+							this.ticket = res.data.rows
+							this.ticket.forEach((item,index)=>{
+								//分割 timestamp字符串，使其成为正常显示的时间
+								item.panic_buying_start = item.panic_buying_start.substring(0,10) + " " + item.panic_buying_start.substring(11,19)
+								item.date_use_begin = item.date_use_begin.substring(0,10) + " " + item.date_use_begin.substring(11,19)
+								item.date_use_end = item.date_use_end.substring(0,10) + " " + item.date_use_end.substring(11,19)
+								item.exchange_deadline = item.exchange_deadline.substring(0,10) + " " + item.exchange_deadline.substring(11,19)
+							})
+						},
+						fail: err => {
+							uni.showToast({
+								icon: 'none',
+								title: "获取优惠券信息失败，请重试！"
+							});
+						}
+					})
 				},
 				fail: err => {
 					uni.showToast({
 						icon: 'none',
-						title: "获取商品信息失败，请重试！"
+						title: "获取token失败，请重试！"
 					});
 				}
 			})
-			//获取优惠券信息
-			uni.request({
-				url: 'http://yibinmall.chenglee.top:8080/coupons/page',
-				method: "GET",
-				// data: msg,
-				header: {
-					'Authorization':"Bearer "+app.globalData.Authorization,
-				},//请求头
-				dataType: "json",
-				sslVerify: false, 
-				success: res => {
-					console.log(res.data.rows)
-					this.ticket = res.data.rows
-				},
-				fail: err => {
-					uni.showToast({
-						icon: 'none',
-						title: "获取优惠券信息失败，请重试！"
-					});
-				}
-			})
+			
+			
 		},
 		onShow(){
 			this.hasUserInfo = getApp().globalData.hasUserInfo
 			this.UserInfo = getApp().globalData.UserInfo
+			let app = getApp()
 			
 		}
 	}
@@ -461,7 +513,7 @@
 						}
 					}
 					.ticket{
-						width: 45vw;
+						width: 46vw;
 						padding-left: 10vw;
 						.ticketHeader{
 							width: 45vw;
@@ -539,7 +591,7 @@
 						margin-left: 3vw;
 					}
 					.goods{
-						width: 45vw;
+						width: 46vw;
 						// height: 32vh;
 						background-color: #FFFFFF;
 						border-radius: 8px;
