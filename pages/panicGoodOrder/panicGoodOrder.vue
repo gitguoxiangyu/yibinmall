@@ -3,10 +3,10 @@
 		<view class="item">
 			<view class="head">
 				<view class="container">
-					<img :src="'http://yibinmall.chenglee.top:8080' + details.goods_main_picture" alt="商品图片" class="goodImg">
+					<img :src="'http://yibinmall.chenglee.top:8080' + details.goods.goods_main_picture" alt="商品图片" class="goodImg">
 					<view class="goodText">
-						<view class="goodDetail">{{details.goods_name}}</view>
-						<view class="goodPrice">共青价：<span style="color: red; font-weight: bold;" >鲜豆{{details.goods_price}}</span></view>
+						<view class="goodDetail">{{details.goods.goods_name}}</view>
+						<view class="goodPrice">共青价：<span style="color: red; font-weight: bold;" >鲜豆{{details.panicBuyingGoods.panic_buying_price}}</span></view>
 					</view>
 				</view>
 				<view class="deliveryWay">
@@ -35,22 +35,22 @@
 			<view class="foot">
 				<view class="bean">
 					<view>商品鲜豆</view>
-					<view>{{details.goods_price}}</view>
+					<view>{{details.panicBuyingGoods.panic_buying_price}}</view>
 				</view>
 				<view class="star">
 					<view>会员星级</view>
-					<view>{{details.star}}星</view>
+					<view>{{details.goods.star}}星</view>
 				</view>
 				<view class="flashTime">
 					<view>市场价</view>
-					<view>{{details.market_price}}元</view>
+					<view>{{details.goods.market_price}}元</view>
 				</view>
-				<view class="sum"><span style="color: red; font-weight: bold;" >鲜豆{{person.number * details.goods_price}}</span>合计： </view>
+				<view class="sum"><span style="color: red; font-weight: bold;" >鲜豆{{person.number * details.panicBuyingGoods.panic_buying_price}}</span>合计： </view>
 			</view>
 		</view>
 		<view class="pay">
 			<view style="color: red; font-weight: bold;">
-				鲜豆{{person.number * details.goods_price}}
+				鲜豆{{person.number * details.panicBuyingGoods.panic_buying_price}}
 			</view>
 			<view class="btn"><button class="btn" @click="buy">立即支付</button></view>
 		</view>
@@ -113,12 +113,12 @@
 		methods: {
 			
 			buy(){
-				if (this.person.address && this.person.tel && this.person.address && this.person.star > this.details.star && this.person.beans > this.person.number * this.details.goods_price){
+				if (this.person.address && this.person.tel && this.person.address && this.person.star > this.details.goods.star && this.person.beans > person.number * details.panicBuyingGoods.panic_buying_price){
 					this.post.order_user_id = this.person.id
-					this.post.store_id = this.details.store_id
-					this.post.goods_id = this.details.goods_id
-					this.post.coupons_id = this.details.coupons_id
-					this.post.number = this.person.number * this.details.goods_price
+					this.post.store_id = this.details.goods.store_id
+					this.post.goods_id = this.details.goods.goods_id
+					this.post.coupons_id = this.details.goods.coupons_id
+					this.post.number = person.number * details.panicBuyingGoods.panic_buying_price
 					this.post.order_status = "已支付"
 					this.post.consignee_name = this.person.real_name
 					this.post.consignee_phone = this.person.tel
@@ -145,7 +145,7 @@
 							app.globalData.Authorization = res.data
 							//发送购买请求
 							uni.request({
-								url: 'http://yibinmall.chenglee.top:8080/orders',
+								url: 'http://yibinmall.chenglee.top:8080/pb_orders',
 								method: "POST",
 								data: this.post,
 								header: {

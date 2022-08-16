@@ -67,14 +67,14 @@
 		</view>
 		<!-- 第二导航栏 -->
 		<view class="subNav">
-			<view :class="{subNavActive:item.active}" v-for="(item,index) in subNavArr" :key="index" @click="changeNavActive(index,subNavArr)">
+			<view :class="{subNavActive:item.active}" v-for="(item,index) in subNavArr" :key="index" @click="changeSubNavActive(index,subNavArr)">
 				{{item.name}}
 			</view>
 		</view>
 		<!-- 商品列表 -->
 		<view class="content">
 			<view class="hot" v-if="navArr[0].active == true">
-				<view class="goods" v-for="(item,index) in goods" :key="index" @click="toGoodsDetails(item)">
+				<view class="goods" v-for="(item,index) in displayGoods" :key="index" @click="toGoodsDetails(item)">
 						<view class="goodsPic">
 							<image class="flashLogo" src="../../static/img/flashSale.png"></image>
 							<image class="goodsImg" :src="'http://yibinmall.chenglee.top:8080' + item.goods_main_picture"></image>
@@ -90,10 +90,37 @@
 								<view class="goodsNum" v-if="item.stock">
 									仅剩{{item.stock}}件
 								</view>
-								<view class="flashTime" v-if="item.panic_buying_start">
+							</view>
+							<view class="goodsSale">
+								鲜豆
+								<view class="saleBean">
+									{{item.goods_price}}
+								</view>
+							</view>
+						</view>
+				</view>
+			</view>
+			<view class="hot" v-if="navArr[1].active == true">
+				<view class="goods" v-for="(item,index) in displayPanicBuyingGoods" :key="index" @click="toPanicGood(item)">
+						<view class="goodsPic">
+							<image class="flashLogo" src="../../static/img/flashSale.png"></image>
+							<image class="goodsImg" :src="'http://yibinmall.chenglee.top:8080' + item.goods.goods_main_picture"></image>
+						</view>
+						<view class="goodsInfo">
+							<view class="goodsDes">
+								<view v-show="item.goods.star" class="goodsStar">{{item.goods.star}}星</view>
+								<view class="goodsTxt">
+									{{item.goods.goods_name}}
+								</view>
+							</view>
+							<view class="goodsSaleInfo">
+								<view class="goodsNum" v-if="item.goods.stock">
+									仅剩{{item.goods.stock}}件
+								</view>
+								<view class="flashTime" v-if="item.panicBuyingGoods">
 									抢购
 									<view style="color: red">
-										{{item.panic_buying_start}}
+										{{item.panicBuyingGoods.panic_buying_start_time}}
 									</view>
 									开始
 								</view>
@@ -101,19 +128,14 @@
 							<view class="goodsSale">
 								鲜豆
 								<view class="saleBean">
-									{{item.goods_price}}
-								</view>
-								<view style="color:#000000">+</view>
-								￥
-								<view class="salePrice">
-									{{item.price}}
+									{{item.goods.goods_price}}
 								</view>
 							</view>
 						</view>
 				</view>
 			</view>
 			<view class="generalPreferential" v-if="navArr[2].active == true">
-				<view class="goods" v-for="(item,index) in ticket" :key="index" @click="toTicketDetails(item)">
+				<view class="goods" v-for="(item,index) in displayTickets" :key="index" @click="toTicketDetails(item)">
 						<view class="goodsPic">
 							<image class="goodsImg" :src="'http://yibinmall.chenglee.top:8080' + item.main_picture"></image>
 						</view>
@@ -145,12 +167,54 @@
 						</view>
 				</view>
 			</view>
+			
+			<view class="generalPreferential" v-if="navArr[3].active == true">
+				<view class="goods" v-for="(item,index) in displayPanicBuyingCoupons" :key="index" @click="toPanicTicket(item)">
+						<view class="goodsPic">
+							<image class="goodsImg" :src="'http://yibinmall.chenglee.top:8080' + item.coupons.main_picture"></image>
+						</view>
+						<view class="goodsInfo">
+							<view class="goodsDes">
+								<view class="goodsStar">{{item.coupons.star}}星</view>
+								<view class="goodsTxt">
+									{{item.coupons.coupon_name}}
+								</view>
+							</view>
+							<view class="goodsSaleInfo">
+								<view class="goodsNum">
+									仅剩{{item.coupons.stock}}件
+								</view>
+								<view class="flashTime" v-if="item.panicBuyingCoupons.panic_buying_start_time">
+									抢购
+									<view style="color: red">
+										{{item.panicBuyingCoupons.panic_buying_start_time}}
+									</view>
+									开始
+								</view>
+								<view class="flashTime" v-if="item.remainBeginSeconds != -1">
+									抢购还剩
+									<view style="color: red">
+										{{item.remainBeginSeconds}}
+									</view>
+									秒开始
+								</view>
+							</view>
+							<view class="goodsSale">
+								鲜豆
+								<view class="saleBean">
+									{{item.coupons.coupon_price}}
+								</view>
+							</view>
+						</view>
+				</view>
+			</view>
 		</view>
 	</view>
 </template>
 
 <script>
 	import icons from '../../uni_modules/uni-icons/components/uni-icons/uni-icons.vue'
+	import panicCreateSetinterval from '../../publicAPI/panicCreateSetInterval.js'
 	export default {
 		components:{"uni-icons":icons},
 		data() {
@@ -160,7 +224,7 @@
 				starRate:20,
 				navArr:[
 					{
-						name:'热门',
+						name:'热门商品',
 						active:true
 					},
 					{
@@ -172,30 +236,44 @@
 						active:false
 					},
 					{
-						name:'商家优惠',
+						name:'限时优惠',
 						active:false
 					}
 				],
 				subNavArr:[
 					{
 						name:'全部',
-						active:true
+						active:true,
+						min:undefined,
+						max:undefined,
 					},
 					{
 						name:'1-50豆',
-						active:false
+						active:false,
+						min:1,
+						max:50,
 					},
 					{
 						name:'51-100豆',
-						active:false
+						active:false,
+						min:51,
+						max:100,
 					},
 					{
 						name:'101豆以上',
-						active:false
+						active:false,
+						min:101,
+						max:undefined,
 					}
 				],
 				goods:[],
-				ticket:[]
+				displayGoods:[],
+				ticket:[],
+				displayTickets:[],
+				panicBuyingGoods:[],
+				displayPanicBuyingGoods:[],
+				panicBuyingCoupons:[],
+				displayPanicBuyingCoupons:[],
 			}
 		},
 		methods: {
@@ -204,11 +282,124 @@
 			 * @param {Object} item
 			 */
 			changeNavActive(index,item){
+				//改变样式
 				for (var i = 0; i < item.length; i++) {
 					item[i].active = false
 					if(index == i) {
 						item[i].active = true
 					}
+				}
+			},
+			changeSubNavActive(index,items){
+				//改变样式
+				for (var i = 0; i < items.length; i++) {
+					items[i].active = false
+					if(index == i) {
+						items[i].active = true
+					}
+				}
+				//条件筛选
+				if (index == 0){
+					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					//~             注意！！！此处均为浅拷贝！！！				~
+					//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					this.displayGoods = this.goods;
+					this.displayTickets = this.ticket
+					this.displayPanicBuyingGoods = this.panicBuyingGoods
+					this.displayPanicBuyingCoupons = this.panicBuyingCoupons
+				}else if (index == 1){
+					let arr = []
+					this.goods.forEach((item,index) => {
+						if(item.goods_price > 0 && item.goods_price < 51){
+							arr.push(item)
+						}
+					})
+					this.displayGoods = arr;
+					arr = []
+					this.ticket.forEach((item,index) => {
+						if(item.coupon_price > 0 && item.coupon_price < 51){
+							arr.push(item)
+						}
+					})
+					this.displayTickets = arr
+					arr = []
+					this.panicBuyingGoods.forEach((item,index) => {
+						if(item.goods.goods_price > 0 && item.goods.goods_price < 51){
+							arr.push(item)
+						}
+					})
+					this.displayPanicBuyingGoods = arr
+					panicCreateSetinterval(this.displayPanicBuyingGoods)
+					arr = []
+					this.panicBuyingCoupons.forEach((item,index) => {
+						if(item.coupons.coupon_price > 0 && item.coupons.coupon_price < 51){
+							arr.push(item)
+						}
+					})
+					this.displayPanicBuyingCoupons = arr
+					panicCreateSetinterval(this.displayPanicBuyingCoupons)
+				}else if (index == 2){
+					let arr = []
+					this.goods.forEach((item,index) => {
+						if(item.goods_price > 50 && item.goods_price < 101){
+							arr.push(item)
+						}
+					})
+					this.displayGoods = arr;
+					arr = []
+					this.ticket.forEach((item,index) => {
+						if(item.coupon_price > 50 && item.coupon_price < 101){
+							arr.push(item)
+						}
+					})
+					this.displayTickets = arr
+					arr = []
+					this.panicBuyingGoods.forEach((item,index) => {
+						if(item.goods.goods_price > 50 && item.goods.goods_price < 101){
+							arr.push(item)
+						}
+					})
+					this.displayPanicBuyingGoods = arr
+					panicCreateSetinterval(this.displayPanicBuyingGoods)
+					arr = []
+					this.panicBuyingCoupons.forEach((item,index) => {
+						if(item.coupons.coupon_price > 50 && item.coupons.coupon_price < 101){
+							arr.push(item)
+						}
+					})
+					this.displayPanicBuyingCoupons = arr
+					panicCreateSetinterval(this.displayPanicBuyingCoupons)
+				}else if (index == 3){
+					let arr = []
+					this.goods.forEach((item,index) => {
+						if(item.goods_price > 100){
+							arr.push(item)
+						}
+					})
+					this.displayGoods = arr;
+					arr = []
+					this.ticket.forEach((item,index) => {
+						if(item.coupon_price > 100){
+							arr.push(item)
+						}
+					})
+					this.displayTickets = arr
+					arr = []
+					this.panicBuyingGoods.forEach((item,index) => {
+						if(item.goods.goods_price > 100){
+							arr.push(item)
+						}
+					})
+					this.displayPanicBuyingGoods = arr
+					panicCreateSetinterval(this.displayPanicBuyingGoods)
+					arr = []
+					this.panicBuyingCoupons.forEach((item,index) => {
+						if(item.coupons.coupon_price > 100){
+							arr.push(item)
+						}
+					})
+					this.displayPanicBuyingCoupons = arr
+					panicCreateSetinterval(this.displayPanicBuyingCoupons)
 				}
 			},
 			/** 导航到商品详情页面
@@ -223,6 +414,15 @@
 					url:'../goodsDetails/goodsDetails?details='+details
 				})
 			},
+			toPanicGood(item){
+				// console.log("跳转")
+				// 加密传递的对象数据
+				let details = encodeURIComponent(JSON.stringify(item))
+				// console.log(item)
+				uni.navigateTo({
+					url:'../panicGood/panicGood?details='+details
+				})
+			},
 			/** 导航到优惠券详情页面
 			 * @param {Object} item
 			 */
@@ -230,6 +430,12 @@
 				let details = encodeURIComponent(JSON.stringify(item))
 				uni.navigateTo({
 					url:'../ticketDetails/ticketDetails?details='+details
+				})
+			},
+			toPanicTicket(item){
+				let details = encodeURIComponent(JSON.stringify(item))
+				uni.navigateTo({
+					url:'../panicTicket/panicTicket?details='+details
 				})
 			},
 			toTicketHistory() {
@@ -263,7 +469,150 @@
 				uni.navigateTo({
 					url:'../login/login'
 				})
-			}
+			},
+			//校正时间戳
+			correctTime(time){
+				return time.substring(0,10) + " " + time.substring(11,19)
+			},
+			//获取商品信息
+			getGoods(){
+				let app = getApp()
+				uni.request({
+					url: 'http://yibinmall.chenglee.top:8080/goods/page',
+					method: "GET",
+					// data: msg,
+					header: {
+						'Authorization':"Bearer "+app.globalData.Authorization,
+					},//请求头
+					dataType: "json",
+					sslVerify: false, 
+					success: res => {
+						console.log(res.data.rows)
+						this.goods = res.data.rows
+						this.goods.forEach((item,index)=>{
+							item.exchange_deadline = item.exchange_deadline.substring(0,10) + " " + item.exchange_deadline.substring(11,19)
+						})
+						this.displayGoods = JSON.parse(JSON.stringify(this.goods))
+					},
+					fail: err => {
+						uni.showToast({
+							icon: 'none',
+							title: "获取商品信息失败，请重试！"
+						});
+					}	
+				})
+			},
+			//获取抢购商品信息
+			getPanicGoods(){
+				let app = getApp()
+				uni.request({
+					url: 'http://yibinmall.chenglee.top:8080/pb_goods/list',
+					method: "GET",
+					// data: msg,
+					header: {
+						'Authorization':"Bearer "+app.globalData.Authorization,
+					},//请求头
+					dataType: "json",
+					sslVerify: false, 
+					success: res => {
+						console.log(res.data.object)
+						let items = res.data.object
+						items.forEach((item,index)=>{
+							item.panicBuyingGoods.panic_buying_start_time = item.panicBuyingGoods.panic_buying_start_time.substring(0,10) + " " + item.panicBuyingGoods.panic_buying_start_time.substring(11,19)
+							item.panicBuyingGoods.panic_buying_end_time = item.panicBuyingGoods.panic_buying_end_time.substring(0,10) + " " + item.panicBuyingGoods.panic_buying_end_time.substring(11,19)
+							item.goods.exchange_deadline = item.goods.exchange_deadline.substring(0,10) + " " + item.goods.exchange_deadline.substring(11,19)
+							item.goods.update_time = item.goods.update_time.substring(0,10) + " " + item.goods.update_time.substring(11,19)
+						})
+						this.panicBuyingGoods = items
+						panicCreateSetinterval(this.panicBuyingGoods)
+						this.displayPanicBuyingGoods = JSON.parse(JSON.stringify(items))
+						// this.displayPanicBuyingGoods.forEach((item,index) => {
+						// 	let timer = setInterval(function(){
+						// 		item.remainBeginSecond--
+						// 		if (item == 0){
+						// 			clearInterval(timer)
+						// 		}
+						// 	},1000)
+						// })
+						panicCreateSetinterval(this.displayPanicBuyingGoods)
+					},
+					fail: err => {
+						uni.showToast({
+							icon: 'none',
+							title: "获取商品信息失败，请重试！"
+						});
+					}	
+				})
+			},
+			//获取优惠券信息
+			getCoupons(){
+				let app = getApp()
+				uni.request({
+					url: 'http://yibinmall.chenglee.top:8080/coupons/page',
+					method: "GET",
+					// data: msg,
+					header: {
+						'Authorization':"Bearer "+app.globalData.Authorization,
+					},//请求头
+					dataType: "json",
+					sslVerify: false, 
+					success: res => {
+						console.log(res.data.rows)
+						this.ticket = res.data.rows
+						this.ticket.forEach((item,index)=>{
+							//分割 timestamp字符串，使其成为正常显示的时间
+							item.date_use_begin = item.date_use_begin.substring(0,10) + " " + item.date_use_begin.substring(11,19)
+							item.date_use_end = item.date_use_end.substring(0,10) + " " + item.date_use_end.substring(11,19)
+							item.exchange_deadline = item.exchange_deadline.substring(0,10) + " " + item.exchange_deadline.substring(11,19)
+						})
+						this.displayTickets = JSON.parse(JSON.stringify(this.ticket))
+					},
+					fail: err => {
+						uni.showToast({
+							icon: 'none',
+							title: "获取优惠券信息失败，请重试！"
+						});
+					}
+				})
+			},
+			//获取抢购优惠券信息
+			getPanicCoupons(){
+				let app = getApp()
+				uni.request({
+					url: 'http://yibinmall.chenglee.top:8080/pb_coupons/list',
+					method: "GET",
+					// data: msg,
+					header: {
+						'Authorization':"Bearer "+app.globalData.Authorization,
+					},//请求头
+					dataType: "json",
+					sslVerify: false, 
+					success: res => {
+						console.log(res.data.object)
+						let items = res.data.object
+						items.forEach((item,index)=>{
+							//校正时间 (可用correctTime方法)
+							item.panicBuyingCoupons.panic_buying_start_time = item.panicBuyingCoupons.panic_buying_start_time.substring(0,10) + " " + item.panicBuyingCoupons.panic_buying_start_time.substring(11,19)
+							item.panicBuyingCoupons.panic_buying_end_time = item.panicBuyingCoupons.panic_buying_end_time.substring(0,10) + " " + item.panicBuyingCoupons.panic_buying_end_time.substring(11,19)
+							item.coupons.date_use_begin = item.coupons.date_use_begin.substring(0,10) + " " + item.coupons.date_use_begin.substring(11,19)
+							item.coupons.date_use_end = item.coupons.date_use_end.substring(0,10) + " " + item.coupons.date_use_end.substring(11,19)
+							item.coupons.exchange_deadline = item.coupons.exchange_deadline.substring(0,10) + " " + item.coupons.exchange_deadline.substring(11,19)
+							item.coupons.update_time = item.coupons.update_time.substring(0,10) + " " + item.coupons.update_time.substring(11,19)
+						})
+						this.panicBuyingCoupons = items
+						panicCreateSetinterval(this.panicBuyingCoupons)
+						//深拷贝
+						this.displayPanicBuyingCoupons = JSON.parse(JSON.stringify(items))
+						panicCreateSetinterval(this.displayPanicBuyingCoupons)
+					},
+					fail: err => {
+						uni.showToast({
+							icon: 'none',
+							title: "获取商品信息失败，请重试！"
+						});
+					}
+				})
+			},
 		},
 		onLoad(){
 			this.hasUserInfo = getApp().globalData.hasUserInfo
@@ -281,61 +630,19 @@
 				sslVerify: false, 
 				success: res => {
 					//将token存入全局变量中
-					let app = getApp()
-					app.globalData.Authorization = res.data
-					uni.request({
-						url: 'http://yibinmall.chenglee.top:8080/goods/page',
-						method: "GET",
-						// data: msg,
-						header: {
-							'Authorization':"Bearer "+app.globalData.Authorization,
-						},//请求头
-						dataType: "json",
-						sslVerify: false, 
-						success: res => {
-							console.log(res.data.rows)
-							this.goods = res.data.rows
-							this.goods.forEach((item,index)=>{
-								item.panic_buying_start = item.panic_buying_start.substring(0,10) + " " + item.panic_buying_start.substring(11,19)
-								item.exchange_deadline = item.exchange_deadline.substring(0,10) + " " + item.exchange_deadline.substring(11,19)
-							})
-						},
-						fail: err => {
-							uni.showToast({
-								icon: 'none',
-								title: "获取商品信息失败，请重试！"
-							});
+					let app = getApp();
+					app.globalData.Authorization = res.data;//此次不加分号会导致报错
+					(async() => {
+						try{
+							console.log("huoqu")
+							let goods = await this.getGoods()
+							let coupons = await this.getCoupons()
+							let panicGood = await this.getPanicGoods()
+							let panicCoupon = await this.getPanicCoupons()
+						}catch{
+							console.log("无法正常获取商品信息")
 						}
-						
-					})
-					//获取优惠券信息
-					uni.request({
-						url: 'http://yibinmall.chenglee.top:8080/coupons/page',
-						method: "GET",
-						// data: msg,
-						header: {
-							'Authorization':"Bearer "+app.globalData.Authorization,
-						},//请求头
-						dataType: "json",
-						sslVerify: false, 
-						success: res => {
-							console.log(res.data.rows)
-							this.ticket = res.data.rows
-							this.ticket.forEach((item,index)=>{
-								//分割 timestamp字符串，使其成为正常显示的时间
-								item.panic_buying_start = item.panic_buying_start.substring(0,10) + " " + item.panic_buying_start.substring(11,19)
-								item.date_use_begin = item.date_use_begin.substring(0,10) + " " + item.date_use_begin.substring(11,19)
-								item.date_use_end = item.date_use_end.substring(0,10) + " " + item.date_use_end.substring(11,19)
-								item.exchange_deadline = item.exchange_deadline.substring(0,10) + " " + item.exchange_deadline.substring(11,19)
-							})
-						},
-						fail: err => {
-							uni.showToast({
-								icon: 'none',
-								title: "获取优惠券信息失败，请重试！"
-							});
-						}
-					})
+					})()//即刻调取箭头函数
 				},
 				fail: err => {
 					uni.showToast({
@@ -345,7 +652,44 @@
 				}
 			})
 			
-			
+			setInterval(() => {
+				this.hasUserInfo = getApp().globalData.hasUserInfo
+				this.UserInfo = getApp().globalData.UserInfo
+				let app = getApp()
+				let msg = {
+					username: "admin",
+					password: "admin123"
+				}
+				uni.request({
+					url: 'http://yibinmall.chenglee.top:8080/get_token',//开发者服务器接口地址
+					method: "POST",
+					data: msg,//请求的参数
+					dataType: "json",
+					sslVerify: false, 
+					success: res => {
+						//将token存入全局变量中
+						let app = getApp();
+						app.globalData.Authorization = res.data;//此次不加分号会导致报错
+						(async() => {
+							try{
+								console.log("huoqu")
+								let goods = await this.getGoods()
+								let coupons = await this.getCoupons()
+								let panicGood = await this.getPanicGoods()
+								let panicCoupon = await this.getPanicCoupons()
+							}catch{
+								console.log("无法正常获取商品信息")
+							}
+						})()//即刻调取箭头函数
+					},
+					fail: err => {
+						uni.showToast({
+							icon: 'none',
+							title: "获取token失败，请重试！"
+						});
+					}
+				})
+			},1800000)
 		},
 		onShow(){
 			this.hasUserInfo = getApp().globalData.hasUserInfo

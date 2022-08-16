@@ -3,15 +3,11 @@
 		<view class="item">
 			<view class="head">
 				<view class="container">
-					<img :src="'http://yibinmall.chenglee.top:8080' + details.goods_main_picture" alt="商品图片" class="goodImg">
+					<img :src="'http://yibinmall.chenglee.top:8080' + details.coupons.main_picture" alt="商品图片" class="goodImg">
 					<view class="goodText">
-						<view class="goodDetail">{{details.goods_name}}</view>
-						<view class="goodPrice">共青价：<span style="color: red; font-weight: bold;" >鲜豆{{details.goods_price}}</span></view>
+						<view class="goodDetail">{{details.coupons.coupon_name}}</view>
+						<view class="goodPrice">共青价：<span style="color: red; font-weight: bold;" >鲜豆{{details.panicBuyingCoupons.panic_buying_price}}</span></view>
 					</view>
-				</view>
-				<view class="deliveryWay">
-					<view class="way">配送方式：</view>
-					<view class="deliver">线下商家配送（ 送货上门 ）</view>
 				</view>
 			</view>
 			<view class="body" @click="change">
@@ -24,10 +20,6 @@
 					<view>{{person.tel}}</view>
 				</view>
 				<view class="option">
-					<view>收货地址</view>
-					<view>{{person.address}}</view>
-				</view>
-				<view class="option">
 					<view>货物数量</view>
 					<view>{{person.number}}</view>
 				</view>
@@ -35,22 +27,22 @@
 			<view class="foot">
 				<view class="bean">
 					<view>商品鲜豆</view>
-					<view>{{details.goods_price}}</view>
+					<view>{{details.panicBuyingCoupons.panic_buying_price}}</view>
 				</view>
 				<view class="star">
 					<view>会员星级</view>
-					<view>{{details.star}}星</view>
+					<view>{{details.coupons.star}}星</view>
 				</view>
 				<view class="flashTime">
 					<view>市场价</view>
-					<view>{{details.market_price}}元</view>
+					<view>{{details.coupons.market_price}}元</view>
 				</view>
-				<view class="sum"><span style="color: red; font-weight: bold;" >鲜豆{{person.number * details.goods_price}}</span>合计： </view>
+				<view class="sum"><span style="color: red; font-weight: bold;" >鲜豆{{person.number * details.panicBuyingCoupons.panic_buying_price}}</span>合计： </view>
 			</view>
 		</view>
 		<view class="pay">
 			<view style="color: red; font-weight: bold;">
-				鲜豆{{person.number * details.goods_price}}
+				鲜豆{{person.number * details.panicBuyingCoupons.panic_buying_price}}
 			</view>
 			<view class="btn"><button class="btn" @click="buy">立即支付</button></view>
 		</view>
@@ -63,9 +55,6 @@
 				</view>
 				<view class="inputItem">
 					收货电话<input v-model="person.tel" class="input" type="text" name="phone" placeholder="请输入收货电话" placeholder-style="font-size:26rpx;color:grey;">
-				</view>
-				<view class="inputItem">
-					收货地址<input v-model="person.address" class="input" type="text" name="address" placeholder="请输入收货地址" placeholder-style="font-size:26rpx;color:grey;">
 				</view>
 				<view class="inputItem">
 					货物数量<input v-model="person.number" class="input" type="text" name="phone" placeholder="请输入货物数量" placeholder-style="font-size:26rpx;color:grey;">
@@ -100,6 +89,9 @@
 				},
 			}
 		},
+		computed:{
+
+		},
 		onLoad(option) {
 			if (option.details){
 				// decodeURIComponent 解密传过来的对象字符串
@@ -108,22 +100,21 @@
 			}
 			this.person.number = 1
 			console.log(getApp().globalData.UserInfo)
-			
 		},
 		methods: {
 			
 			buy(){
-				if (this.person.address && this.person.tel && this.person.address && this.person.star > this.details.star && this.person.beans > this.person.number * this.details.goods_price){
+				if (this.person.real_name && this.person.tel && this.person.star >= this.details.coupons.star && this.person.beans >= this.person.number * this.details.panicBuyingCoupons.panic_buying_price){
 					this.post.order_user_id = this.person.id
-					this.post.store_id = this.details.store_id
-					this.post.goods_id = this.details.goods_id
-					this.post.coupons_id = this.details.coupons_id
-					this.post.number = this.person.number * this.details.goods_price
+					this.post.store_id = this.details.coupons.store_id
+					this.post.goods_id = this.details.coupons.goods_id
+					this.post.coupons_id = this.details.coupons.coupon_id
+					this.post.number = this.person.number
 					this.post.order_status = "已支付"
 					this.post.consignee_name = this.person.real_name
 					this.post.consignee_phone = this.person.tel
-					this.post.consignee_address = this.person.address
-					this.post.deliver_type = "线下厂商配送"
+					this.post.consignee_address = null
+					this.post.deliver_type = null
 					this.post.order_time = new Date().getTime()
 					this.post.deliver_time = undefined
 					
@@ -145,7 +136,7 @@
 							app.globalData.Authorization = res.data
 							//发送购买请求
 							uni.request({
-								url: 'http://yibinmall.chenglee.top:8080/orders',
+								url: 'http://yibinmall.chenglee.top:8080/pb_orders',
 								method: "POST",
 								data: this.post,
 								header: {
@@ -155,6 +146,15 @@
 								sslVerify: false, 
 								success: res => {
 									console.log(res)
+									uni.showToast({
+										icon: 'none',
+										title: "订单发送成功！"
+									})
+									setTimeout(()=>{
+										uni.navigateTo({
+											url:'../mall/mall'
+										})
+									},1000)
 								},
 								fail: err => {
 									uni.showToast({
@@ -176,7 +176,7 @@
 						icon: 'none',
 						title: "用户星级不足"
 					});
-				}else if (this.person.beans < this.person.number * this.details.goods_price){
+				}else if (this.person.beans < this.person.number * this.details.coupon_price){
 					uni.showToast({
 						icon: 'none',
 						title: "用户鲜豆不足"
@@ -188,9 +188,7 @@
 						title: "请检查收货信息是否正确"
 					});
 				}
-				// uni.navigateTo({
-				// 	url:'../mall/mall'
-				// })
+				
 			},
 			change(){
 				this.showPop = true
@@ -276,6 +274,19 @@
 		flex-direction: row;
 		justify-content: space-between;
 	}
+	
+	/* .tel{
+		margin: 1vh 0;
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+	}
+	.address{
+		margin: 1vh 0;
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+	} */
 	
 	.foot{
 		font-size: 10px;

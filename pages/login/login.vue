@@ -31,13 +31,14 @@
 				//正则校验社保卡号前六位是否为621721
 				//51253419720212703X
 				let reg = /^621721/
+				let long = /^d[19]/
 				let app = getApp()
 				//请求体
 				let msg = {
 					idCard: data.detail.value.idCard,
 					token: app.globalData.token
 				}
-				if (reg.test(data.detail.value.ICBC_card_num) == true){
+				if (reg.test(data.detail.value.ICBC_card_num) == true ){
 					uni.request({
 						url: 'http://data-tran-yb.nvnbd.com/api/user/info',//开发者服务器接口地址
 						method: "POST",

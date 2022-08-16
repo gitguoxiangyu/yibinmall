@@ -72,6 +72,49 @@
 		    }
 		    
 		}
+		,{
+		    "path" : "pages/ticketOrder/ticketOrder",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "兑换详情",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		}
+		,{
+            "path" : "pages/panicGood/panicGood",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "商品详情",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+		,{
+		    "path" : "pages/panicTicket/panicTicket",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "商品详情",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		},{
+		    "path" : "pages/panicTicketOrder/panicTicketOrder",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "抢购订单",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		},{
+		    "path" : "pages/panicGoodOrder/panicGoodOrder",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "抢购订单",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		}
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

@@ -2,28 +2,34 @@
 	<view class="body">
 		<view class="goods">
 				<view class="goodsPic">
-					<image class="goodsImg" :src="'http://yibinmall.chenglee.top:8080' + details.main_picture"></image>
+					<image class="goodsImg" :src="'http://yibinmall.chenglee.top:8080' + details.coupons.main_picture"></image>
 				</view>
 				<view class="goodsInfo">
 					<view class="goodsDes">
-						<view v-show="details.star > 0" class="goodsStar">{{details.star}}星</view>
+						<view v-show="details.coupons.star > 0" class="goodsStar">{{details.coupons.star}}星</view>
 						<view class="goodsTxt">
-							{{details.coupon_name}}
+							{{details.coupons.coupon_name}}
 						</view>
 					</view>
 					<view class="goodsSale">
 						<view style="color: #000000;">
 							共青价：
 						</view>
-						鲜豆  {{details.coupon_price}}
+						鲜豆  {{details.panicBuyingCoupons.panic_buying_price}}
 					</view>
 					<view class="goodsSaleInfo">
-						市场价：￥{{details.market_price}}
+						市场价：￥{{details.coupons.market_price}}
 					</view>
 					<view class="goodsSaleInfo">
-						兑换截止日期：
+						抢购开始时间：
 						<view style="color: red">
-							{{details.exchange_deadline}}
+							{{details.panicBuyingCoupons.panic_buying_start_time}}
+						</view>
+					</view>
+					<view class="goodsSaleInfo">
+						抢购截止时间：
+						<view style="color: red">
+							{{details.panicBuyingCoupons.panic_buying_end_time}}
 						</view>
 					</view>
 				</view>
@@ -38,7 +44,7 @@
 						使用时间
 					</view>
 					<view class="right">
-						{{details.available_time}}
+						{{details.coupons.available_time}}
 					</view>
 				</view>
 				<view class="address">
@@ -46,7 +52,7 @@
 						使用地址
 					</view>
 					<view class="right">
-						{{details.place_of_use}}所有商家
+						{{details.coupons.place_of_use}}所有商家
 					</view>
 				</view>
 				<view class="attention">
@@ -55,7 +61,7 @@
 					</view>
 					<view class="right">
 						<view class="first">
-							{{details.notice}}
+							{{details.coupons.notice}}
 						</view>
 						<!-- <view class="second">
 							2.此消费券不兑换现金，只能才购买商品时抵扣！
@@ -69,7 +75,7 @@
 				<view style="color: #000000;">
 					共青价：
 				</view>
-				鲜豆  {{details.coupon_price}}
+				鲜豆  {{details.panicBuyingCoupons.panic_buying_price}}
 			</view>
 			<button type="default" @click="buy">立即兑换</button>
 		</view>
@@ -93,7 +99,7 @@
 			buy(){
 				let details = encodeURIComponent(JSON.stringify(this.details))
 				uni.navigateTo({
-					url:'../ticketOrder/ticketOrder?details='+details
+					url:'../panicTicketOrder/panicTicketOrder?details='+details
 				})
 			}
 		}
