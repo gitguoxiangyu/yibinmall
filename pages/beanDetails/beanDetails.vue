@@ -80,6 +80,7 @@
 							arr.forEach((item,index)=>{
 								item.beans_action_time = item.beans_action_time.substring(0,10) + " " + item.beans_action_time.substring(11,19)
 							})
+							arr.reverse()
 							this.msg = arr
 							this.displayMsg = arr
 						},

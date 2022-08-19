@@ -73,133 +73,199 @@
 				<button @click="closeModal()" class="login" >确定</button>
 			<!-- </form> -->
 		</view>
-
+		
 	</view>
 </template>
 
 <script>
-	export default {
-		data() {
-			return {
-				showPop: false,
-				details:{},
-				person: getApp().globalData.UserInfo,
-				post:{
-					order_user_id: undefined,
-					store_id: undefined,
-					goods_id: undefined,
-					coupons_id: undefined,
-					number: undefined,
-					order_status: undefined,
-					consignee_name: undefined,
-					consignee_phone: undefined,
-					consignee_address: undefined,
-					deliver_type: undefined,
-					order_time: undefined,
-					deliver_time: undefined,
-				},
-			}
-		},
-		onLoad(option) {
-			if (option.details){
-				// decodeURIComponent 解密传过来的对象字符串
-				this.details = JSON.parse(decodeURIComponent(option.details));
-				console.log(this.details)
-			}
-			this.person.number = 1
-			console.log(getApp().globalData.UserInfo)
-			
-		},
-		methods: {
-			
-			buy(){
-				if (this.person.address && this.person.tel && this.person.address && this.person.star > this.details.goods.star && this.person.beans > person.number * details.panicBuyingGoods.panic_buying_price){
-					this.post.order_user_id = this.person.id
-					this.post.store_id = this.details.goods.store_id
-					this.post.goods_id = this.details.goods.goods_id
-					this.post.coupons_id = this.details.goods.coupons_id
-					this.post.number = person.number * details.panicBuyingGoods.panic_buying_price
-					this.post.order_status = "已支付"
-					this.post.consignee_name = this.person.real_name
-					this.post.consignee_phone = this.person.tel
-					this.post.consignee_address = this.person.address
-					this.post.deliver_type = "线下厂商配送"
-					this.post.order_time = new Date().getTime()
-					this.post.deliver_time = undefined
-					
-					console.log(this.post)
+import getToken from '../../publicAPI/getToken.js'
+import updatePersonMsg from '../../publicAPI/updataPersonMsg.js'
+export default {
+	data() {
+		return {
+			showPop: false,
+			details:{},
+			person: getApp().globalData.UserInfo,
+			post:{
+				order_user_id: undefined,
+				store_id: undefined,
+				goods_id: undefined,
+				coupons_id: undefined,
+				number: undefined,
+				order_status: undefined,
+				consignee_name: undefined,
+				consignee_phone: undefined,
+				consignee_address: undefined,
+				deliver_type: undefined,
+				order_time: undefined,
+				deliver_time: undefined,
+			},
+		}
+	},
+	onLoad(option) {
+		if (option.details){
+			// decodeURIComponent 解密传过来的对象字符串
+			this.details = JSON.parse(decodeURIComponent(option.details));
+			console.log(this.details)
+		}
+		this.person.number = 1
+		console.log(getApp().globalData.UserInfo)
+		
+	},
+	methods: {
+		buy(){
+			if (this.person.address && this.person.tel && this.person.real_name && this.person.star >= this.details.goods.star && this.person.beans >= this.person.number * this.details.panicBuyingGoods.panic_buying_price){
+				this.post.order_user_id = this.person.id
+				this.post.store_id = this.details.goods.store_id
+				this.post.goods_id = this.details.goods.goods_id
+				this.post.coupons_id = this.details.goods.coupons_id
+				this.post.number = this.person.number
+				this.post.order_status = "已支付"
+				this.post.consignee_name = this.person.real_name
+				this.post.consignee_phone = this.person.tel
+				this.post.consignee_address = this.person.address
+				this.post.deliver_type = "线下厂商配送"
+				this.post.order_time = new Date().getTime()
+				this.post.deliver_time = undefined
+				
+				console.log(this.post)
+				let app = getApp()
+				let poll = {
+					user_id: this.person.id,
+					type: 1,
+					thingsId: this.details.goods.goods_id,
+				}
+				//getToken获取token，第一个参数是成功的回调，第二个参数是失败的回调
+				getToken(
+				res => {
+					//将token存入全局变量中
 					let app = getApp()
-					let msg = {
-						username: "admin",
-						password: "admin123"
-					}
+					app.globalData.Authorization = res.data
+					//发送购买请求
 					uni.request({
-						url: 'http://yibinmall.chenglee.top:8080/get_token',//开发者服务器接口地址
+						url: 'http://yibinmall.chenglee.top:8080/pb_orders',
 						method: "POST",
-						data: msg,//请求的参数
+						data: this.post,
+						header: {
+							'Authorization':"Bearer "+app.globalData.Authorization,
+						},//请求头
 						dataType: "json",
 						sslVerify: false, 
 						success: res => {
-							//将token存入全局变量中
-							let app = getApp()
-							app.globalData.Authorization = res.data
-							//发送购买请求
-							uni.request({
-								url: 'http://yibinmall.chenglee.top:8080/pb_orders',
-								method: "POST",
-								data: this.post,
-								header: {
-									'Authorization':"Bearer "+app.globalData.Authorization,
-								},//请求头
-								dataType: "json",
-								sslVerify: false, 
-								success: res => {
-									console.log(res)
-								},
-								fail: err => {
-									uni.showToast({
-										icon: 'none',
-										title: "订单信息发送失败，请重试！"
-									});
-								}
-							})
+							console.log(res)
+							//轮询抢购结果
+							if (res.data.code == 200){
+								uni.showLoading({
+									title: res.data.message
+								});
+								let timer = setInterval(()=>{
+									uni.request({
+										url: 'http://yibinmall.chenglee.top:8080/pb_orders/result/'+poll.user_id+'/'+poll.type+'/'+poll.thingsId,
+										method: "GET",
+										// data: poll,
+										header: {
+											'Authorization':"Bearer "+app.globalData.Authorization,
+										},//请求头
+										dataType: "json",
+										sslVerify: false, 
+										success: res => {
+											console.log(res)
+											uni.hideLoading()
+											if (res.data.code == 200){
+												uni.showModal({
+													title: '抢购成功',
+													// content: '是否查看订单详情',
+													success: function (res) {
+														updatePersonMsg()//更新鲜豆信息
+														if (res.confirm) {
+															setTimeout(()=>{																
+																uni.navigateTo({
+																	url: '../mall/mall'
+																})
+															},500)
+														} else if (res.cancel) {
+															setTimeout(()=>{
+																uni.navigateTo({
+																	url: '../mall/mall'
+																})
+															},500)
+														}
+													}
+												});
+												clearInterval(timer)
+											}else if(res.data.code == 500){
+												uni.hideLoading()
+												uni.showToast({
+													icon: 'none',
+													title: res.data.message
+												});
+												clearInterval(timer)
+											}
+										},
+										fail: err => {
+											uni.hideLoading()
+											uni.showToast({
+												icon: 'none',
+												title: "订单信息获取失败，请重试！"
+											});
+											uni.hideLoading()
+										}
+									})
+								},1000)
+							}else{
+								uni.showToast({
+									icon: 'none',
+									title: res.data.message
+								});
+							}
+							
 						},
 						fail: err => {
 							uni.showToast({
 								icon: 'none',
-								title: "获取token失败，请重试！"
+								title: "订单信息发送失败，请重试！"
 							});
 						}
 					})
-				}else if(this.person.star < this.details.star){
+				},
+				err => {
 					uni.showToast({
 						icon: 'none',
-						title: "用户星级不足"
-					});
-				}else if (this.person.beans < this.person.number * this.details.goods_price){
-					uni.showToast({
-						icon: 'none',
-						title: "用户鲜豆不足"
+						title: "获取token失败，请重试！"
 					});
 				}
-				else{
-					uni.showToast({
-						icon: 'none',
-						title: "请检查收货信息是否正确"
-					});
-				}
-				// uni.navigateTo({
-				// 	url:'../mall/mall'
-				// })
-			},
-			change(){
-				this.showPop = true
-			},
-			closeModal(){
-				this.showPop = false
-			},
-		}
+				)
+				
+			}else if(this.person.star < this.details.star){
+				uni.showToast({
+					icon: 'none',
+					title: "用户星级不足"
+				});
+			}else if (this.person.beans < this.person.number * this.details.panicBuyingGoods.panic_buying_price){
+				uni.showToast({
+					icon: 'none',
+					title: "用户鲜豆不足"
+				});
+			}
+			else{
+				console.log(this.person)
+				uni.showToast({
+					icon: 'none',
+					title: "请检查收货信息是否正确"
+				});
+			}
+			// uni.navigateTo({
+			// 	url:'../mall/mall'
+			// })
+		},
+		change(){
+			this.showPop = true
+		},
+		closeModal(){
+			this.showPop = false
+		},
 	}
+}
 </script>
 
 <style>
@@ -356,3 +422,92 @@
 	}
 	
 </style>
+
+<!-- uni.request({
+						url: 'http://yibinmall.chenglee.top:8080/get_token',//开发者服务器接口地址
+						method: "POST",
+						data: msg,//请求的参数
+						dataType: "json",
+						sslVerify: false, 
+						success: res => {
+							//将token存入全局变量中
+							let app = getApp()
+							app.globalData.Authorization = res.data
+							//发送购买请求
+							uni.request({
+								url: 'http://yibinmall.chenglee.top:8080/pb_orders',
+								method: "POST",
+								data: this.post,
+								header: {
+									'Authorization':"Bearer "+app.globalData.Authorization,
+								},//请求头
+								dataType: "json",
+								sslVerify: false, 
+								success: res => {
+									console.log(res)
+									uni.showLoading({
+										title: res.data.message
+									});
+									//轮询抢购结果
+									if (res.data.code == 200){
+										uni.showLoading({
+											title: res.data.message
+										});
+										let timer = setInterval(()=>{
+											uni.request({
+												url: 'http://yibinmall.chenglee.top:8080/pb_orders/result/'+poll.user_id+'/'+poll.type+'/'+poll.thingsId,
+												method: "GET",
+												// data: poll,
+												header: {
+													'Authorization':"Bearer "+app.globalData.Authorization,
+												},//请求头
+												dataType: "json",
+												sslVerify: false, 
+												success: res => {
+													console.log(res)
+													uni.hideLoading()
+													if (res.data.code == 200){
+														uni.showModal({
+															title: '抢购成功',
+															content: '是否查看订单详情',
+															success: function (res) {
+																if (res.confirm) {
+																	console.log('用户点击确定');
+																} else if (res.cancel) {
+																	console.log('用户点击取消');
+																}
+															}
+														});
+														clearInterval(timer)
+													}else if(res.data.code == 500){
+														console.log("抢购失败")
+														clearInterval(timer)
+													}
+												},
+												fail: err => {
+													uni.showToast({
+														icon: 'none',
+														title: "订单信息获取失败，请重试！"
+													});
+													uni.hideLoading()
+												}
+											})
+										},1000)
+									}
+									
+								},
+								fail: err => {
+									uni.showToast({
+										icon: 'none',
+										title: "订单信息发送失败，请重试！"
+									});
+								}
+							})
+						},
+						fail: err => {
+							uni.showToast({
+								icon: 'none',
+								title: "获取token失败，请重试！"
+							});
+						}
+					}) -->

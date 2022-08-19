@@ -78,6 +78,7 @@
 </template>
 
 <script>
+	import updatePersonMsg from '../../publicAPI/updataPersonMsg.js'
 	export default {
 		data() {
 			return {
@@ -113,7 +114,7 @@
 		methods: {
 			
 			buy(){
-				if (this.person.address && this.person.tel && this.person.address && this.person.star > this.details.star && this.person.beans > this.person.number * this.details.goods_price){
+				if (this.person.address && this.person.tel && this.person.real_name && this.person.star >= this.details.star && this.person.beans >= this.person.number * this.details.goods_price){
 					this.post.order_user_id = this.person.id
 					this.post.store_id = this.details.store_id
 					this.post.goods_id = this.details.goods_id
@@ -155,6 +156,16 @@
 								sslVerify: false, 
 								success: res => {
 									console.log(res)
+									uni.showToast({
+										icon: 'none',
+										title: res.data.message
+									});
+									updatePersonMsg()//更新鲜豆信息
+									setTimeout(()=>{
+										uni.navigateTo({
+											url: '../mall/mall'
+										})
+									},1000)
 								},
 								fail: err => {
 									uni.showToast({

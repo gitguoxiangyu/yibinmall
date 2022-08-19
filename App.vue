@@ -2,6 +2,7 @@
 	export default {
 		globalData: {  
 		    toekn:"",
+			idCard:"",
 			hasUserInfo:0,
 			UserInfo:{},
 			Authorization:"",

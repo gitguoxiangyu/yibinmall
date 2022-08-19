@@ -67,6 +67,7 @@
 </template>
 
 <script>
+	import updatePersonMsg from '../../publicAPI/updataPersonMsg.js'
 	export default {
 		data() {
 			return {
@@ -148,11 +149,14 @@
 									console.log(res)
 									uni.showToast({
 										icon: 'none',
-										title: "订单发送成功！"
+										title: res.data.message
 									})
-									uni.navigateTo({
-										url:'../mall/mall'
-									})
+									updatePersonMsg()//更新鲜豆信息
+									setTimeout(()=>{
+										uni.navigateTo({
+											url: '../mall/mall'
+										})
+									},1000)
 								},
 								fail: err => {
 									uni.showToast({

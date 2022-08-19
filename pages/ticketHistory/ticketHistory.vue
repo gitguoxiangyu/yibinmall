@@ -9,38 +9,38 @@
 		<view class="content">
 			<!-- 优惠券 -->
 			<view class="item" v-for="(item, index) in displayTicket" :key="index">
-				<img class="itemPic" height="100" :src="'http://yibinmall.chenglee.top:8080' + item.main_picture" alt="">
+				<img class="itemPic" height="100" :src="'http://yibinmall.chenglee.top:8080' + item.coupons.main_picture" alt="">
 				<view class="itemInfo">
 					<view class="itemDescription">
-						<view v-if="item.star > 0" class="itemStar">{{item.star}}星</view>
-						<view class="itemTitle">{{item.coupon_name}}</view>
+						<view v-if="item.star > 0" class="itemStar">{{item.coupons.star}}星</view>
+						<view class="itemTitle">{{item.coupons.coupon_name}}</view>
 					</view>
 					<view class="itemPriceWrapper">
 						<view class="itemPriceText1">鲜豆</view>
-						<view class="itemBean itemPriceText2">{{item.coupon_price}}</view>
+						<view class="itemBean itemPriceText2">{{item.coupons.coupon_price}}</view>
 					</view>
 					<view class="itemDateWrapper">
-						<view class="itemDate" v-if="true">截止日期: {{item.exchange_deadline.split(" ")[0]}}</view>
-						<view class="itemDate" v-else>使用日期: {{item.exchangeDDL.split(" ")[0]}}</view>
-						<button class="exchangeButton" @click="onExchangeClicked(item)">立即兑换</button>
+						<view class="itemDate" v-if="true">截止日期: {{item.coupons.exchange_deadline.split(" ")[0]}}</view>
+						<!-- <view class="itemDate" v-else>使用日期: {{item.exchangeDDL.split(" ")[0]}}</view> -->
+						<button class="exchangeButton" @click="onExchangeClicked(item.coupons,item.exchange.coupons_item_id)">立即兑换</button>
 					</view>
 				</view>
 			</view>
 			<!-- 商品 -->
 			<view class="item" v-for="(item, index) in displayItems" :key="item.id">
-				<img class="itemPic" height="100" :src="'http://yibinmall.chenglee.top:8080' + item.goods_main_picture" alt="">
+				<img class="itemPic" height="100" :src="'http://yibinmall.chenglee.top:8080' + item.goods.goods_main_picture" alt="">
 				<view class="itemInfo">
 					<view class="itemDescription">
-						<view v-if="item.star > 0" class="itemStar">{{item.star}}星</view>
-						<view class="itemTitle">{{item.goods_name}}</view>
+						<view v-if="item.star > 0" class="itemStar">{{item.goods.star}}星</view>
+						<view class="itemTitle">{{item.goods.goods_name}}</view>
 					</view>
 					<view class="itemPriceWrapper">
 						<view class="itemPriceText1">鲜豆</view>
-						<view class="itemBean itemPriceText2">{{item.goods_price}}</view>
+						<view class="itemBean itemPriceText2">{{item.goods.goods_price}}</view>
 					</view>
 					<view class="itemDateWrapper">
-						<view class="itemDate" v-if="true">截止日期: {{item.exchange_deadline.split(" ")[0]}}</view>
-						<view class="itemDate" v-else>兑换日期: {{item.update_time.split(" ")[0]}}</view>
+						<!-- <view class="itemDate" v-if="true">截止日期: {{item.goods.exchange_deadline.split(" ")[0]}}</view>
+						<view class="itemDate" v-else>兑换日期: {{item.update_time.split(" ")[0]}}</view> -->
 						
 					</view>
 				</view>
@@ -94,25 +94,18 @@
 					let arr = res.data.object
 					arr.forEach((item,index) => {
 						if (item.coupons != null){
-							//分割 timestamp字符串，使其成为正常显示的时间
-							if (item.panic_buying_start){
-								item.coupons.panic_buying_start = item.coupons.panic_buying_start.substring(0,10) + " " + item.coupons.panic_buying_start.substring(11,19)
-							}
 							item.coupons.date_use_begin = item.coupons.date_use_begin.substring(0,10) + " " + item.coupons.date_use_begin.substring(11,19)
 							item.coupons.date_use_end = item.coupons.date_use_end.substring(0,10) + " " + item.coupons.date_use_end.substring(11,19)
 							item.coupons.exchange_deadline = item.coupons.exchange_deadline.substring(0,10) + " " + item.coupons.exchange_deadline.substring(11,19)
 							this.id = Symbol()//为每一个对象添加一个唯一标识符，以此保证v-for的key不重复
-							this.ticket.push(item.coupons)
-							this.displayTicket.push(item.coupons)
+							this.ticket.push(item)
+							this.displayTicket.push(item)
 						}else if(item.goods != null){
-							if (item.panic_buying_start){
-								item.goods.panic_buying_start = item.goods.panic_buying_start.substring(0,10) + " " + item.goods.panic_buying_start.substring(11,19)
-							}
 							item.goods.exchange_deadline = item.goods.exchange_deadline.substring(0,10) + " " + item.goods.exchange_deadline.substring(11,19)
 							item.goods.update_time = item.goods.update_time.substring(0,10) + " " + item.goods.update_time.substring(11,19)
 							this.id = Symbol()
-							this.goods.push(item.goods)
-							this.displayItems.push(item.goods)
+							this.goods.push(item)
+							this.displayItems.push(item)
 						}
 					})
 					console.log(this.ticket)
@@ -147,38 +140,73 @@
 		methods: {
 			onNavItemClicked(index) {
 				this.navActiveIndex = index;
-				if(index === 0) {
-					// 全部
-					this.displayItems.length = 0;
-					this.displayItems.push(...this.items);
-				} else if(index === 1) {
-					// 已过期（优惠券）
-					this.displayItems.length = 0;
-					this.displayItems.push(...this.items);
-					for(let i = 0; i < this.displayItems.length;) {
-						// 删除未过期的项
-						if(this.getDate(this.displayItems[i].exchangeDDL) > new Date()) {
-							this.displayItems.splice(i, 1);
-						} else {
-							++i;
-						}
-					}
-				} else if(index === 2) {
-					// 未使用（未过期且未核销的优惠券）
-					this.displayItems.length = 0;
-					this.displayItems.push(...this.items);
-					for(let i = 0; i < this.displayItems.length;) {
-						// 删除已过期的项
-						if(this.getDate(this.displayItems[i].exchangeDDL) <= new Date()) {
-							this.displayItems.splice(i, 1);
-						} else {
-							++i;
-						}
-					}
-				} else {
-					// 已使用（兑换的商品，以及核销的优惠券）
-					this.displayItems.length = 0;
+				if(index === 0){
+					this.displayTicket = this.ticket
+					this.displayItems = this.goods
 				}
+				else if(index === 1){
+					let arr = []
+					this.ticket.forEach((item,index)=>{
+						if(item.exchange.exchange_status == "已过期"){
+							arr.push(item)
+						}
+					})
+					this.displayTicket = arr
+					this.displayItems = null
+				}
+				else if(index === 2){
+					let arr = []
+					this.ticket.forEach((item,index)=>{
+						if(item.exchange.exchange_status == "未使用"){
+							arr.push(item)
+						}
+					})
+					this.displayTicket = arr
+					this.displayItems = null
+				}
+				else if(index === 3){
+					console.log("0000")
+					let arr = []
+					this.ticket.forEach((item,index)=>{
+						if(item.exchange.exchange_status == "已使用"){
+							arr.push(item)
+						}
+					})
+					this.displayTicket = arr
+					this.displayItems = this.goods
+				}
+				// if(index === 0) {
+				// 	// 全部
+				// 	this.displayItems.length = 0;
+				// 	this.displayItems.push(...this.items);
+				// } else if(index === 1) {
+				// 	// 已过期（优惠券）
+				// 	this.displayItems.length = 0;
+				// 	this.displayItems.push(...this.items);
+				// 	for(let i = 0; i < this.displayItems.length;) {
+				// 		// 删除未过期的项
+				// 		if(this.getDate(this.displayItems[i].exchangeDDL) > new Date()) {
+				// 			this.displayItems.splice(i, 1);
+				// 		} else {
+				// 			++i;
+				// 		}
+				// 	}
+				// } else if(index === 2) {
+				// 	// 未使用（未过期且未核销的优惠券）
+				// 	this.displayItems.length = 0;
+				// 	this.displayItems.push(...this.items);
+				// 	for(let i = 0; i < this.displayItems.length;) {
+				// 		// 删除已过期的项
+				// 		if(this.getDate(this.displayItems[i].exchangeDDL) <= new Date()) {
+				// 			this.displayItems.splice(i, 1);
+				// 		} else {
+				// 			++i;
+				// 		}
+				// 	}
+				// } else {
+				// 	// 已使用（兑换的商品，以及核销的优惠券）
+				// 	this.displayItems.length = 0;
+				// }
 			},
 
 			/**
@@ -203,7 +231,9 @@
 
 				return d;
 			},
-			onExchangeClicked(item) {
+			onExchangeClicked(item,id) {
+				item = JSON.parse(JSON.stringify(item))
+				item.coupons_item_id = id
 				let details = encodeURIComponent(JSON.stringify(item))
 				uni.navigateTo({
 					url:'../ticketExchange/ticketExchange?details=' + details

@@ -101,6 +101,7 @@
 				</view>
 			</view>
 			<view class="hot" v-if="navArr[1].active == true">
+				<!-- 抢购商品 -->
 				<view class="goods" v-for="(item,index) in displayPanicBuyingGoods" :key="index" @click="toPanicGood(item)">
 						<view class="goodsPic">
 							<image class="flashLogo" src="../../static/img/flashSale.png"></image>
@@ -114,8 +115,9 @@
 								</view>
 							</view>
 							<view class="goodsSaleInfo">
-								<view class="goodsNum" v-if="item.goods.stock">
-									仅剩{{item.goods.stock}}件
+								<!-- v-if="item.panicBuyingGoods.panic_buying_goods_stock" -->
+								<view class="goodsNum" >
+									仅剩{{item.panicBuyingGoods.panic_buying_goods_stock}}件
 								</view>
 								<view class="flashTime" v-if="item.panicBuyingGoods">
 									抢购
@@ -124,11 +126,71 @@
 									</view>
 									开始
 								</view>
+								<view class="flashTime" v-if="!(item.remainBeginSeconds == -1 || item.remainBeginSeconds == -2)">
+									抢购还剩
+									<view style="color: red">
+										{{Math.floor( item.remainBeginSeconds / 3600)}}时{{Math.floor((item.remainBeginSeconds / 60)%60)}}分{{item.remainBeginSeconds % 60}}
+									</view>
+									秒开始
+								</view>
+								<view class="flashTime" v-else-if="!(item.remainEndSeconds == -1 || item.remainEndSeconds == -2)">
+									抢购还剩
+									<view style="color: red">
+										{{Math.floor( item.remainEndSeconds / 3600)}}时{{Math.floor((item.remainEndSeconds / 60)%60)}}分{{item.remainEndSeconds % 60}}
+									</view>
+									秒结束
+								</view>
 							</view>
 							<view class="goodsSale">
 								鲜豆
 								<view class="saleBean">
-									{{item.goods.goods_price}}
+									{{item.panicBuyingGoods.panic_buying_price}}
+								</view>
+							</view>
+						</view>
+				</view>
+				<!-- 抢购优惠券 -->
+				<view class="goods" v-for="(item,index) in displayPanicBuyingCoupons" :key="item.coupons.coupon_id" @click="toPanicTicket(item)">
+						<view class="goodsPic">
+							<image class="goodsImg" :src="'http://yibinmall.chenglee.top:8080' + item.coupons.main_picture"></image>
+						</view>
+						<view class="goodsInfo">
+							<view class="goodsDes">
+								<view class="goodsStar">{{item.coupons.star}}星</view>
+								<view class="goodsTxt">
+									{{item.coupons.coupon_name}}
+								</view>
+							</view>
+							<view class="goodsSaleInfo">
+								<view class="goodsNum">
+									仅剩{{item.panicBuyingCoupons.panic_buying_coupons_stock}}件
+								</view>
+								<view class="flashTime" v-if="item.panicBuyingCoupons.panic_buying_start_time">
+									抢购
+									<view style="color: red">
+										{{item.panicBuyingCoupons.panic_buying_start_time}}
+									</view>
+									开始
+								</view>
+								<view class="flashTime" v-if="!(item.remainBeginSeconds == -1 || item.remainBeginSeconds == -2)">
+									抢购还剩
+									<view style="color: red">
+										{{Math.floor( item.remainBeginSeconds / 3600)}}时{{Math.floor((item.remainBeginSeconds / 60)%60)}}分{{item.remainBeginSeconds % 60}}
+									</view>
+									秒开始
+								</view>
+								<view class="flashTime" v-else-if="!(item.remainEndSeconds == -1 || item.remainEndSeconds == -2)">
+									抢购还剩
+									<view style="color: red">
+										{{Math.floor( item.remainEndSeconds / 3600)}}时{{Math.floor((item.remainEndSeconds / 60)%60)}}分{{item.remainEndSeconds % 60}}
+									</view>
+									秒结束
+								</view>
+							</view>
+							<view class="goodsSale">
+								鲜豆
+								<view class="saleBean">
+									{{item.coupons.coupon_price}}
 								</view>
 							</view>
 						</view>
@@ -169,40 +231,33 @@
 			</view>
 			
 			<view class="generalPreferential" v-if="navArr[3].active == true">
-				<view class="goods" v-for="(item,index) in displayPanicBuyingCoupons" :key="index" @click="toPanicTicket(item)">
+				<view class="goods" v-for="(item,index) in displayMerchantCoupons" :key="index" @click="toTicketDetails(item)">
 						<view class="goodsPic">
-							<image class="goodsImg" :src="'http://yibinmall.chenglee.top:8080' + item.coupons.main_picture"></image>
+							<image class="goodsImg" :src="'http://yibinmall.chenglee.top:8080' + item.main_picture"></image>
 						</view>
 						<view class="goodsInfo">
 							<view class="goodsDes">
-								<view class="goodsStar">{{item.coupons.star}}星</view>
+								<view class="goodsStar">{{item.star}}星</view>
 								<view class="goodsTxt">
-									{{item.coupons.coupon_name}}
+									{{item.coupon_name}}
 								</view>
 							</view>
 							<view class="goodsSaleInfo">
 								<view class="goodsNum">
-									仅剩{{item.coupons.stock}}件
+									仅剩{{item.stock}}件
 								</view>
-								<view class="flashTime" v-if="item.panicBuyingCoupons.panic_buying_start_time">
+								<view class="flashTime" v-if="item.panic_buying_start">
 									抢购
 									<view style="color: red">
-										{{item.panicBuyingCoupons.panic_buying_start_time}}
+										{{item.panic_buying_start}}
 									</view>
 									开始
-								</view>
-								<view class="flashTime" v-if="item.remainBeginSeconds != -1">
-									抢购还剩
-									<view style="color: red">
-										{{item.remainBeginSeconds}}
-									</view>
-									秒开始
 								</view>
 							</view>
 							<view class="goodsSale">
 								鲜豆
 								<view class="saleBean">
-									{{item.coupons.coupon_price}}
+									{{item.coupon_price}}
 								</view>
 							</view>
 						</view>
@@ -215,6 +270,7 @@
 <script>
 	import icons from '../../uni_modules/uni-icons/components/uni-icons/uni-icons.vue'
 	import panicCreateSetinterval from '../../publicAPI/panicCreateSetInterval.js'
+	import updatePersonMsg from '../../publicAPI/updataPersonMsg.js'
 	export default {
 		components:{"uni-icons":icons},
 		data() {
@@ -236,7 +292,7 @@
 						active:false
 					},
 					{
-						name:'限时优惠',
+						name:'商家优惠',
 						active:false
 					}
 				],
@@ -274,6 +330,8 @@
 				displayPanicBuyingGoods:[],
 				panicBuyingCoupons:[],
 				displayPanicBuyingCoupons:[],
+				merchantCoupons:[],
+				displayMerchantCoupons:[],
 			}
 		},
 		methods: {
@@ -307,6 +365,7 @@
 					this.displayTickets = this.ticket
 					this.displayPanicBuyingGoods = this.panicBuyingGoods
 					this.displayPanicBuyingCoupons = this.panicBuyingCoupons
+					this.displayMerchantCoupons = this.merchantCoupons
 				}else if (index == 1){
 					let arr = []
 					this.goods.forEach((item,index) => {
@@ -329,7 +388,9 @@
 						}
 					})
 					this.displayPanicBuyingGoods = arr
-					panicCreateSetinterval(this.displayPanicBuyingGoods)
+					//加了定时器会造成定时器重复，因为未关闭以前的定时器
+					//由于是浅拷贝，所以定时功能不会出现问题
+					// panicCreateSetinterval(this.displayPanicBuyingGoods)
 					arr = []
 					this.panicBuyingCoupons.forEach((item,index) => {
 						if(item.coupons.coupon_price > 0 && item.coupons.coupon_price < 51){
@@ -337,7 +398,14 @@
 						}
 					})
 					this.displayPanicBuyingCoupons = arr
-					panicCreateSetinterval(this.displayPanicBuyingCoupons)
+					// panicCreateSetinterval(this.displayPanicBuyingCoupons)
+					arr = []
+					this.merchantCoupons.forEach((item,index) => {
+						if(item.coupon_price > 0 && item.coupon_price < 51){
+							arr.push(item)
+						}
+					})
+					this.displayMerchantCoupons = arr
 				}else if (index == 2){
 					let arr = []
 					this.goods.forEach((item,index) => {
@@ -360,7 +428,6 @@
 						}
 					})
 					this.displayPanicBuyingGoods = arr
-					panicCreateSetinterval(this.displayPanicBuyingGoods)
 					arr = []
 					this.panicBuyingCoupons.forEach((item,index) => {
 						if(item.coupons.coupon_price > 50 && item.coupons.coupon_price < 101){
@@ -368,7 +435,13 @@
 						}
 					})
 					this.displayPanicBuyingCoupons = arr
-					panicCreateSetinterval(this.displayPanicBuyingCoupons)
+					arr = []
+					this.merchantCoupons.forEach((item,index) => {
+						if(item.coupon_price > 50 && item.coupon_price < 101){
+							arr.push(item)
+						}
+					})
+					this.displayMerchantCoupons = arr
 				}else if (index == 3){
 					let arr = []
 					this.goods.forEach((item,index) => {
@@ -391,7 +464,6 @@
 						}
 					})
 					this.displayPanicBuyingGoods = arr
-					panicCreateSetinterval(this.displayPanicBuyingGoods)
 					arr = []
 					this.panicBuyingCoupons.forEach((item,index) => {
 						if(item.coupons.coupon_price > 100){
@@ -399,7 +471,13 @@
 						}
 					})
 					this.displayPanicBuyingCoupons = arr
-					panicCreateSetinterval(this.displayPanicBuyingCoupons)
+					arr = []
+					this.merchantCoupons.forEach((item,index) => {
+						if(item.coupon_price > 100){
+							arr.push(item)
+						}
+					})
+					this.displayMerchantCoupons = arr
 				}
 			},
 			/** 导航到商品详情页面
@@ -525,7 +603,8 @@
 						})
 						this.panicBuyingGoods = items
 						panicCreateSetinterval(this.panicBuyingGoods)
-						this.displayPanicBuyingGoods = JSON.parse(JSON.stringify(items))
+						//浅拷贝
+						this.displayPanicBuyingGoods = this.panicBuyingGoods
 						// this.displayPanicBuyingGoods.forEach((item,index) => {
 						// 	let timer = setInterval(function(){
 						// 		item.remainBeginSecond--
@@ -534,7 +613,7 @@
 						// 		}
 						// 	},1000)
 						// })
-						panicCreateSetinterval(this.displayPanicBuyingGoods)
+						// panicCreateSetinterval(this.displayPanicBuyingGoods)
 					},
 					fail: err => {
 						uni.showToast({
@@ -558,14 +637,25 @@
 					sslVerify: false, 
 					success: res => {
 						console.log(res.data.rows)
-						this.ticket = res.data.rows
-						this.ticket.forEach((item,index)=>{
+						let arrTicket = []
+						arrTicket = []
+						let merchant = []
+						merchant = []
+						res.data.rows.forEach((item,index)=>{
 							//分割 timestamp字符串，使其成为正常显示的时间
 							item.date_use_begin = item.date_use_begin.substring(0,10) + " " + item.date_use_begin.substring(11,19)
 							item.date_use_end = item.date_use_end.substring(0,10) + " " + item.date_use_end.substring(11,19)
 							item.exchange_deadline = item.exchange_deadline.substring(0,10) + " " + item.exchange_deadline.substring(11,19)
+							if (item.place_of_use == "全部商家"){
+								arrTicket.push(item)
+							}else {
+								merchant.push(item)
+							}
 						})
-						this.displayTickets = JSON.parse(JSON.stringify(this.ticket))
+						this.ticket = arrTicket
+						this.merchantCoupons = merchant
+						this.displayTickets = this.ticket
+						this.displayMerchantCoupons = this.merchantCoupons
 					},
 					fail: err => {
 						uni.showToast({
@@ -601,9 +691,8 @@
 						})
 						this.panicBuyingCoupons = items
 						panicCreateSetinterval(this.panicBuyingCoupons)
-						//深拷贝
-						this.displayPanicBuyingCoupons = JSON.parse(JSON.stringify(items))
-						panicCreateSetinterval(this.displayPanicBuyingCoupons)
+						//浅拷贝
+						this.displayPanicBuyingCoupons = this.panicBuyingCoupons
 					},
 					fail: err => {
 						uni.showToast({
@@ -689,13 +778,14 @@
 						});
 					}
 				})
-			},1800000)
+			},180000)
 		},
 		onShow(){
 			this.hasUserInfo = getApp().globalData.hasUserInfo
 			this.UserInfo = getApp().globalData.UserInfo
-			let app = getApp()
-			
+			// if(getApp().globalData.hasUserInfo){
+			// 	updatePersonMsg()
+			// }
 		}
 	}
 </script>

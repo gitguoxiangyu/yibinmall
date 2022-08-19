@@ -46,7 +46,7 @@
 						使用地址
 					</view>
 					<view class="right">
-						{{details.place_of_use}}所有商家
+						{{details.place_of_use}}
 					</view>
 				</view>
 				<view class="attention">
@@ -91,10 +91,22 @@
 		},
 		methods: {
 			buy(){
-				let details = encodeURIComponent(JSON.stringify(this.details))
-				uni.navigateTo({
-					url:'../ticketOrder/ticketOrder?details='+details
-				})
+				if(getApp().globalData.hasUserInfo == 0){
+					uni.showToast({
+						icon: 'none',
+						title: "用户未登录"
+					});
+					setTimeout(()=>{
+						uni.navigateTo({
+							url: '../login/login'
+						})
+					},1000)
+				}else{
+					let details = encodeURIComponent(JSON.stringify(this.details))
+					uni.navigateTo({
+						url:'../ticketOrder/ticketOrder?details='+details
+					})
+				}
 			}
 		}
 	}

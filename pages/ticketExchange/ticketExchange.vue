@@ -6,7 +6,7 @@
 				<view class="ticketName">{{detail.coupon_name}}</view>
 				<!-- <u-qrcode canvasId="qrcode" :value="ticketDetails.code"></u-qrcode> -->
 				<canvas id="qrcode" canvas-id="qrcode"></canvas>
-				<view class="code">核销码: {{detail.coupon_id}}</view>
+				<view class="code">核销码: {{detail.coupons_item_id}}</view>
 			</view>
 			<view class="dividerWrapper">
 				<view class="divider"></view>
@@ -46,6 +46,7 @@
 </template>
 
 <script>
+	import getToken from '../../publicAPI/getToken.js'
 	import uQRCode from "@/uni_modules/Sansnn-uQRCode/js_sdk/u-qrcode/module.js"
 	export default {
 		data() {
@@ -92,15 +93,37 @@
 		onLoad(item) {
 			this.detail = JSON.parse(decodeURIComponent(item.details))
 			console.log(this.detail)
+			let app = getApp()
+			getToken(
+			uni.request({
+				url: 'http://yibinmall.chenglee.top:8080/coupons_stock/page?item_id=' + this.detail.coupons_item_id,
+				method: "GET",
+				header: {
+					'Authorization':"Bearer "+app.globalData.Authorization,
+				},//请求头
+				dataType: "json",
+				sslVerify: false, 
+				success: res => {
+					console.log(res)
+					// 根据核销码生成二维码
+					const ctx = uni.createCanvasContext("qrcode");
+					const uqrcode = new uQRCode({
+						text: res.data.rows[0].qr_code,
+						size: 120,
+					}, ctx);
+					uqrcode.make();
+					uqrcode.draw();
+				},
+				fail: err => {
+					uni.hideLoading()
+					uni.showToast({
+						icon: 'none',
+						title: '鲜豆更新错误'
+					});
+				}
+			})
+			)
 			
-			// 根据核销码生成二维码
-			const ctx = uni.createCanvasContext("qrcode");
-			const uqrcode = new uQRCode({
-				text: "http://yibinmall.chenglee.top:8080/" + this.detail.coupon_id,
-				size: 120,
-			}, ctx);
-			uqrcode.make();
-			uqrcode.draw();
 		},
 	}
 </script>

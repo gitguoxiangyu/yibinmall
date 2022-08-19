@@ -33,7 +33,7 @@
 				—— 商品详情 ——
 			</view>
 			<view class="details" v-for="(item,index) in describe" :key="index">
-				<image :src="'http://yibinmall.chenglee.top:8080' + item"></image>
+				<image :src="'http://yibinmall.chenglee.top:8080' + item" mode="widthFix"></image>
 			</view>
 		</view>
 		<view class="footer">
@@ -77,10 +77,22 @@
 		},
 		methods: {
 			buy(){
-				let details = encodeURIComponent(JSON.stringify(this.details))
-				uni.navigateTo({
-					url:'../orderDetails/orderDetails?details='+details
-				})
+				if(getApp().globalData.hasUserInfo == 0){
+					uni.showToast({
+						icon: 'none',
+						title: "用户未登录"
+					});
+					setTimeout(()=>{
+						uni.navigateTo({
+							url: '../login/login'
+						})
+					},1000)
+				}else{
+					let details = encodeURIComponent(JSON.stringify(this.details))
+					uni.navigateTo({
+						url:'../orderDetails/orderDetails?details='+details
+					})
+				}
 			}
 		}
 	}

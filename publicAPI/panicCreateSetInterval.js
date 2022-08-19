@@ -1,13 +1,22 @@
 let panicCreateSetinterval = function(arr){
 	arr.forEach((item,index) => {
-		var timer = setInterval(function(){
+		var beginTimer = setInterval(function(){
 			// console.log(item)
-			item.remainBeginSeconds--
-			if (item.remainBeginSeconds == -1 && item){
-				clearInterval(timer)
+			if (item.remainBeginSeconds <= 0 && item){
+				clearInterval(beginTimer)
 				// console.log("成功清除")
 			}
 			// console.log("成功调用")
+			item.remainBeginSeconds--
+		},1000)
+		var endTimer = setInterval(function(){
+			// console.log(item)
+			if (item.remainEndSeconds <= 0 && item){
+				clearInterval(endTimer)
+				// console.log("成功清除")
+			}
+			// console.log("成功调用")
+			item.remainEndSeconds--
 		},1000)
 	})
 }
