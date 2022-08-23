@@ -77,7 +77,9 @@
 				</view>
 				鲜豆  {{details.panicBuyingCoupons.panic_buying_price}}
 			</view>
-			<button type="default" @click="buy">立即兑换</button>
+			<!-- <button type="default" @click="buy">立即兑换</button> -->
+			<button type="default" @click="buy" v-if="details.remainEndSeconds >= 0">立即兑换</button>
+			<button type="default" class="overTime" @click="buy" v-else>抢购已结束</button>
 		</view>
 	</view>
 </template>
@@ -262,6 +264,17 @@
 					line-height: 3vh;
 					text-align: center;
 					border-radius: 12px;
+				}
+				.overTime{
+					margin-left: 25vw;
+					width: 28vw;
+					height: 3vh;
+					background-color: grey;
+					color: #FFFFFF;
+					line-height: 3vh;
+					text-align: center;
+					border-radius: 12px;
+					font-size: 3vw;
 				}
 			}
 		}

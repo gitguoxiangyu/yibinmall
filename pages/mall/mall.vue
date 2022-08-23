@@ -147,6 +147,9 @@
 									{{item.panicBuyingGoods.panic_buying_price}}
 								</view>
 							</view>
+							<view class="overTime" v-if="item.remainEndSeconds <= 0">
+								抢购已结束
+							</view>
 						</view>
 				</view>
 				<!-- 抢购优惠券 -->
@@ -192,6 +195,9 @@
 								<view class="saleBean">
 									{{item.coupons.coupon_price}}
 								</view>
+							</view>
+							<view class="overTime" v-if="item.remainEndSeconds <= 0">
+								抢购已结束
 							</view>
 						</view>
 				</view>
@@ -1098,6 +1104,11 @@
 								.saleBean,.salePrice{
 									font-size: 15px;
 								}
+							}
+							.overTime{
+								font-size: 10px;
+								color: grey;
+								font-weight: 600;
 							}
 						}
 					}
