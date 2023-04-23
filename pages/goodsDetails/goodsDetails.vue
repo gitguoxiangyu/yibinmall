@@ -2,7 +2,7 @@
 	<view class="body">
 		<view class="goods">
 				<view class="goodsPic">
-					<image class="goodsImg" :src="'http://yibinmall.chenglee.top:8080' + details.goods_main_picture"></image>
+					<image class="goodsImg" :src="details.goods_main_picture"></image>
 				</view>
 				<view class="goodsInfo">
 					<view class="goodsDes">
@@ -57,6 +57,7 @@
 </template>
 
 <script>
+	import {baseURL} from '../../publicAPI/baseData.js'
 	export default {
 		data() {
 			return {

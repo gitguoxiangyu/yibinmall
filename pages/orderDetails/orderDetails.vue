@@ -3,7 +3,7 @@
 		<view class="item">
 			<view class="head">
 				<view class="container">
-					<img :src="'http://yibinmall.chenglee.top:8080' + details.goods_main_picture" alt="商品图片" class="goodImg">
+					<img :src="details.goods_main_picture" alt="商品图片" class="goodImg">
 					<view class="goodText">
 						<view class="goodDetail">{{details.goods_name}}</view>
 						<view class="goodPrice">共青价：<span style="color: red; font-weight: bold;" >鲜豆{{details.goods_price}}</span></view>
@@ -79,6 +79,7 @@
 
 <script>
 	import updatePersonMsg from '../../publicAPI/updataPersonMsg.js'
+	import {baseURL} from '../../publicAPI/baseData.js'
 	export default {
 		data() {
 			return {
@@ -135,7 +136,7 @@
 						password: "admin123"
 					}
 					uni.request({
-						url: 'http://yibinmall.chenglee.top:8080/get_token',//开发者服务器接口地址
+						url: 'http://yibinmall.chenglee.top:81/prod-api/mall',//开发者服务器接口地址
 						method: "POST",
 						data: msg,//请求的参数
 						dataType: "json",
@@ -146,7 +147,7 @@
 							app.globalData.Authorization = res.data
 							//发送购买请求
 							uni.request({
-								url: 'http://yibinmall.chenglee.top:8080/orders',
+								url: baseURL + '/orders',
 								method: "POST",
 								data: this.post,
 								header: {

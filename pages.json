@@ -4,7 +4,7 @@
             "path" : "pages/mall/mall",
             "style" :                                                                                    
             {
-                "navigationBarTitleText": "积分商城",
+                "navigationBarTitleText": "鲜豆商城",
                 "enablePullDownRefresh": false
             }
             
@@ -112,8 +112,31 @@
 		    {
 		        "navigationBarTitleText": "抢购订单",
 		        "enablePullDownRefresh": false
-		    }
-		    
+		    }  
+		}
+		,{
+		    "path" : "pages/adviceDetails/adviceDetails",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "商城投诉",
+		        "enablePullDownRefresh": false
+		    }  
+		}
+		,{
+		    "path" : "pages/showingOrder/showingOrder",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "查看订单",
+		        "enablePullDownRefresh": false
+		    }  
+		},
+		{
+		    "path" : "pages/evaluateDetails/evaluateDetails",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "商品评价",
+		        "enablePullDownRefresh": false
+		    }  
 		}
     ],
 	"globalStyle": {

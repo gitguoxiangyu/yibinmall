@@ -20,9 +20,9 @@
 						<view class="itemBean itemPriceText2">{{item.coupons.coupon_price}}</view>
 					</view>
 					<view class="itemDateWrapper">
-						<view class="itemDate" v-if="true">截止日期: {{item.coupons.exchange_deadline.split(" ")[0]}}</view>
+						<view class="itemDate">截止日期: {{item.coupons.exchange_deadline.split(" ")[0]}}</view>
 						<!-- <view class="itemDate" v-else>使用日期: {{item.exchangeDDL.split(" ")[0]}}</view> -->
-						<button class="exchangeButton" @click="onExchangeClicked(item.coupons,item.exchange.coupons_item_id)">立即兑换</button>
+						<button class="exchangeButton" @click="onExchangeClicked(item.coupons,item.exchange.coupons_item_id)">兑换纸质券</button>
 					</view>
 				</view>
 			</view>
@@ -39,12 +39,20 @@
 						<view class="itemBean itemPriceText2">{{item.goods.goods_price}}</view>
 					</view>
 					<view class="itemDateWrapper">
-						<!-- <view class="itemDate" v-if="true">截止日期: {{item.goods.exchange_deadline.split(" ")[0]}}</view>
-						<view class="itemDate" v-else>兑换日期: {{item.update_time.split(" ")[0]}}</view> -->
-						
+						<view class="buyingDate">下单时间: <br>{{item.goods.update_time}}</view>
+						<view class="buttonContainer">
+							<button class="goodsButton" @click="toEvaluate(item)">我要评价</button>
+							<button class="goodsButton" @click="toShowingOrder(item)">查看订单</button>
+						</view>
 					</view>
 				</view>
 			</view>
+		</view>
+		<view v-if="showPop" class="modal">
+			<view class="uni-textarea">
+				<textarea placeholder-style="color:#999999" placeholder="请输入详细描述,不超过50字" maxlength="50" name="advice"/>
+			</view>
+			<button @click="closeModal()" class="login" >确定</button>
 		</view>
 	</view>
 </template>
@@ -75,6 +83,7 @@
 				ticket: [],
 				displayTicket: [],
 				displayItems:[],
+				showPop:false,
 			}
 		},
 		created() {
@@ -118,21 +127,7 @@
 					});
 				}
 			})
-			// this.displayItems.push(...this.items);
-			// this.navArr[0].count = this.displayItems.length;
-			// // 已过期
-			// this.navArr[1].count = 0;
-			// // 未使用
-			// this.navArr[2].count = 0;
-			// this.displayItems.forEach((item) => {
-			// 	if(this.getDate(item.exchangeDDL) <= new Date()) { // 等于也算过期
-			// 		this.navArr[1].count++;
-			// 	} else {
-			// 		this.navArr[2].count++;
-			// 	}
-			// })
-			// // 已使用
-			// this.navArr[3].count = 0;
+			
 		},
 		onLoad() {
 			
@@ -175,62 +170,9 @@
 					this.displayTicket = arr
 					this.displayItems = this.goods
 				}
-				// if(index === 0) {
-				// 	// 全部
-				// 	this.displayItems.length = 0;
-				// 	this.displayItems.push(...this.items);
-				// } else if(index === 1) {
-				// 	// 已过期（优惠券）
-				// 	this.displayItems.length = 0;
-				// 	this.displayItems.push(...this.items);
-				// 	for(let i = 0; i < this.displayItems.length;) {
-				// 		// 删除未过期的项
-				// 		if(this.getDate(this.displayItems[i].exchangeDDL) > new Date()) {
-				// 			this.displayItems.splice(i, 1);
-				// 		} else {
-				// 			++i;
-				// 		}
-				// 	}
-				// } else if(index === 2) {
-				// 	// 未使用（未过期且未核销的优惠券）
-				// 	this.displayItems.length = 0;
-				// 	this.displayItems.push(...this.items);
-				// 	for(let i = 0; i < this.displayItems.length;) {
-				// 		// 删除已过期的项
-				// 		if(this.getDate(this.displayItems[i].exchangeDDL) <= new Date()) {
-				// 			this.displayItems.splice(i, 1);
-				// 		} else {
-				// 			++i;
-				// 		}
-				// 	}
-				// } else {
-				// 	// 已使用（兑换的商品，以及核销的优惠券）
-				// 	this.displayItems.length = 0;
-				// }
 			},
 
-			/**
-			 * 将时间字符串转换为`Date`对象
-			 * @param {string} dateStr `YYYY-MM-DD hh:mm(:ss)`格式的时间字符串
-			 * @returns {Date | null}
-			 */
-			getDate(dateStr) {
-				const reg = /(\d{1,4})-(\d{1,2})-(\d{1,2}) (\d{1,2}):(\d{1,2})(:(\d{1,2}))?/;
-				const match = dateStr.match(reg);
-				if (match == null) return null;
-
-				let [year, month, day, hour, minute, second] = match.slice(1).map((value) => parseInt(value));
-				second = parseInt(match[7]);
-				if (Number.isNaN(second)) {
-					second = 0;
-				}
-
-				const d = new Date();
-				d.setFullYear(year, month - 1, day);
-				d.setHours(hour, minute, second);
-
-				return d;
-			},
+			
 			onExchangeClicked(item,id) {
 				item = JSON.parse(JSON.stringify(item))
 				item.coupons_item_id = id
@@ -238,8 +180,26 @@
 				uni.navigateTo({
 					url:'../ticketExchange/ticketExchange?details=' + details
 				})
-			}
-
+			},
+			toShowingOrder(item) {
+				let details = encodeURIComponent(JSON.stringify(item))
+				uni.navigateTo({
+					url:'../showingOrder/showingOrder?details=' + details
+				})
+			},
+			toEvaluate(item){
+				let details = encodeURIComponent(JSON.stringify(item))
+				uni.navigateTo({
+					url:'../evaluateDetails/evaluateDetails?details=' + details
+				})
+			},
+			change(){
+				console.log("000")
+				this.showPop = true
+			},
+			closeModal(){
+				this.showPop = false
+			},
 		}
 	}
 </script>
@@ -325,12 +285,10 @@
 				display: flex;
 				align-items: flex-end;
 				padding: 4px 0;
-
 				.itemPriceText1 {
 					font-weight: bold;
 					color: #f53a33;
 				}
-
 				.itemPriceText2 {
 					font-weight: bold;
 					font-size: 18px;
@@ -354,18 +312,45 @@
 					flex-grow: 1;
 					font-size: 12px;
 				}
+				.buttonContainer{
+					width: 18vw;
+					.goodsButton{
+						height: 24px;
+						font-size: 12px;
+						display: inline-block;
+						line-height: 24px;
+						color: #f53a33;
+						border: solid 1px #f53a33;
+						border-radius: 20px;
+						padding: 0 8px;
+						margin: 2px 0;
+						background-color: #ffffff;
+						&::after {
+							display: none;
+						}
+					}
+					
+				}
+				.buyingDate{
+					// padding-top: 2vh;
+					flex-grow: 1;
+					font-size: 12px;
+					font-weight: bold;
+					color: #f53a33;
+				}
 				.exchangeButton {
 					// position: absolute;
 					// bottom: 0;
 					// right: 0;
+					height: 24px;
 					font-size: 12px;
 					display: inline-block;
-					line-height: 26px;
+					line-height: 24px;
 					color: #f53a33;
 					border: solid 1px #f53a33;
 					border-radius: 20px;
 					padding: 0 8px;
-					margin: 0;
+					margin: 2px 0;
 					background-color: #ffffff;
 					&::after {
 						display: none;
@@ -378,7 +363,88 @@
 
 		}
 	}
+	/* 弹窗 */
+	.modal{
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%,-50%);
+		background-color: grey;
+		width: 70vw;
+		height: 30vh;
+		border: 1px rgb(195,195,195) solid;
+		padding: 1vh 3vw;
+	}
 </style>
+// if(index === 0) {
+				// 	// 全部
+				// 	this.displayItems.length = 0;
+				// 	this.displayItems.push(...this.items);
+				// } else if(index === 1) {
+				// 	// 已过期（优惠券）
+				// 	this.displayItems.length = 0;
+				// 	this.displayItems.push(...this.items);
+				// 	for(let i = 0; i < this.displayItems.length;) {
+				// 		// 删除未过期的项
+				// 		if(this.getDate(this.displayItems[i].exchangeDDL) > new Date()) {
+				// 			this.displayItems.splice(i, 1);
+				// 		} else {
+				// 			++i;
+				// 		}
+				// 	}
+				// } else if(index === 2) {
+				// 	// 未使用（未过期且未核销的优惠券）
+				// 	this.displayItems.length = 0;
+				// 	this.displayItems.push(...this.items);
+				// 	for(let i = 0; i < this.displayItems.length;) {
+				// 		// 删除已过期的项
+				// 		if(this.getDate(this.displayItems[i].exchangeDDL) <= new Date()) {
+				// 			this.displayItems.splice(i, 1);
+				// 		} else {
+				// 			++i;
+				// 		}
+				// 	}
+				// } else {
+				// 	// 已使用（兑换的商品，以及核销的优惠券）
+				// 	this.displayItems.length = 0;
+				// }
+/**
+			 * 将时间字符串转换为`Date`对象
+			 * @param {string} dateStr `YYYY-MM-DD hh:mm(:ss)`格式的时间字符串
+			 * @returns {Date | null}
+			 */
+			// getDate(dateStr) {
+			// 	const reg = /(\d{1,4})-(\d{1,2})-(\d{1,2}) (\d{1,2}):(\d{1,2})(:(\d{1,2}))?/;
+			// 	const match = dateStr.match(reg);
+			// 	if (match == null) return null;
+
+			// 	let [year, month, day, hour, minute, second] = match.slice(1).map((value) => parseInt(value));
+			// 	second = parseInt(match[7]);
+			// 	if (Number.isNaN(second)) {
+			// 		second = 0;
+			// 	}
+
+			// 	const d = new Date();
+			// 	d.setFullYear(year, month - 1, day);
+			// 	d.setHours(hour, minute, second);
+
+			// 	return d;
+			// },
+// this.displayItems.push(...this.items);
+			// this.navArr[0].count = this.displayItems.length;
+			// // 已过期
+			// this.navArr[1].count = 0;
+			// // 未使用
+			// this.navArr[2].count = 0;
+			// this.displayItems.forEach((item) => {
+			// 	if(this.getDate(item.exchangeDDL) <= new Date()) { // 等于也算过期
+			// 		this.navArr[1].count++;
+			// 	} else {
+			// 		this.navArr[2].count++;
+			// 	}
+			// })
+			// // 已使用
+			// this.navArr[3].count = 0;
 <!-- {
 	mallName: '万达广场',
 	money: 100,

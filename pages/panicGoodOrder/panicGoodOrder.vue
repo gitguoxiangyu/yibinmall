@@ -3,7 +3,7 @@
 		<view class="item">
 			<view class="head">
 				<view class="container">
-					<img :src="'http://yibinmall.chenglee.top:8080' + details.goods.goods_main_picture" alt="商品图片" class="goodImg">
+					<img :src="details.goods.goods_main_picture" alt="商品图片" class="goodImg">
 					<view class="goodText">
 						<view class="goodDetail">{{details.goods.goods_name}}</view>
 						<view class="goodPrice">共青价：<span style="color: red; font-weight: bold;" >鲜豆{{details.panicBuyingGoods.panic_buying_price}}</span></view>
@@ -80,6 +80,7 @@
 <script>
 import getToken from '../../publicAPI/getToken.js'
 import updatePersonMsg from '../../publicAPI/updataPersonMsg.js'
+import {baseURL} from '../../publicAPI/baseData.js'
 export default {
 	data() {
 		return {
@@ -143,7 +144,7 @@ export default {
 					app.globalData.Authorization = res.data
 					//发送购买请求
 					uni.request({
-						url: 'http://yibinmall.chenglee.top:8080/pb_orders',
+						url: baseURL + '/pb_orders',
 						method: "POST",
 						data: this.post,
 						header: {
@@ -160,7 +161,7 @@ export default {
 								});
 								let timer = setInterval(()=>{
 									uni.request({
-										url: 'http://yibinmall.chenglee.top:8080/pb_orders/result/'+poll.user_id+'/'+poll.type+'/'+poll.thingsId,
+										url: baseURL + '/pb_orders/result/'+poll.user_id+'/'+poll.type+'/'+poll.thingsId,
 										method: "GET",
 										// data: poll,
 										header: {

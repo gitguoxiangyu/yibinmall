@@ -1,7 +1,7 @@
 <script>
 	export default {
 		globalData: {  
-		    toekn:"",
+		  toekn:"",
 			idCard:"",
 			hasUserInfo:0,
 			UserInfo:{},

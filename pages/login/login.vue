@@ -19,7 +19,7 @@
 </template>
 
 <script>
-
+	import {baseURL} from '../../publicAPI/baseData.js'
 	export default {
 		data() {
 			return {
@@ -42,7 +42,7 @@
 				app.globalData.idCard = data.detail.value.idCard
 				if (reg.test(data.detail.value.ICBC_card_num) == true && data.detail.value.ICBC_card_num.length == 19){
 					uni.request({
-						url: 'http://yibinmall.chenglee.top/province/user/info',//开发者服务器接口地址
+						url: 'http://43.139.78.156/interface_yb/user/info',//开发者服务器接口地址
 						method: "POST",
 						data: msg,//请求的参数
 						dataType: "json",
@@ -56,16 +56,17 @@
 									real_name: res.data.data.realname,
 									card_num: res.data.data.cardNum,
 									card_type: res.data.data.cardType,
-									ICBC_card_num: data.detail.value.ICBC_card_num,
+									icbc_card_num: data.detail.value.ICBC_card_num,
 									avatar: res.data.data.avatar,
 									mobile: res.data.data.mobile,
 									beans: res.data.data.score,
 									star: res.data.data.certificate,
+									hours: res.data.data.hours
 								}
 								console.log(app.globalData.UserInfo)
 								
 								uni.request({
-									url: 'http://yibinmall.chenglee.top:8080/user_info',//开发者服务器接口地址
+									url: baseURL + '/user_info',//开发者服务器接口地址
 									method: "POST",
 									data: app.globalData.UserInfo,//请求的参数
 									header: {
@@ -75,6 +76,7 @@
 									sslVerify: false, 
 									success: res => {
 										app.globalData.hasUserInfo = 1
+										app.globalData.UserInfo.beans = res.data.object
 										console.log(res)
 										uni.navigateTo({
 											url: '../mall/mall'
@@ -121,8 +123,8 @@
 			
 			//获取token
 			let data = {
-				appId:"ZYSC_YB",
-				secert:"123456"
+				appId:"yb001",
+				secret:"123456Aa."
 			}
 			
 			let msg = {
@@ -130,7 +132,7 @@
 				password: "admin123"
 			}
 			uni.request({
-				url: 'http://yibinmall.chenglee.top:8080/get_token',//开发者服务器接口地址
+				url: 'http://yibinmall.chenglee.top:81/prod-api/auth/get_token',//开发者服务器接口地址
 				method: "POST",
 				data: msg,//请求的参数
 				dataType: "json",
@@ -138,9 +140,9 @@
 				success: res => {
 					//将token存入全局变量中
 					let app = getApp()
-					app.globalData.Authorization = res.data
+					app.globalData.Authorization = res.data.object.access_token
 					uni.request({
-						url: 'http://yibinmall.chenglee.top/province/data/getToken',//开发者服务器接口地址
+						url: 'http://43.139.78.156/interface_yb/data/getToken',//开发者服务器接口地址
 						method: "POST",
 						data: data,//请求的参数
 						header: {

@@ -22,6 +22,7 @@
 </template>
 
 <script>
+	import {baseURL} from '../../publicAPI/baseData.js'
 	export default {
 		data() {
 			return {
@@ -57,7 +58,7 @@
 				password: "admin123"
 			}
 			uni.request({
-				url: 'http://yibinmall.chenglee.top:8080/get_token',//开发者服务器接口地址
+				url: 'http://yibinmall.chenglee.top:81/prod-api/mall',//开发者服务器接口地址
 				method: "POST",
 				data: msg,//请求的参数
 				dataType: "json",
@@ -67,7 +68,7 @@
 					let app = getApp()
 					app.globalData.Authorization = res.data
 					uni.request({
-						url: 'http://yibinmall.chenglee.top:8080/beansAction/byUserId/' + this.details.id,
+						url: baseURL + '/beansAction/byUserId/' + this.details.id,
 						method:"GET",
 						header: {
 							'Authorization':"Bearer "+app.globalData.Authorization,

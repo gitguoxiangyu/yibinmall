@@ -1,0 +1,1 @@
+export const baseURL = 'http://yibinmall.chenglee.top:81/prod-api/mall'

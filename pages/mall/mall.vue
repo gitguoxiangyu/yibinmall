@@ -25,14 +25,18 @@
 						<view class="beanName">鲜豆</view>
 						<view class="beanNum">{{UserInfo.beans}}</view>
 					</view>
-					<view class="beanFooter"><uni-icons type="arrowright" size="12"></uni-icons></view>
+					<!-- <view class="beanFooter"><uni-icons type="arrowright" size="12"></uni-icons></view> -->
 				</view>
 				<view class="ticket" @click="toTicketHistory()">
 					<view class="ticketHeader">
 						<view class="ticketIcon"><uni-icons type="shop" size="22" color="red"></uni-icons></view>
 						<view class="ticketName">兑换记录</view>
 					</view>
-					<view class="ticketFooter">有2张3.31到期 <uni-icons type="arrowright" size="12"></uni-icons></view>
+					<!-- <view class="ticketFooter">有2张3.31到期 <uni-icons type="arrowright" size="12"></uni-icons></view> -->
+				</view>
+				<view class="advice" @click="toAdviceDetails()">
+					<view class="adviceIcon"><uni-icons type="compose" size="22" color="red"></uni-icons></view>
+					<view class="adviceName">商城投诉</view>
 				</view>
 			</view>
 		</view>
@@ -55,7 +59,11 @@
 						<view class="ticketIcon"><uni-icons type="shop" size="22" color="red"></uni-icons></view>
 						<view class="ticketName">兑换记录</view>
 					</view>
-					<view class="ticketFooter">有0张12.31到期 <uni-icons type="arrowright" size="12"></uni-icons></view>
+					<!-- <view class="ticketFooter">有0张12.31到期 <uni-icons type="arrowright" size="12"></uni-icons></view> -->
+				</view>
+				<view class="advice" @click="toAdviceDetails()">
+					<view class="adviceIcon"><uni-icons type="compose" size="22" color="red"></uni-icons></view>
+					<view class="adviceName">商城投诉</view>
 				</view>
 			</view>
 		</view>
@@ -77,7 +85,7 @@
 				<view class="goods" v-for="(item,index) in displayGoods" :key="index" @click="toGoodsDetails(item)">
 						<view class="goodsPic">
 							<image class="flashLogo" src="../../static/img/flashSale.png"></image>
-							<image class="goodsImg" :src="'http://yibinmall.chenglee.top:8080' + item.goods_main_picture"></image>
+							<image class="goodsImg" :src="item.goods_main_picture"></image>
 						</view>
 						<view class="goodsInfo">
 							<view class="goodsDes">
@@ -105,7 +113,7 @@
 				<view class="goods" v-for="(item,index) in displayPanicBuyingGoods" :key="index" @click="toPanicGood(item)">
 						<view class="goodsPic">
 							<image class="flashLogo" src="../../static/img/flashSale.png"></image>
-							<image class="goodsImg" :src="'http://yibinmall.chenglee.top:8080' + item.goods.goods_main_picture"></image>
+							<image class="goodsImg" :src="item.goods.goods_main_picture"></image>
 						</view>
 						<view class="goodsInfo">
 							<view class="goodsDes">
@@ -155,7 +163,7 @@
 				<!-- 抢购优惠券 -->
 				<view class="goods" v-for="(item,index) in displayPanicBuyingCoupons" :key="item.coupons.coupon_id" @click="toPanicTicket(item)">
 						<view class="goodsPic">
-							<image class="goodsImg" :src="'http://yibinmall.chenglee.top:8080' + item.coupons.main_picture"></image>
+							<image class="goodsImg" :src="item.coupons.main_picture"></image>
 						</view>
 						<view class="goodsInfo">
 							<view class="goodsDes">
@@ -205,7 +213,7 @@
 			<view class="generalPreferential" v-if="navArr[2].active == true">
 				<view class="goods" v-for="(item,index) in displayTickets" :key="index" @click="toTicketDetails(item)">
 						<view class="goodsPic">
-							<image class="goodsImg" :src="'http://yibinmall.chenglee.top:8080' + item.main_picture"></image>
+							<image class="goodsImg" :src="item.main_picture"></image>
 						</view>
 						<view class="goodsInfo">
 							<view class="goodsDes">
@@ -239,7 +247,7 @@
 			<view class="generalPreferential" v-if="navArr[3].active == true">
 				<view class="goods" v-for="(item,index) in displayMerchantCoupons" :key="index" @click="toTicketDetails(item)">
 						<view class="goodsPic">
-							<image class="goodsImg" :src="'http://yibinmall.chenglee.top:8080' + item.main_picture"></image>
+							<image class="goodsImg" :src="item.main_picture"></image>
 						</view>
 						<view class="goodsInfo">
 							<view class="goodsDes">
@@ -277,10 +285,13 @@
 	import icons from '../../uni_modules/uni-icons/components/uni-icons/uni-icons.vue'
 	import panicCreateSetinterval from '../../publicAPI/panicCreateSetInterval.js'
 	import updatePersonMsg from '../../publicAPI/updataPersonMsg.js'
+	import {baseURL} from '../../publicAPI/baseData.js'
+	
 	export default {
 		components:{"uni-icons":icons},
 		data() {
 			return {
+				imageUrl:'http://yibinmall.chenglee.top:81/prod-api/mall/',
 				hasUserInfo:getApp().globalData.hasUserInfo,
 				UserInfo:getApp().globalData.UserInfo,
 				starRate:20,
@@ -535,6 +546,22 @@
 					});
 				}
 			},
+			toAdviceDetails(){
+				uni.navigateTo({
+					url:"../adviceDetails/adviceDetails"
+				})
+				// let app = getApp()
+				// if (app.globalData.hasUserInfo == 1){
+				// 	uni.navigateTo({
+				// 		url:"../../adviceDetails/adviceDetails"
+				// 	})
+				// }else{
+				// 	uni.showToast({
+				// 		icon: 'none',
+				// 		title: "请登入"
+				// 	});
+				// }
+			},
 			toBeanDetails(item){
 				let app = getApp()
 				if (app.globalData.hasUserInfo == 1){
@@ -562,7 +589,7 @@
 			getGoods(){
 				let app = getApp()
 				uni.request({
-					url: 'http://yibinmall.chenglee.top:8080/goods/page',
+					url: baseURL + '/goods/page',
 					method: "GET",
 					// data: msg,
 					header: {
@@ -590,7 +617,7 @@
 			getPanicGoods(){
 				let app = getApp()
 				uni.request({
-					url: 'http://yibinmall.chenglee.top:8080/pb_goods/list',
+					url: baseURL + '/pb_goods/list',
 					method: "GET",
 					// data: msg,
 					header: {
@@ -633,7 +660,7 @@
 			getCoupons(){
 				let app = getApp()
 				uni.request({
-					url: 'http://yibinmall.chenglee.top:8080/coupons/page',
+					url: baseURL + '/coupons/page',
 					method: "GET",
 					// data: msg,
 					header: {
@@ -675,7 +702,7 @@
 			getPanicCoupons(){
 				let app = getApp()
 				uni.request({
-					url: 'http://yibinmall.chenglee.top:8080/pb_coupons/list',
+					url: baseURL + '/pb_coupons/list',
 					method: "GET",
 					// data: msg,
 					header: {
@@ -718,7 +745,7 @@
 				password: "admin123"
 			}
 			uni.request({
-				url: 'http://yibinmall.chenglee.top:8080/get_token',//开发者服务器接口地址
+				url: 'http://yibinmall.chenglee.top:81/prod-api/auth/get_token',//开发者服务器接口地址
 				method: "POST",
 				data: msg,//请求的参数
 				dataType: "json",
@@ -726,7 +753,8 @@
 				success: res => {
 					//将token存入全局变量中
 					let app = getApp();
-					app.globalData.Authorization = res.data;//此次不加分号会导致报错
+					console.log(res)
+					app.globalData.Authorization = res.data.object.access_token;//此次不加分号会导致报错
 					(async() => {
 						try{
 							console.log("huoqu")
@@ -756,7 +784,7 @@
 					password: "admin123"
 				}
 				uni.request({
-					url: 'http://yibinmall.chenglee.top:8080/get_token',//开发者服务器接口地址
+					url: 'http://yibinmall.chenglee.top:81/prod-api/auth/get_token',//开发者服务器接口地址
 					method: "POST",
 					data: msg,//请求的参数
 					dataType: "json",
@@ -764,7 +792,7 @@
 					success: res => {
 						//将token存入全局变量中
 						let app = getApp();
-						app.globalData.Authorization = res.data;//此次不加分号会导致报错
+						app.globalData.Authorization = res.data.object.access_token;//此次不加分号会导致报错
 						(async() => {
 							try{
 								console.log("huoqu")
@@ -924,23 +952,25 @@
 					flex-direction: row;
 					align-items: center;
 					.bean{
-						width: 35vw;
-						padding-left: 10vw;
+						width: 24vw;
+						padding:0 3vw;
 						border-right: #95928c 1px solid;
 						.beanHeader{
-							width: 35vw;
+							width: 24vw;
 							height: 3vh;
 							line-height: 3vh;
 							display: flex;
 							justify-content: space-between;
 							.beanName{
+								width: 10vw;
 								font-weight: bold;
 							}
 							.beanNum{
-								padding-right: 10vw;
-								font-size: 20px;
+								width: 14vw;
+								font-size: 18px;
 								color: #f53a33;
 								font-weight: bold;
+								text-align: center;
 							}
 						}
 						.beanFooter{
@@ -953,10 +983,11 @@
 						}
 					}
 					.ticket{
-						width: 46vw;
-						padding-left: 10vw;
+						width: 26vw;
+						padding:0 3vw;
+						border-right: #95928c 1px solid;
 						.ticketHeader{
-							width: 45vw;
+							width: 26vw;
 							height: 3vh;
 							line-height: 3vh;
 							display: flex;
@@ -964,7 +995,7 @@
 
 							}
 							.ticketName{
-								margin-left: 1vh;
+								margin-left: 1vw;
 								font-weight: bold;
 							}
 						}
@@ -974,6 +1005,18 @@
 							line-height: 3vh;
 							font-size: 10px;
 							color: #9b9b9b;
+						}
+					}
+					.advice{
+						width: 26vw;
+						padding: 0 3vw;
+						display: flex;
+						.adviceIcon{
+							
+						}
+						.adviceName{
+							margin-left: 1vw;
+							font-weight: bold;
 						}
 					}
 				}
