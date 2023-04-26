@@ -48,6 +48,7 @@
 <script>
 	import getToken from '../../publicAPI/getToken.js'
 	import uQRCode from "@/uni_modules/Sansnn-uQRCode/js_sdk/u-qrcode/module.js"
+	import {baseURL} from '../../publicAPI/baseData.js'
 	export default {
 		data() {
 			return {
@@ -97,7 +98,7 @@
 			getToken(
 				()=>{
 					uni.request({
-						url: 'http://yibinmall.chenglee.top:8080/coupons_stock/page?item_id=' + this.detail.coupons_item_id,
+						url: baseURL + '/coupons_stock/page?item_id=' + this.detail.coupons_item_id,
 						method: "GET",
 						header: {
 							'Authorization':"Bearer "+app.globalData.Authorization,
