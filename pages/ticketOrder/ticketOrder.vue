@@ -3,7 +3,7 @@
 		<view class="item">
 			<view class="head">
 				<view class="container">
-					<img :src="'http://yibinmall.chenglee.top:8080' + details.main_picture" alt="商品图片" class="goodImg">
+					<img :src="details.main_picture" alt="商品图片" class="goodImg">
 					<view class="goodText">
 						<view class="goodDetail">{{details.coupon_name}}</view>
 						<view class="goodPrice">共青价：<span style="color: red; font-weight: bold;" >鲜豆{{details.coupon_price}}</span></view>
@@ -68,6 +68,7 @@
 
 <script>
 	import updatePersonMsg from '../../publicAPI/updataPersonMsg.js'
+	import {baseURL} from '../../publicAPI/baseData.js'
 	export default {
 		data() {
 			return {
@@ -107,69 +108,47 @@
 			buy(){
 				if (this.person.real_name && this.person.tel && this.person.star >= this.details.star && this.person.beans >= this.person.number * this.details.coupon_price){
 					this.post.order_user_id = this.person.id
-					this.post.store_id = this.details.store_id
+					this.post.store_id = this.details.store_id ? this.details.store_id : 1
 					this.post.goods_id = this.details.goods_id
 					this.post.coupons_id = this.details.coupon_id
 					this.post.number = this.person.number
 					this.post.order_status = "已支付"
 					this.post.consignee_name = this.person.real_name
 					this.post.consignee_phone = this.person.tel
-					this.post.consignee_address = null
-					this.post.deliver_type = null
+					this.post.consignee_address = ''
+					this.post.deliver_type = undefined
 					this.post.order_time = new Date().getTime()
 					this.post.deliver_time = undefined
 					
 					console.log(this.post)
 					let app = getApp()
-					let msg = {
-						username: "admin",
-						password: "admin123"
-					}
+					//发送购买请求
 					uni.request({
-						url: 'http://yibinmall.chenglee.top:8080/get_token',//开发者服务器接口地址
+						url: baseURL + '/orders',
 						method: "POST",
-						data: msg,//请求的参数
+						data: this.post,
+						header: {
+							'Authorization':"Bearer "+app.globalData.Authorization,
+						},//请求头
 						dataType: "json",
 						sslVerify: false, 
 						success: res => {
-							//将token存入全局变量中
-							let app = getApp()
-							app.globalData.Authorization = res.data
-							//发送购买请求
-							uni.request({
-								url: 'http://yibinmall.chenglee.top:8080/orders',
-								method: "POST",
-								data: this.post,
-								header: {
-									'Authorization':"Bearer "+app.globalData.Authorization,
-								},//请求头
-								dataType: "json",
-								sslVerify: false, 
-								success: res => {
-									console.log(res)
-									uni.showToast({
-										icon: 'none',
-										title: res.data.message
-									})
-									updatePersonMsg()//更新鲜豆信息
-									setTimeout(()=>{
-										uni.navigateTo({
-											url: '../mall/mall'
-										})
-									},1000)
-								},
-								fail: err => {
-									uni.showToast({
-										icon: 'none',
-										title: "订单信息发送失败，请重试！"
-									});
-								}
+							console.log(res)
+							uni.showToast({
+								icon: 'none',
+								title: res.data.message
 							})
+							// updatePersonMsg()//更新鲜豆信息
+							setTimeout(()=>{
+								uni.navigateTo({
+									url: '../mall/mall'
+								})
+							},1000)
 						},
 						fail: err => {
 							uni.showToast({
 								icon: 'none',
-								title: "获取token失败，请重试！"
+								title: "订单信息发送失败，请重试！"
 							});
 						}
 					})

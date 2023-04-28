@@ -39,7 +39,7 @@
 				—— 商品详情 ——
 			</view>
 			<view class="details" v-for="(item,index) in describe" :key="index">
-				<image :src="'http://yibinmall.chenglee.top:8080' + item" mode="widthFix"></image>
+				<image :src="item" mode="widthFix"></image>
 			</view>
 		</view>
 		<view class="footer">

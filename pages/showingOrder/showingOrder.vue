@@ -3,7 +3,7 @@
 		<view class="item">
 			<view class="head">
 				<view class="container">
-					<img :src="'http://yibinmall.chenglee.top:8080' + details.goods.goods_main_picture" alt="商品图片" class="goodImg">
+					<img :src="details.goods.goods_main_picture" alt="商品图片" class="goodImg">
 					<view class="goodText">
 						<view class="goodDetail">{{details.goods.goods_name}}</view>
 						<view class="goodPrice">共青价：<span style="color: red; font-weight: bold;" >鲜豆{{details.goods.goods_price}}</span></view>
@@ -77,6 +77,7 @@
 <script>
 import getToken from '../../publicAPI/getToken.js'
 import updatePersonMsg from '../../publicAPI/updataPersonMsg.js'
+import {baseURL} from '../../publicAPI/baseData.js'
 export default {
 	data() {
 		return {
@@ -91,30 +92,24 @@ export default {
 			this.details = JSON.parse(decodeURIComponent(option.details));
 			console.log(this.details)
 			let app = getApp()
-			getToken(
-			()=>{
-				uni.request({
-					url: 'http://yibinmall.chenglee.top:8080/exchange/page?exchange_id=' + this.details.exchange.exchange_id,
-					method: "GET",
-					header: {
-						'Authorization':"Bearer "+app.globalData.Authorization,
-					},//请求头
-					dataType: "json",
-					sslVerify: false, 
-					success: res => {
-						console.log(res)
-					},
-					fail: err => {
-						uni.hideLoading()
-						uni.showToast({
-							icon: 'none',
-							title: '订单信息获取错误'
-						});
-					}
-				})
-			},
-			()=>{
-				
+			uni.request({
+				url: baseURL + '/exchange/page?exchange_id=' + this.details.exchange.exchange_id,
+				method: "GET",
+				header: {
+					'Authorization':"Bearer "+app.globalData.Authorization,
+				},//请求头
+				dataType: "json",
+				sslVerify: false, 
+				success: res => {
+					console.log(res)
+				},
+				fail: err => {
+					uni.hideLoading()
+					uni.showToast({
+						icon: 'none',
+						title: '订单信息获取错误'
+					});
+				}
 			})
 		}
 	},

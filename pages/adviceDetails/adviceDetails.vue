@@ -5,7 +5,7 @@
 				<view class="typeName">投诉类型</view>
 				<view class="typeOptions">
 					<!-- @change="optionChange" -->
-					<picker  :value="index" :range="adviceType" name="adviceType">
+					<picker :value="index" :range="adviceType" name="adviceType" @change="onAdviceTypeChange">
 						<view class="listItem">{{adviceType[index]}}</view>
 					</picker>
 				</view>
@@ -13,26 +13,74 @@
 			<view class="content">
 					<view class="contentHead">投诉详情</view>
 					<view class="uni-textarea">
-						<textarea placeholder-style="color:#999999" placeholder="请输入详细描述,不超过50字" maxlength="50" name="advice"/>
+						<textarea v-model="advice" placeholder-style="color:#999999" placeholder="请输入详细描述，不超过200字" maxlength="200" name="advice"/>
 					</view>
-					<button form-type="submit" class="submit" >提交</button>
+					<button :disabled="submitted" form-type="submit" class="submit" >提交</button>
 			</view>
-			
+
 		</form>
 	</view>
 </template>
 
 <script>
+import { baseURL } from '../../publicAPI/baseData'
 	export default {
 		data(){
 			return {
-				adviceType:["商品问题","优惠券问题","商城体验不佳","其他"],
-				index:0,
+				adviceType: ["商品问题","优惠券问题","商城体验不佳","其他"],
+				index: 0,
+				advice: "",
+				submitted: false, // 是否已提交，用于阻止重复提交
 			}
 		},
 		methods:{
-			adviceSubmit(data){
-				console.log(data)
+			onAdviceTypeChange(e) {
+				this.index = e.detail.value;
+			},
+			adviceSubmit(){
+				const app = getApp()
+				const data = {
+					complaintUserId: app.globalData.UserInfo.id,
+					complaintContent: this.advice,
+					complaintPicture: [],
+					complaintType: this.index + 1,
+					complaintUserName: app.globalData.UserInfo.real_name,
+				}
+				uni.request({
+					url: baseURL + '/complaint',
+					method: 'POST',
+					header: {
+						'Authorization':"Bearer " + app.globalData.Authorization,
+					},//请求头
+					data: data,
+					dataType: "json",
+					sslVerify: false,
+					success: res => {
+						if (res.data.code !== 200) {
+							console.error(res.data);
+							uni.showToast({
+								icon: 'none',
+								title: '提交失败，请稍后重试！',
+							})
+							return;
+						}
+						uni.showToast({
+							icon:'success',
+							title: '提交成功！',
+						})
+						this.submitted = true
+						setTimeout(() => {
+							uni.navigateBack()
+						}, 1000)
+					},
+					fail: res => {
+						console.error(res);
+						uni.showToast({
+							icon: 'none',
+							title: '提交失败，请稍后重试！',
+						})
+					}
+				})
 			}
 		}
 	}

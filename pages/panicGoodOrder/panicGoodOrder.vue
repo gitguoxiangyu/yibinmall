@@ -136,106 +136,108 @@ export default {
 					type: 1,
 					thingsId: this.details.goods.goods_id,
 				}
-				//getToken获取token，第一个参数是成功的回调，第二个参数是失败的回调
-				getToken(
-				res => {
-					//将token存入全局变量中
-					let app = getApp()
-					app.globalData.Authorization = res.data
-					//发送购买请求
-					uni.request({
-						url: baseURL + '/pb_orders',
-						method: "POST",
-						data: this.post,
-						header: {
-							'Authorization':"Bearer "+app.globalData.Authorization,
-						},//请求头
-						dataType: "json",
-						sslVerify: false, 
-						success: res => {
-							console.log(res)
-							//轮询抢购结果
-							if (res.data.code == 200){
-								uni.showLoading({
-									title: res.data.message
-								});
-								let timer = setInterval(()=>{
-									uni.request({
-										url: baseURL + '/pb_orders/result/'+poll.user_id+'/'+poll.type+'/'+poll.thingsId,
-										method: "GET",
-										// data: poll,
-										header: {
-											'Authorization':"Bearer "+app.globalData.Authorization,
-										},//请求头
-										dataType: "json",
-										sslVerify: false, 
-										success: res => {
-											console.log(res)
-											uni.hideLoading()
-											if (res.data.code == 200){
-												uni.showModal({
-													title: '抢购成功',
-													// content: '是否查看订单详情',
-													success: function (res) {
-														updatePersonMsg()//更新鲜豆信息
-														if (res.confirm) {
-															setTimeout(()=>{																
-																uni.navigateTo({
-																	url: '../mall/mall'
-																})
-															},500)
-														} else if (res.cancel) {
-															setTimeout(()=>{
-																uni.navigateTo({
-																	url: '../mall/mall'
-																})
-															},500)
-														}
+				// //getToken获取token，第一个参数是成功的回调，第二个参数是失败的回调
+				// getToken(
+				// res => {
+				// 	//将token存入全局变量中
+				// 	let app = getApp()
+				// 	app.globalData.Authorization = res.data
+				// 	//发送购买请求
+					
+				// },
+				// err => {
+				// 	uni.showToast({
+				// 		icon: 'none',
+				// 		title: "获取token失败，请重试！"
+				// 	});
+				// }
+				// )
+				
+				uni.request({
+					url: baseURL + '/pb_orders',
+					method: "POST",
+					data: this.post,
+					header: {
+						'Authorization':"Bearer "+app.globalData.Authorization,
+					},//请求头
+					dataType: "json",
+					sslVerify: false, 
+					success: res => {
+						console.log(res)
+						//轮询抢购结果
+						if (res.data.code == 200){
+							uni.showLoading({
+								title: res.data.message
+							});
+							let timer = setInterval(()=>{
+								uni.request({
+									url: baseURL + '/pb_orders/result/'+poll.user_id+'/'+poll.type+'/'+poll.thingsId,
+									method: "GET",
+									// data: poll,
+									header: {
+										'Authorization':"Bearer "+app.globalData.Authorization,
+									},//请求头
+									dataType: "json",
+									sslVerify: false, 
+									success: res => {
+										console.log(res)
+										uni.hideLoading()
+										if (res.data.code == 200){
+											uni.showModal({
+												title: '抢购成功',
+												// content: '是否查看订单详情',
+												success: function (res) {
+													// updatePersonMsg()//更新鲜豆信息
+													if (res.confirm) {
+														setTimeout(()=>{																
+															uni.navigateTo({
+																url: '../mall/mall'
+															})
+														},500)
+													} else if (res.cancel) {
+														setTimeout(()=>{
+															uni.navigateTo({
+																url: '../mall/mall'
+															})
+														},500)
 													}
-												});
-												clearInterval(timer)
-											}else if(res.data.code == 500){
-												uni.hideLoading()
-												uni.showToast({
-													icon: 'none',
-													title: res.data.message
-												});
-												clearInterval(timer)
-											}
-										},
-										fail: err => {
+												}
+											});
+											clearInterval(timer)
+										}else if(res.data.code == 500){
 											uni.hideLoading()
 											uni.showToast({
 												icon: 'none',
-												title: "订单信息获取失败，请重试！"
+												title: res.data.message
 											});
-											uni.hideLoading()
+											clearInterval(timer)
 										}
-									})
-								},1000)
-							}else{
-								uni.showToast({
-									icon: 'none',
-									title: res.data.message
-								});
-							}
-							
-						},
-						fail: err => {
+									},
+									fail: err => {
+										uni.hideLoading()
+										uni.showToast({
+											icon: 'none',
+											title: "订单信息获取失败，请重试！"
+										});
+										uni.hideLoading()
+									}
+								})
+							},1000)
+						}else{
 							uni.showToast({
 								icon: 'none',
-								title: "订单信息发送失败，请重试！"
+								title: res.data.message
 							});
 						}
-					})
-				},
-				err => {
-					uni.showToast({
-						icon: 'none',
-						title: "获取token失败，请重试！"
-					});
-				}
-				)
+						
+					},
+					fail: err => {
+						uni.showToast({
+							icon: 'none',
+							title: "订单信息发送失败，请重试！"
+						});
+					}
+				})
 				
 			}else if(this.person.star < this.details.star){
 				uni.showToast({

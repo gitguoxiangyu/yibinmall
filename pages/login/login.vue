@@ -29,8 +29,8 @@
 		methods: {
 			formSubmit(data){
 				//正则校验社保卡号前六位是否为6217212314
-
-				//51253419720212703X
+				// 6217212314999999999
+				// 51253419720212703X
 				let reg = /^6217212314/
 				let app = getApp()
 				//请求体
@@ -42,7 +42,7 @@
 				app.globalData.idCard = data.detail.value.idCard
 				if (reg.test(data.detail.value.ICBC_card_num) == true && data.detail.value.ICBC_card_num.length == 19){
 					uni.request({
-						url: 'http://43.139.78.156/interface_yb/user/info',//开发者服务器接口地址
+						url: 'http://yibinmall.chenglee.top:81/province/user/info',//开发者服务器接口地址
 						method: "POST",
 						data: msg,//请求的参数
 						dataType: "json",

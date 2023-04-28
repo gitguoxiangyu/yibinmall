@@ -16,7 +16,7 @@ function updatePersonMsg (){
 		dataType: "json",
 		sslVerify: false, 
 		success: res => {
-			//将服务器token存入全局变量中
+			// 将服务器token存入全局变量中
 			let app = getApp()
 			app.globalData.Authorization = res.data
 			//获取省平台token

@@ -51,48 +51,31 @@
 			console.log(this.details)
 		},
 		onShow(){
-			//获取鲜豆收支信息
 			let app = getApp()
-			let msg = {
-				username: "admin",
-				password: "admin123"
-			}
 			uni.request({
-				url: 'http://yibinmall.chenglee.top:81/prod-api/mall',//开发者服务器接口地址
-				method: "POST",
-				data: msg,//请求的参数
+				url: baseURL + '/beansAction/byUserId/' + this.details.id,
+				method:"GET",
+				header: {
+					'Authorization':"Bearer "+app.globalData.Authorization,
+				},//请求头
 				dataType: "json",
 				sslVerify: false, 
 				success: res => {
-					//将token存入全局变量中
-					let app = getApp()
-					app.globalData.Authorization = res.data
-					uni.request({
-						url: baseURL + '/beansAction/byUserId/' + this.details.id,
-						method:"GET",
-						header: {
-							'Authorization':"Bearer "+app.globalData.Authorization,
-						},//请求头
-						dataType: "json",
-						sslVerify: false, 
-						success: res => {
-							console.log(res)
-							let arr = res.data.object
-							arr.forEach((item,index)=>{
-								item.beans_action_time = item.beans_action_time.substring(0,10) + " " + item.beans_action_time.substring(11,19)
-							})
-							arr.reverse()
-							this.msg = arr
-							this.displayMsg = arr
-						},
-						fail: err => {
-							uni.showToast({
-								icon: 'none',
-								title: "获取鲜豆收支信息失败，请重试！"
-							});
-						}
+					console.log(res)
+					let arr = res.data.object
+					arr.forEach((item,index)=>{
+						item.beans_action_time = item.beans_action_time.substring(0,10) + " " + item.beans_action_time.substring(11,19)
 					})
+					arr.reverse()
+					this.msg = arr
+					this.displayMsg = arr
 				},
+				fail: err => {
+					uni.showToast({
+						icon: 'none',
+						title: "获取鲜豆收支信息失败，请重试！"
+					});
+				}
 			})
 		},
 		methods: {

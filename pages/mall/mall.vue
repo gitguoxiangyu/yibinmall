@@ -588,7 +588,7 @@
 			//获取商品信息
 			getGoods(){
 				let app = getApp()
-				uni.request({
+				const xhr = uni.request({
 					url: baseURL + '/goods/page',
 					method: "GET",
 					// data: msg,
@@ -598,8 +598,9 @@
 					dataType: "json",
 					sslVerify: false, 
 					success: res => {
-						console.log(res.data.rows)
-						this.goods = res.data.rows
+						let Jsonbig = require('json-bigint')({storeAsString: true})
+						console.log(Jsonbig.parse(xhr._xhr.response).rows)
+						this.goods = Jsonbig.parse(xhr._xhr.response).rows
 						this.goods.forEach((item,index)=>{
 							item.exchange_deadline = item.exchange_deadline.substring(0,10) + " " + item.exchange_deadline.substring(11,19)
 						})
@@ -616,7 +617,7 @@
 			//获取抢购商品信息
 			getPanicGoods(){
 				let app = getApp()
-				uni.request({
+				const xhr = uni.request({
 					url: baseURL + '/pb_goods/list',
 					method: "GET",
 					// data: msg,
@@ -626,8 +627,9 @@
 					dataType: "json",
 					sslVerify: false, 
 					success: res => {
-						console.log(res.data.object)
-						let items = res.data.object
+						let Jsonbig = require('json-bigint')({storeAsString: true})
+						console.log(Jsonbig.parse(xhr._xhr.response))
+						let items = Jsonbig.parse(xhr._xhr.response).object
 						items.forEach((item,index)=>{
 							item.panicBuyingGoods.panic_buying_start_time = item.panicBuyingGoods.panic_buying_start_time.substring(0,10) + " " + item.panicBuyingGoods.panic_buying_start_time.substring(11,19)
 							item.panicBuyingGoods.panic_buying_end_time = item.panicBuyingGoods.panic_buying_end_time.substring(0,10) + " " + item.panicBuyingGoods.panic_buying_end_time.substring(11,19)
@@ -701,7 +703,7 @@
 			//获取抢购优惠券信息
 			getPanicCoupons(){
 				let app = getApp()
-				uni.request({
+				const xhr = uni.request({
 					url: baseURL + '/pb_coupons/list',
 					method: "GET",
 					// data: msg,
@@ -712,7 +714,9 @@
 					sslVerify: false, 
 					success: res => {
 						console.log(res.data.object)
-						let items = res.data.object
+						let Jsonbig = require('json-bigint')({storeAsString: true})
+						console.log(Jsonbig.parse(xhr._xhr.response).object)
+						let items = Jsonbig.parse(xhr._xhr.response).object
 						items.forEach((item,index)=>{
 							//校正时间 (可用correctTime方法)
 							item.panicBuyingCoupons.panic_buying_start_time = item.panicBuyingCoupons.panic_buying_start_time.substring(0,10) + " " + item.panicBuyingCoupons.panic_buying_start_time.substring(11,19)
@@ -776,50 +780,22 @@
 			})
 			
 			setInterval(() => {
-				this.hasUserInfo = getApp().globalData.hasUserInfo
-				this.UserInfo = getApp().globalData.UserInfo
-				let app = getApp()
-				let msg = {
-					username: "admin",
-					password: "admin123"
-				}
-				uni.request({
-					url: 'http://yibinmall.chenglee.top:81/prod-api/auth/get_token',//开发者服务器接口地址
-					method: "POST",
-					data: msg,//请求的参数
-					dataType: "json",
-					sslVerify: false, 
-					success: res => {
-						//将token存入全局变量中
-						let app = getApp();
-						app.globalData.Authorization = res.data.object.access_token;//此次不加分号会导致报错
-						(async() => {
-							try{
-								console.log("huoqu")
-								let goods = await this.getGoods()
-								let coupons = await this.getCoupons()
-								let panicGood = await this.getPanicGoods()
-								let panicCoupon = await this.getPanicCoupons()
-							}catch{
-								console.log("无法正常获取商品信息")
-							}
-						})()//即刻调取箭头函数
-					},
-					fail: err => {
-						uni.showToast({
-							icon: 'none',
-							title: "获取token失败，请重试！"
-						});
+				(async() => {
+					try{
+						console.log("huoqu")
+						let goods = await this.getGoods()
+						let coupons = await this.getCoupons()
+						let panicGood = await this.getPanicGoods()
+						let panicCoupon = await this.getPanicCoupons()
+					}catch{
+						console.log("无法正常获取商品信息")
 					}
-				})
+				})()//即刻调取箭头函数
 			},180000)
 		},
 		onShow(){
 			this.hasUserInfo = getApp().globalData.hasUserInfo
 			this.UserInfo = getApp().globalData.UserInfo
-			// if(getApp().globalData.hasUserInfo){
-			// 	updatePersonMsg()
-			// }
 		}
 	}
 </script>

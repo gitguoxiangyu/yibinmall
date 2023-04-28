@@ -115,6 +115,7 @@
 		methods: {
 			
 			buy(){
+				console.log(this.person.beans>= this.person.number * this.details.goods_price)
 				if (this.person.address && this.person.tel && this.person.real_name && this.person.star >= this.details.star && this.person.beans >= this.person.number * this.details.goods_price){
 					this.post.order_user_id = this.person.id
 					this.post.store_id = this.details.store_id
@@ -131,55 +132,33 @@
 					
 					console.log(this.post)
 					let app = getApp()
-					let msg = {
-						username: "admin",
-						password: "admin123"
-					}
+					//发送购买请求
 					uni.request({
-						url: 'http://yibinmall.chenglee.top:81/prod-api/mall',//开发者服务器接口地址
+						url: baseURL + '/orders',
 						method: "POST",
-						data: msg,//请求的参数
+						data: this.post,
+						header: {
+							'Authorization':"Bearer "+app.globalData.Authorization,
+						},//请求头
 						dataType: "json",
 						sslVerify: false, 
 						success: res => {
-							//将token存入全局变量中
-							let app = getApp()
-							app.globalData.Authorization = res.data
-							//发送购买请求
-							uni.request({
-								url: baseURL + '/orders',
-								method: "POST",
-								data: this.post,
-								header: {
-									'Authorization':"Bearer "+app.globalData.Authorization,
-								},//请求头
-								dataType: "json",
-								sslVerify: false, 
-								success: res => {
-									console.log(res)
-									uni.showToast({
-										icon: 'none',
-										title: res.data.message
-									});
-									updatePersonMsg()//更新鲜豆信息
-									setTimeout(()=>{
-										uni.navigateTo({
-											url: '../mall/mall'
-										})
-									},1000)
-								},
-								fail: err => {
-									uni.showToast({
-										icon: 'none',
-										title: "订单信息发送失败，请重试！"
-									});
-								}
-							})
+							console.log(res)
+							uni.showToast({
+								icon: 'none',
+								title: res.data.message
+							});
+							// updatePersonMsg()//更新鲜豆信息
+							setTimeout(()=>{
+								uni.navigateTo({
+									url: '../mall/mall'
+								})
+							},1000)
 						},
 						fail: err => {
 							uni.showToast({
 								icon: 'none',
-								title: "获取token失败，请重试！"
+								title: "订单信息发送失败，请重试！"
 							});
 						}
 					})

@@ -3,7 +3,7 @@
 		<view class="item">
 			<view class="head">
 				<view class="container">
-					<img :src="'http://yibinmall.chenglee.top:8080' + details.coupons.main_picture" alt="商品图片" class="goodImg">
+					<img :src="details.coupons.main_picture" alt="商品图片" class="goodImg">
 					<view class="goodText">
 						<view class="goodDetail">{{details.coupons.coupon_name}}</view>
 						<view class="goodPrice">共青价：<span style="color: red; font-weight: bold;" >鲜豆{{details.panicBuyingCoupons.panic_buying_price}}</span></view>
@@ -69,6 +69,7 @@
 <script>
 	import getToken from '../../publicAPI/getToken.js'
 	import updatePersonMsg from '../../publicAPI/updataPersonMsg.js'
+	import {baseURL} from '../../publicAPI/baseData.js'
 	export default {
 		data() {
 			return {
@@ -108,15 +109,15 @@
 			buy(){
 				if (this.person.real_name && this.person.tel && this.person.star >= this.details.coupons.star && this.person.beans >= this.person.number * this.details.panicBuyingCoupons.panic_buying_price){
 					this.post.order_user_id = this.person.id
-					this.post.store_id = this.details.coupons.store_id
+					this.post.store_id = this.details.coupons.store_id ? this.details.coupons.store_id : 1
 					this.post.goods_id = this.details.coupons.goods_id
 					this.post.coupons_id = this.details.coupons.coupon_id
 					this.post.number = this.person.number
 					this.post.order_status = "已支付"
 					this.post.consignee_name = this.person.real_name
 					this.post.consignee_phone = this.person.tel
-					this.post.consignee_address = null
-					this.post.deliver_type = null
+					this.post.consignee_address = '0'
+					this.post.deliver_type = '0'
 					this.post.order_time = new Date().getTime()
 					this.post.deliver_time = undefined
 					
@@ -131,15 +132,8 @@
 						type: 2,
 						thingsId: this.details.coupons.coupon_id,
 					}
-					//getToken获取token，第一个参数是成功的回调，第二个参数是失败的回调
-					getToken(
-					res => {
-						//将token存入全局变量中
-						let app = getApp()
-						app.globalData.Authorization = res.data
-						//发送购买请求
-						uni.request({
-							url: 'http://yibinmall.chenglee.top:8080/pb_orders',
+					uni.request({
+							url: baseURL + '/pb_orders',
 							method: "POST",
 							data: this.post,
 							header: {
@@ -171,7 +165,7 @@
 														title: '抢购成功',
 														// content: '是否查看订单详情',
 														success: function (res) {
-															updatePersonMsg()//更新鲜豆信息
+															// updatePersonMsg()//更新鲜豆信息
 															if (res.confirm) {
 																setTimeout(()=>{
 																	uni.navigateTo({
@@ -222,14 +216,6 @@
 								});
 							}
 						})
-					},
-					err => {
-						uni.showToast({
-							icon: 'none',
-							title: "获取token失败，请重试！"
-						});
-					}
-					)
 				}else if(this.person.star < this.details.star){
 					uni.showToast({
 						icon: 'none',

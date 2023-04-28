@@ -9,7 +9,7 @@
 		<view class="content">
 			<!-- 优惠券 -->
 			<view class="item" v-for="(item, index) in displayTicket" :key="index">
-				<img class="itemPic" height="100" :src="'http://yibinmall.chenglee.top:8080' + item.coupons.main_picture" alt="">
+				<img class="itemPic" height="100" :src="item.coupons.main_picture" alt="">
 				<view class="itemInfo">
 					<view class="itemDescription">
 						<view v-if="item.star > 0" class="itemStar">{{item.coupons.star}}星</view>
@@ -28,7 +28,7 @@
 			</view>
 			<!-- 商品 -->
 			<view class="item" v-for="(item, index) in displayItems" :key="item.id">
-				<img class="itemPic" height="100" :src="'http://yibinmall.chenglee.top:8080' + item.goods.goods_main_picture" alt="">
+				<img class="itemPic" height="100" :src="item.goods.goods_main_picture" alt="">
 				<view class="itemInfo">
 					<view class="itemDescription">
 						<view v-if="item.star > 0" class="itemStar">{{item.goods.star}}星</view>
@@ -58,6 +58,7 @@
 </template>
 
 <script>
+	import { baseURL } from '../../publicAPI/baseData.js'
 	export default {
 		data() {
 			return {
@@ -89,10 +90,8 @@
 		created() {
 			let app = getApp()
 			uni.request({
-				// url: 'http://yibinmall.chenglee.top:8080/exchange/page',
-				url: 'http://yibinmall.chenglee.top:8080/exchange/byUserId/' + app.globalData.UserInfo.id,
+				url: baseURL + '/exchange/byUserId/' + app.globalData.UserInfo.id,
 				method: "GET",
-				// data: msg,
 				header: {
 					'Authorization':"Bearer "+app.globalData.Authorization,
 				},//请求头
