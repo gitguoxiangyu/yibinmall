@@ -150,7 +150,7 @@
 									});
 									let timer = setInterval(()=>{
 										uni.request({
-											url: 'http://yibinmall.chenglee.top:8080/pb_orders/result/'+poll.user_id+'/'+poll.type+'/'+poll.thingsId,
+											url: baseURL + '/pb_orders/result/'+poll.user_id+'/'+poll.type+'/'+poll.thingsId,
 											method: "GET",
 											header: {
 												'Authorization':"Bearer "+app.globalData.Authorization,

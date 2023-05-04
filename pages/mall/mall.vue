@@ -661,7 +661,7 @@
 			//获取优惠券信息
 			getCoupons(){
 				let app = getApp()
-				uni.request({
+				const xhr = uni.request({
 					url: baseURL + '/coupons/page',
 					method: "GET",
 					// data: msg,
@@ -672,11 +672,12 @@
 					sslVerify: false, 
 					success: res => {
 						console.log(res.data.rows)
+						let Jsonbig = require('json-bigint')({storeAsString: true})
+						console.log(Jsonbig.parse(xhr._xhr.response))
+						let items = Jsonbig.parse(xhr._xhr.response).rows
 						let arrTicket = []
-						arrTicket = []
 						let merchant = []
-						merchant = []
-						res.data.rows.forEach((item,index)=>{
+						items.forEach((item,index)=>{
 							//分割 timestamp字符串，使其成为正常显示的时间
 							item.date_use_begin = item.date_use_begin.substring(0,10) + " " + item.date_use_begin.substring(11,19)
 							item.date_use_end = item.date_use_end.substring(0,10) + " " + item.date_use_end.substring(11,19)

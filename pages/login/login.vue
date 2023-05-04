@@ -42,7 +42,7 @@
 				app.globalData.idCard = data.detail.value.idCard
 				if (reg.test(data.detail.value.ICBC_card_num) == true && data.detail.value.ICBC_card_num.length == 19){
 					uni.request({
-						url: 'http://yibinmall.chenglee.top:81/province/user/info',//开发者服务器接口地址
+						url: 'http://43.139.78.156/interface_yb/user/info',//开发者服务器接口地址
 						method: "POST",
 						data: msg,//请求的参数
 						dataType: "json",
@@ -158,7 +158,7 @@
 						fail: err => {
 							uni.showToast({
 								icon: 'none',
-								title: "获取token失败，请重试！"
+								title: "获取省平台token失败，请重试！"
 							});
 						}
 					})

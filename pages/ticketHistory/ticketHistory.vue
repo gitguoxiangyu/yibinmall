@@ -8,24 +8,27 @@
 		</view>
 		<view class="content">
 			<!-- 优惠券 -->
-			<view class="item" v-for="(item, index) in displayTicket" :key="index">
-				<img class="itemPic" height="100" :src="item.coupons.main_picture" alt="">
+			<view class="item" v-for="(item, index) in displayTicket" :key="item.order_id">
+				<!-- <img class="itemPic" height="100" :src="item.coupons.main_picture" alt=""> -->
 				<view class="itemInfo">
 					<view class="itemDescription">
-						<view v-if="item.star > 0" class="itemStar">{{item.coupons.star}}星</view>
-						<view class="itemTitle">{{item.coupons.coupon_name}}</view>
+<!-- 						<view v-if="item.star > 0" class="itemStar">{{item.coupons.star}}星</view>
+						<view class="itemTitle">{{item.coupons.coupon_name}}</view> -->
+						<view class="itemTitle">{{item.params.couponsName}}</view>
 					</view>
 					<view class="itemPriceWrapper">
-						<view class="itemPriceText1">鲜豆</view>
-						<view class="itemBean itemPriceText2">{{item.coupons.coupon_price}}</view>
+<!-- 						<view class="itemPriceText1">鲜豆</view>
+						<view class="itemBean itemPriceText2">{{item.coupons.coupon_price}}</view> -->
 					</view>
 					<view class="itemDateWrapper">
-						<view class="itemDate">截止日期: {{item.coupons.exchange_deadline.split(" ")[0]}}</view>
+						<view class="itemDate">截止日期: {{item.use_time}}</view>
+						<!-- <view class="itemDate">截止日期: {{item.coupons.exchange_deadline.split(" ")[0]}}</view> -->
 						<!-- <view class="itemDate" v-else>使用日期: {{item.exchangeDDL.split(" ")[0]}}</view> -->
 						<button class="exchangeButton" @click="onExchangeClicked(item.coupons,item.exchange.coupons_item_id)">兑换纸质券</button>
 					</view>
 				</view>
 			</view>
+			
 			<!-- 商品 -->
 			<view class="item" v-for="(item, index) in displayItems" :key="item.id">
 				<img class="itemPic" height="100" :src="item.goods.goods_main_picture" alt="">
@@ -59,6 +62,7 @@
 
 <script>
 	import { baseURL } from '../../publicAPI/baseData.js'
+	import { correctTime , jsonToBigint} from '../../utils/common.js'
 	export default {
 		data() {
 			return {
@@ -89,8 +93,8 @@
 		},
 		created() {
 			let app = getApp()
-			uni.request({
-				url: baseURL + '/exchange/byUserId/' + app.globalData.UserInfo.id,
+			let xhr = uni.request({
+				url: baseURL + '/exchange/page?exchange_user_id=' + app.globalData.UserInfo.id,
 				method: "GET",
 				header: {
 					'Authorization':"Bearer "+app.globalData.Authorization,
@@ -98,18 +102,17 @@
 				dataType: "json",
 				sslVerify: false, 
 				success: res => {
-					console.log(res)
-					let arr = res.data.object
+					let arr = jsonToBigint(xhr).rows
 					arr.forEach((item,index) => {
-						if (item.coupons != null){
-							item.coupons.date_use_begin = item.coupons.date_use_begin.substring(0,10) + " " + item.coupons.date_use_begin.substring(11,19)
-							item.coupons.date_use_end = item.coupons.date_use_end.substring(0,10) + " " + item.coupons.date_use_end.substring(11,19)
-							item.coupons.exchange_deadline = item.coupons.exchange_deadline.substring(0,10) + " " + item.coupons.exchange_deadline.substring(11,19)
-							this.id = Symbol()//为每一个对象添加一个唯一标识符，以此保证v-for的key不重复
+						if (item.goods_id == null){
+							// item.coupons.date_use_begin = item.coupons.date_use_begin.substring(0,10) + " " + item.coupons.date_use_begin.substring(11,19)
+							// item.coupons.date_use_end = item.coupons.date_use_end.substring(0,10) + " " + item.coupons.date_use_end.substring(11,19)
+							// item.coupons.exchange_deadline = item.coupons.exchange_deadline.substring(0,10) + " " + item.coupons.exchange_deadline.substring(11,19)
+							item.use_time = correctTime(item.use_time)
 							this.ticket.push(item)
 							this.displayTicket.push(item)
-						}else if(item.goods != null){
-							item.goods.exchange_deadline = item.goods.exchange_deadline.substring(0,10) + " " + item.goods.exchange_deadline.substring(11,19)
+						}else{
+							item.use_time = item.goods.exchange_deadline.substring(0,10) + " " + item.goods.exchange_deadline.substring(11,19)
 							item.goods.update_time = item.goods.update_time.substring(0,10) + " " + item.goods.update_time.substring(11,19)
 							this.id = Symbol()
 							this.goods.push(item)
