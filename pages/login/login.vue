@@ -42,7 +42,8 @@
 				app.globalData.idCard = data.detail.value.idCard
 				if (reg.test(data.detail.value.ICBC_card_num) == true && data.detail.value.ICBC_card_num.length == 19){
 					uni.request({
-						url: 'http://43.139.78.156/interface_yb/user/info',//开发者服务器接口地址
+						// http://yibinmall.chenglee.top:81/province/
+						url: 'http://yibinmall.chenglee.top:82/province/user/info',//开发者服务器接口地址
 						method: "POST",
 						data: msg,//请求的参数
 						dataType: "json",
@@ -127,46 +128,25 @@
 				secret:"123456Aa."
 			}
 			
-			let msg = {
-				username: "admin",
-				password: "admin123"
-			}
+			let app = getApp()
 			uni.request({
-				url: 'http://yibinmall.chenglee.top:81/prod-api/auth/get_token',//开发者服务器接口地址
+				url: 'http://yibinmall.chenglee.top:82/province/data/getToken',//开发者服务器接口地址
 				method: "POST",
-				data: msg,//请求的参数
+				data: data,//请求的参数
+				header: {
+					'Authorization':"Bearer "+app.globalData.Authorization,
+				},//请求头
 				dataType: "json",
 				sslVerify: false, 
 				success: res => {
 					//将token存入全局变量中
 					let app = getApp()
-					app.globalData.Authorization = res.data.object.access_token
-					uni.request({
-						url: 'http://43.139.78.156/interface_yb/data/getToken',//开发者服务器接口地址
-						method: "POST",
-						data: data,//请求的参数
-						header: {
-							'Authorization':"Bearer "+app.globalData.Authorization,
-						},//请求头
-						dataType: "json",
-						sslVerify: false, 
-						success: res => {
-							//将token存入全局变量中
-							let app = getApp()
-							app.globalData.token = res.data.data
-						},
-						fail: err => {
-							uni.showToast({
-								icon: 'none',
-								title: "获取省平台token失败，请重试！"
-							});
-						}
-					})
+					app.globalData.token = res.data.data
 				},
 				fail: err => {
 					uni.showToast({
 						icon: 'none',
-						title: "获取token失败，请重试！"
+						title: "获取省平台token失败，请重试！"
 					});
 				}
 			})

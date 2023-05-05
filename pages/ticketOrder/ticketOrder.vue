@@ -98,10 +98,8 @@
 			if (option.details){
 				// decodeURIComponent 解密传过来的对象字符串
 				this.details = JSON.parse(decodeURIComponent(option.details));
-				console.log(this.details)
 			}
 			this.person.number = 1
-			console.log(getApp().globalData.UserInfo)
 		},
 		methods: {
 			

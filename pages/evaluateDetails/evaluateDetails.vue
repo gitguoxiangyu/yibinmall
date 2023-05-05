@@ -43,6 +43,39 @@ export default {
 	methods: {
 		submit(details){
 			console.log(details)
+			uni.request({
+				url: baseURL + '/complaint',
+				method: 'POST',
+				header: {
+					'Authorization':"Bearer " + app.globalData.Authorization,
+				},//请求头
+				data: data,
+				dataType: "json",
+				sslVerify: false,
+				success: res => {
+					if (res.data.code !== 200) {
+						uni.showToast({
+							icon: 'none',
+							title: '提交失败，请稍后重试！',
+						})
+						return;
+					}
+					uni.showToast({
+						icon:'success',
+						title: '提交成功！',
+					})
+					this.submitted = true
+					setTimeout(() => {
+						uni.navigateBack()
+					}, 1000)
+				},
+				fail: res => {
+					uni.showToast({
+						icon: 'none',
+						title: '提交失败，请稍后重试！',
+					})
+				}
+			})
 		}
 	}
 }

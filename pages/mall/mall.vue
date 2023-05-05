@@ -589,7 +589,7 @@
 			getGoods(){
 				let app = getApp()
 				const xhr = uni.request({
-					url: baseURL + '/goods/page',
+					url: baseURL + '/goods/list',
 					method: "GET",
 					// data: msg,
 					header: {
@@ -746,11 +746,11 @@
 			this.UserInfo = getApp().globalData.UserInfo
 			let app = getApp()
 			let msg = {
-				username: "admin",
-				password: "admin123"
+				username: "token",
+				password: "123456Aa."
 			}
 			uni.request({
-				url: 'http://yibinmall.chenglee.top:81/prod-api/auth/get_token',//开发者服务器接口地址
+				url: 'http://yibinmall.chenglee.top:82/prod-api/auth/get_token',//开发者服务器接口地址
 				method: "POST",
 				data: msg,//请求的参数
 				dataType: "json",

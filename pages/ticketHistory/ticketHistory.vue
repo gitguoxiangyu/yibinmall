@@ -8,27 +8,24 @@
 		</view>
 		<view class="content">
 			<!-- 优惠券 -->
-			<view class="item" v-for="(item, index) in displayTicket" :key="item.order_id">
-				<!-- <img class="itemPic" height="100" :src="item.coupons.main_picture" alt=""> -->
+			<view class="item" v-for="(item, index) in displayTicket" :key="index">
+				<img class="itemPic" height="100" :src="item.coupons.main_picture" alt="">
 				<view class="itemInfo">
 					<view class="itemDescription">
-<!-- 						<view v-if="item.star > 0" class="itemStar">{{item.coupons.star}}星</view>
-						<view class="itemTitle">{{item.coupons.coupon_name}}</view> -->
-						<view class="itemTitle">{{item.params.couponsName}}</view>
+						<view v-if="item.star > 0" class="itemStar">{{item.coupons.star}}星</view>
+						<view class="itemTitle">{{item.coupons.coupon_name}}</view>
 					</view>
 					<view class="itemPriceWrapper">
-<!-- 						<view class="itemPriceText1">鲜豆</view>
-						<view class="itemBean itemPriceText2">{{item.coupons.coupon_price}}</view> -->
+						<view class="itemPriceText1">鲜豆</view>
+						<view class="itemBean itemPriceText2">{{item.coupons.coupon_price}}</view>
 					</view>
 					<view class="itemDateWrapper">
-						<view class="itemDate">截止日期: {{item.use_time}}</view>
-						<!-- <view class="itemDate">截止日期: {{item.coupons.exchange_deadline.split(" ")[0]}}</view> -->
+						<view class="itemDate">截止日期: {{item.coupons.exchange_deadline.split(" ")[0]}}</view>
 						<!-- <view class="itemDate" v-else>使用日期: {{item.exchangeDDL.split(" ")[0]}}</view> -->
 						<button class="exchangeButton" @click="onExchangeClicked(item.coupons,item.exchange.coupons_item_id)">兑换纸质券</button>
 					</view>
 				</view>
 			</view>
-			
 			<!-- 商品 -->
 			<view class="item" v-for="(item, index) in displayItems" :key="item.id">
 				<img class="itemPic" height="100" :src="item.goods.goods_main_picture" alt="">
@@ -42,7 +39,7 @@
 						<view class="itemBean itemPriceText2">{{item.goods.goods_price}}</view>
 					</view>
 					<view class="itemDateWrapper">
-						<view class="buyingDate">下单时间: <br>{{item.goods.update_time}}</view>
+						<view class="buyingDate">下单时间: <br>{{item.exchange.params.orderTime}}</view>
 						<view class="buttonContainer">
 							<button class="goodsButton" @click="toEvaluate(item)">我要评价</button>
 							<button class="goodsButton" @click="toShowingOrder(item)">查看订单</button>
@@ -62,7 +59,7 @@
 
 <script>
 	import { baseURL } from '../../publicAPI/baseData.js'
-	import { correctTime , jsonToBigint} from '../../utils/common.js'
+	import { correctTime , jsonToBigint } from '../../utils/common.js'
 	export default {
 		data() {
 			return {
@@ -94,27 +91,28 @@
 		created() {
 			let app = getApp()
 			let xhr = uni.request({
-				url: baseURL + '/exchange/page?exchange_user_id=' + app.globalData.UserInfo.id,
+				// url: 'http://yibinmall.chenglee.top:8080/exchange/page',
+				url: baseURL + '/exchange/byUserId/' + app.globalData.UserInfo.id,
 				method: "GET",
+				// data: msg,
 				header: {
 					'Authorization':"Bearer "+app.globalData.Authorization,
 				},//请求头
 				dataType: "json",
 				sslVerify: false, 
 				success: res => {
-					let arr = jsonToBigint(xhr).rows
+					let arr = jsonToBigint(xhr).object
 					arr.forEach((item,index) => {
-						if (item.goods_id == null){
-							// item.coupons.date_use_begin = item.coupons.date_use_begin.substring(0,10) + " " + item.coupons.date_use_begin.substring(11,19)
-							// item.coupons.date_use_end = item.coupons.date_use_end.substring(0,10) + " " + item.coupons.date_use_end.substring(11,19)
-							// item.coupons.exchange_deadline = item.coupons.exchange_deadline.substring(0,10) + " " + item.coupons.exchange_deadline.substring(11,19)
-							item.use_time = correctTime(item.use_time)
+						if (item.coupons != null){
+							item.coupons.date_use_begin = correctTime(item.coupons.date_use_begin)
+							item.coupons.date_use_end = correctTime(item.coupons.date_use_end)
+							item.coupons.exchange_deadline = correctTime(item.coupons.exchange_deadline)
 							this.ticket.push(item)
 							this.displayTicket.push(item)
-						}else{
-							item.use_time = item.goods.exchange_deadline.substring(0,10) + " " + item.goods.exchange_deadline.substring(11,19)
-							item.goods.update_time = item.goods.update_time.substring(0,10) + " " + item.goods.update_time.substring(11,19)
-							this.id = Symbol()
+						}else if(item.goods != null){
+							item.goods.exchange_deadline = correctTime(item.goods.exchange_deadline)
+							item.goods.update_time = correctTime(item.goods.update_time)
+							item.exchange.params.orderTime = correctTime(item.exchange.params.orderTime)
 							this.goods.push(item)
 							this.displayItems.push(item)
 						}

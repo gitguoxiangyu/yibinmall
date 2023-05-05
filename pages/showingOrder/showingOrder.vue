@@ -17,19 +17,23 @@
 			<view class="body" @click="change">
 				<view class="option">
 					<view>收货人</view>
-					<view>{{person.real_name}}</view>
+					<view>{{order.consignee_name}}</view>
 				</view>
 				<view class="option">
 					<view>收货电话</view>
-					<view>{{person.tel}}</view>
+					<view>{{order.consignee_phone}}</view>
 				</view>
 				<view class="option">
 					<view>收货地址</view>
-					<view>{{person.address}}</view>
+					<view>{{order.consignee_address}}</view>
 				</view>
 				<view class="option">
 					<view>货物数量</view>
-					<view>{{person.number}}</view>
+					<view>{{order.number}}</view>
+				</view>
+				<view class="option">
+					<view>下单时间</view>
+					<view>{{order.order_time}}</view>
 				</view>
 			</view>
 			<view class="foot">
@@ -48,28 +52,6 @@
 				<view class="sum"><span style="color: red; font-weight: bold;" >鲜豆{{details.goods.goods_price}}</span>合计： </view>
 			</view>
 		</view>
-<!-- 		<view class="pay">
-			<view style="color: red; font-weight: bold;">
-				鲜豆{{person.number * details.goods.goods_price}}
-			</view>
-			<view class="btn"><button class="btn" @click="buy">立即支付</button></view>
-		</view> -->
-		
-		<view v-if="showPop" class="modal"> 
-			<view class="inputItem">
-				收货人<input v-model="person.real_name" class="input" type="text" name="name" placeholder="请输入收货人姓名" placeholder-style="font-size:26rpx;color:grey;">
-			</view>
-			<view class="inputItem">
-				收货电话<input v-model="person.tel" class="input" type="text" name="phone" placeholder="请输入收货电话" placeholder-style="font-size:26rpx;color:grey;">
-			</view>
-			<view class="inputItem">
-				收货地址<input v-model="person.address" class="input" type="text" name="address" placeholder="请输入收货地址" placeholder-style="font-size:26rpx;color:grey;">
-			</view>
-			<view class="inputItem">
-				货物数量<input v-model="person.number" class="input" type="text" name="phone" placeholder="请输入货物数量" placeholder-style="font-size:26rpx;color:grey;">
-			</view>
-			<button @click="closeModal()" class="login" >确定</button>
-		</view>
 		
 	</view>
 </template>
@@ -78,12 +60,14 @@
 import getToken from '../../publicAPI/getToken.js'
 import updatePersonMsg from '../../publicAPI/updataPersonMsg.js'
 import {baseURL} from '../../publicAPI/baseData.js'
+import { correctTime } from '../../utils/common.js'
 export default {
 	data() {
 		return {
 			showPop: false,
 			details:{},
 			person:{},
+			order: {}
 		}
 	},
 	onLoad(option) {
@@ -93,7 +77,7 @@ export default {
 			console.log(this.details)
 			let app = getApp()
 			uni.request({
-				url: baseURL + '/exchange/page?exchange_id=' + this.details.exchange.exchange_id,
+				url: baseURL + '/orders/orderById?orderId=' + this.details.exchange.order_id,
 				method: "GET",
 				header: {
 					'Authorization':"Bearer "+app.globalData.Authorization,
@@ -101,7 +85,9 @@ export default {
 				dataType: "json",
 				sslVerify: false, 
 				success: res => {
-					console.log(res)
+					this.order = res.data.object
+					this.order.order_time = correctTime(this.order.order_time)
+					console.log(this.order)
 				},
 				fail: err => {
 					uni.hideLoading()

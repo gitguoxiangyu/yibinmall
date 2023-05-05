@@ -95,37 +95,33 @@
 			this.detail = JSON.parse(decodeURIComponent(item.details))
 			console.log(this.detail)
 			let app = getApp()
-			getToken(
-				()=>{
-					uni.request({
-						url: baseURL + '/coupons_stock/page?item_id=' + this.detail.coupons_item_id,
-						method: "GET",
-						header: {
-							'Authorization':"Bearer "+app.globalData.Authorization,
-						},//请求头
-						dataType: "json",
-						sslVerify: false, 
-						success: res => {
-							console.log(res)
-							// 根据核销码生成二维码
-							const ctx = uni.createCanvasContext("qrcode");
-							const uqrcode = new uQRCode({
-								text: res.data.rows[0].qr_code,
-								size: 120,
-							}, ctx);
-							uqrcode.make();
-							uqrcode.draw();
-						},
-						fail: err => {
-							uni.hideLoading()
-							uni.showToast({
-								icon: 'none',
-								title: '鲜豆更新错误'
-							});
-						}
-					})
+			uni.request({
+				url: baseURL + '/coupons_stock/page?item_id=' + this.detail.coupons_item_id,
+				method: "GET",
+				header: {
+					'Authorization':"Bearer "+app.globalData.Authorization,
+				},//请求头
+				dataType: "json",
+				sslVerify: false, 
+				success: res => {
+					console.log(res)
+					// 根据核销码生成二维码
+					const ctx = uni.createCanvasContext("qrcode");
+					const uqrcode = new uQRCode({
+						text: res.data.rows[0].qr_code,
+						size: 120,
+					}, ctx);
+					uqrcode.make();
+					uqrcode.draw();
+				},
+				fail: err => {
+					uni.hideLoading()
+					uni.showToast({
+						icon: 'none',
+						title: '鲜豆更新错误'
+					});
 				}
-			)
+			})
 			
 		},
 	}

@@ -2,7 +2,7 @@
 	<view class="main">
 		<form @submit="adviceSubmit">
 			<view class="type">
-				<view class="typeName">投诉类型</view>
+				<view class="typeName">请选择投诉类型</view>
 				<view class="typeOptions">
 					<!-- @change="optionChange" -->
 					<picker :value="index" :range="adviceType" name="adviceType" @change="onAdviceTypeChange">
