@@ -6,16 +6,16 @@
 		<view class="body">
 			<form @submit="formSubmit">
 				<view class="cardWord">
-					<input type="number" name="ICBC_card_num" placeholder="请输入社保卡号" placeholder-style="font-size:26rpx;color:white;">
+					<input placeholder-class="login-input" class="login-input" type="number" name="ICBC_card_num" placeholder="请输入社保卡号">
 				</view>
 				<view class="identifyWord">
-					<input type="text" name="idCard" placeholder="请输入身份证号" placeholder-style="font-size:26rpx;color:white;">
+					<input placeholder-class="login-input" class="login-input" type="text" name="idCard" placeholder="请输入身份证号">
 				</view>
 				<button form-type="submit" class="login" >登入</button>
 			</form>
 		</view>
 	</view>
-	
+
 </template>
 
 <script>
@@ -43,11 +43,11 @@
 				if (reg.test(data.detail.value.ICBC_card_num) == true && data.detail.value.ICBC_card_num.length == 19){
 					uni.request({
 						// http://yibinmall.chenglee.top:81/province/
-						url: 'http://yibinmall.chenglee.top:82/province/user/info',//开发者服务器接口地址
+						url: '/province/user/info',//开发者服务器接口地址
 						method: "POST",
 						data: msg,//请求的参数
 						dataType: "json",
-						sslVerify: false, 
+						sslVerify: false,
 						success: res => {
 							console.log(res)
 							if (res.data.code == "200"){
@@ -65,7 +65,7 @@
 									hours: res.data.data.hours
 								}
 								console.log(app.globalData.UserInfo)
-								
+
 								uni.request({
 									url: baseURL + '/user_info',//开发者服务器接口地址
 									method: "POST",
@@ -74,7 +74,7 @@
 										'Authorization':"Bearer "+app.globalData.Authorization,
 									},//请求头
 									dataType: "json",
-									sslVerify: false, 
+									sslVerify: false,
 									success: res => {
 										app.globalData.hasUserInfo = 1
 										app.globalData.UserInfo.beans = res.data.object
@@ -112,7 +112,7 @@
 						title: "请检查社保卡号是否正确"
 					});
 				}
-				
+
 			}
 		},
 		onLoad(option) {
@@ -121,23 +121,23 @@
 				this.details = JSON.parse(decodeURIComponent(option.details));
 				console.log(this.details)
 			}
-			
+
 			//获取token
 			let data = {
 				appId:"yb001",
 				secret:"123456Aa."
 			}
-			
+
 			let app = getApp()
 			uni.request({
-				url: 'http://yibinmall.chenglee.top:82/province/data/getToken',//开发者服务器接口地址
+				url: '/province/data/getToken',//开发者服务器接口地址
 				method: "POST",
 				data: data,//请求的参数
 				header: {
 					'Authorization':"Bearer "+app.globalData.Authorization,
 				},//请求头
 				dataType: "json",
-				sslVerify: false, 
+				sslVerify: false,
 				success: res => {
 					//将token存入全局变量中
 					let app = getApp()
@@ -156,7 +156,8 @@
 
 <style>
 	.main{
-		height: 100vh;
+		box-sizing: border-box;
+		height: calc(100vh - var(--window-top));
 		padding: 10vh 5vw;
 		background-image: url(../../static/img/login.jpg);
 	}
@@ -173,11 +174,15 @@
 		padding: 0 3vw;
 		margin: 3vh auto;
 		border: 1px rgb(200, 200, 200) solid;
-		border-radius: 3%;
+		border-radius: 3px;
 	}
-		
+	.login-input {
+		font-size: 36rpx;
+		color: white;
+	}
+
 	.login{
 		width: 80vw;
 	}
-	
+
 </style>

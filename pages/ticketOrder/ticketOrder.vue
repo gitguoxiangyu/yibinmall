@@ -1,12 +1,12 @@
 <template>
 	<view class="main">
-		<view class="item">
-			<view class="head">
+		<view class="blockItem">
+			<view class="head ticketHead">
 				<view class="container">
 					<img :src="details.main_picture" alt="商品图片" class="goodImg">
 					<view class="goodText">
 						<view class="goodDetail">{{details.coupon_name}}</view>
-						<view class="goodPrice">共青价：<span style="color: red; font-weight: bold;" >鲜豆{{details.coupon_price}}</span></view>
+						<view class="goodPrice">共青价：<span style="color: red; font-weight: bold;" >鲜豆 {{details.coupon_price}}</span></view>
 					</view>
 				</view>
 			</view>
@@ -25,39 +25,42 @@
 				</view>
 			</view>
 			<view class="foot">
-				<view class="bean">
+				<view class="option">
 					<view>商品鲜豆</view>
 					<view>{{details.coupon_price}}</view>
 				</view>
-				<view class="star">
+				<view class="option">
 					<view>会员星级</view>
-					<view>{{details.star}}星</view>
+					<view>{{details.star}} 星</view>
 				</view>
-				<view class="flashTime">
+				<view class="option">
 					<view>市场价</view>
-					<view>{{details.market_price}}元</view>
+					<view>{{details.market_price}} 元</view>
 				</view>
-				<view class="sum"><span style="color: red; font-weight: bold;" >鲜豆{{person.number * details.coupon_price}}</span>合计： </view>
+				<view class="option option--rightAligned"><span style="color: red; font-weight: bold;" >鲜豆 {{person.number * details.coupon_price}}</span>合计： </view>
 			</view>
 		</view>
 		<view class="pay">
 			<view style="color: red; font-weight: bold;">
-				鲜豆{{person.number * details.coupon_price}}
+				鲜豆 {{person.number * details.coupon_price}}
 			</view>
-			<view class="btn"><button class="btn" @click="buy">立即支付</button></view>
+			<view><button class="btn" @click="buy">立即支付</button></view>
 		</view>
-		
+
 		<!-- 弹窗 -->
-		<view v-if="showPop" class="modal"> 
+		<view v-if="showPop" class="modal">
 			<!-- <form @submit="formSubmit"> -->
 				<view class="inputItem">
-					收货人<input v-model="person.real_name" class="input" type="text" name="name" placeholder="请输入收货人姓名" placeholder-style="font-size:26rpx;color:grey;">
+					<text class="inputLabel">收货人</text>
+					<input v-model="person.real_name" class="input" placeholder-class="inputPlaceholder" type="text" name="name" placeholder="请输入收货人姓名">
 				</view>
 				<view class="inputItem">
-					收货电话<input v-model="person.tel" class="input" type="text" name="phone" placeholder="请输入收货电话" placeholder-style="font-size:26rpx;color:grey;">
+					<text class="inputLabel">收货电话</text>
+					<input v-model="person.tel" class="input" placeholder-class="inputPlaceholder" type="text" name="phone" placeholder="请输入收货电话">
 				</view>
 				<view class="inputItem">
-					货物数量<input v-model="person.number" class="input" type="text" name="phone" placeholder="请输入货物数量" placeholder-style="font-size:26rpx;color:grey;">
+					<text class="inputLabel">货物数量</text>
+					<input v-model="person.number" class="input" placeholder-class="inputPlaceholder" type="text" name="phone" placeholder="请输入货物数量">
 				</view>
 				<button @click="closeModal()" class="login" >确定</button>
 			<!-- </form> -->
@@ -102,7 +105,7 @@
 			this.person.number = 1
 		},
 		methods: {
-			
+
 			buy(){
 				if (this.person.real_name && this.person.tel && this.person.star >= this.details.star && this.person.beans >= this.person.number * this.details.coupon_price){
 					this.post.order_user_id = this.person.id
@@ -117,7 +120,7 @@
 					this.post.deliver_type = undefined
 					this.post.order_time = new Date().getTime()
 					this.post.deliver_time = undefined
-					
+
 					console.log(this.post)
 					let app = getApp()
 					//发送购买请求
@@ -129,7 +132,7 @@
 							'Authorization':"Bearer "+app.globalData.Authorization,
 						},//请求头
 						dataType: "json",
-						sslVerify: false, 
+						sslVerify: false,
 						success: res => {
 							console.log(res)
 							uni.showToast({
@@ -167,7 +170,7 @@
 						title: "请检查收货信息是否正确"
 					});
 				}
-				
+
 			},
 			change(){
 				this.showPop = true
@@ -179,170 +182,6 @@
 	}
 </script>
 
-<style>
-	.main{
-		height: 100vh;
-		background-color: rgb(245,245,245);
-	}
-	
-	.item{
-		height: 70vh;
-		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
-	}
-		
-	.head{
-		height: 18vh;
-		padding: 5vw;
-		background-color: white;
-	}
-	
-	.container{
-		display: flex;
-		flex-wrap: wrap;
-		flex-direction: row;
-		justify-content: space-between;
-		height: 30vw;
-	}
-		
-	.goodImg{
-		height: 20vw;
-		width: 20vw;
-		display: inline;
-		border-radius: 5%;
-	}
-	
-	.goodText{
-		width: 60vw;
-		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
-	}
-	
-	.goodDetail{
-		width: 60vw;
-		height: 13vw;
-		overflow: hidden;  
-		font-weight: bold;
-		font-size: 10px;
-	}
-	
-	.goodPrice{
-		width: 60vw;
-		height: 12vw;
-		font-size: 10px;
-	}
-	
-	.deliveryWay{
-		font-size: 10px;
-		display: flex;
-		flex-direction: row;
-		justify-content: space-between;
-	}
-	
-	.body{
-		font-size: 10px;
-		padding: 5vw;
-		background-color: white;
-	}
-	
-	.option{
-		margin: 1vh 0;
-		display: flex;
-		flex-direction: row;
-		justify-content: space-between;
-	}
-	
-	/* .tel{
-		margin: 1vh 0;
-		display: flex;
-		flex-direction: row;
-		justify-content: space-between;
-	}
-	.address{
-		margin: 1vh 0;
-		display: flex;
-		flex-direction: row;
-		justify-content: space-between;
-	} */
-	
-	.foot{
-		font-size: 10px;
-		padding: 5vw;
-		background-color: white;
-	}
-	
-	.bean{
-		display: flex;
-		flex-direction: row;
-		justify-content: space-between;
-	}
-	
-	.star{
-		margin: 1vh 0;
-		display: flex;
-		flex-direction: row;
-		justify-content: space-between;
-	}
-	
-	.flashTime{
-		margin: 1vh 0;
-		display: flex;
-		flex-direction: row;
-		justify-content: space-between;
-	}
-	
-	.sum{
-		margin: 1vh 0;
-		display: flex;
-		flex-direction: row-reverse;
-	}
-	
-	.pay{
-		width: 100vw;
-		height: 4vh;
-		padding: 5vw;
-		position: fixed;
-		bottom: 0;
-		background-color: white;
-		display: flex;
-		flex-direction: row;
-		justify-content: space-between;
-	}
-	
-	.btn{
-		width: 28vw;
-		height: 3vh;
-		margin-right: 10vw;
-		background-color: red;
-		color: #FFFFFF;
-		line-height: 3vh;
-		text-align: center;
-		border-radius: 12px;
-	}
-	
-	/* 弹窗 */
-	.modal{
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%,-50%);
-		background-color: white;
-		width: 70vw;
-		border: 1px rgb(195,195,195) solid;
-		padding: 1vh 3vw;
-	}
-	.inputItem{
-		display: flex;
-		flex-direction: row;
-		font-size: 12px;
-		margin:2vh 0;
-		vertical-align: sub;
-	}
-	.input{
-		margin-left: 3vw;
-		border-bottom: 1px rgb(195,195,195) solid;
-	}
-	
+<style lang="scss">
+	@import "../../styles/orderPage.scss";
 </style>

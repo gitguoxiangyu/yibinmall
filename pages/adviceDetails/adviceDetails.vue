@@ -2,7 +2,7 @@
 	<view class="main">
 		<form @submit="adviceSubmit">
 			<view class="type">
-				<view class="typeName">请选择投诉类型</view>
+				<view class="typeName">投诉类型</view>
 				<view class="typeOptions">
 					<!-- @change="optionChange" -->
 					<picker :value="index" :range="adviceType" name="adviceType" @change="onAdviceTypeChange">
@@ -96,15 +96,14 @@ import { baseURL } from '../../publicAPI/baseData'
 		background-color: white;
 		height: 6vh;
 		line-height: 6vh;
-		padding: 0 5vw;
+		padding-left: 5vw;
+		font-size: 16px;
 		.typeName{
-			font-size: 14px;
 			color: #2a2a2a;
 			font-weight: 400;
 		}
 		.typeOptions{
-			font-size: 14px;
-			margin: 0 8vw;
+			margin-left: 8vw;
 			// width: ;
 			flex-grow: 4;
 		}
@@ -114,12 +113,15 @@ import { baseURL } from '../../publicAPI/baseData'
 		background-color: white;
 		padding: 0 5vw;
 		margin: 3vh 0;
+		font-size: 16px;
 		.contentHead{
-			font-size: 14px;
 			height: 6vh;
 			line-height: 6vh;
 			font-weight: 400;
 			color: #2a2a2a;
+		}
+		uni-textarea {
+			width: unset;
 		}
 		.submit{
 			width: 18vw;

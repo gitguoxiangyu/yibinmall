@@ -1,0 +1,162 @@
+
+page{
+	background-color: #F5F5F5;
+	image{
+		image-rendering: pixelated;
+	}
+}
+.detailsBody{
+	width: 100vw;
+	height: calc(100vh - var(--window-top));
+	.goods{
+		width: 100vw;
+		// height: 64vh; // 取消固定高度，防止内容溢出
+		background-color: #FFFFFF;
+		.goodsPic{
+			height: 48vh;
+			position: relative;
+			.goodsImg{
+				width: 100%;
+				height: 100%;
+			}
+		}
+		.goodsInfo{
+			// height: 20vh;
+			padding: 12px;
+			font-size: 15px; // 原本的8px太小了
+			.goodsDes{
+				position: relative;
+				white-space: normal;   //使文本多行显示
+				text-overflow: ellipsis;  //多余的部分用省略号来代替
+				overflow: hidden;      // 隐藏多余的部分
+				display: -webkit-box;       //浮动布局
+				-webkit-line-clamp: 2;      //显示的行数
+				-webkit-box-orient: vertical;   //垂直排列
+				.goodsStar{
+					display: inline-block;
+					padding: 1px 4px;
+					margin-left: 3px;
+					margin-right: 6px;
+					transform: translateY(-2px);
+					vertical-align: middle;
+					text-align: center;
+					background-color: red;
+					border-radius: 5px;
+					font-size: 13px;
+					color: #FFFFFF;
+				}
+				.goodsTxt{
+					white-space: normal;   //使文本多行显示
+					font-weight: bold;
+					display: inline;
+					font-size: 16px;
+				}
+			}
+			.goodsSaleInfo{
+				margin-top: 1vh;
+				display: flex;
+				color: #999999;
+			}
+			.goodsSale{
+				margin-top: 1vh;
+				height: 3vh;
+				display: flex;
+				align-items:flex-end;
+				color: red;
+				.saleBean,.salePrice{
+					font-size: 22px;
+				}
+			}
+		}
+	}
+	.goodsDetailsWrapper{
+		padding-bottom: 9vh; // 对应footer的height，防止footer挡住图片
+		.nav{
+			height: 4vh;
+			line-height: 4vh;
+			text-align: center;
+			font-size: 14px;
+			color: #cccccc;
+		}
+		.goodsDetails{
+			font-size: 0; // 去除图片间的缝隙
+			image{
+				width: 100%;
+				height: 100%;
+			}
+		}
+		.emptyTip {
+			margin-top: 10px;
+			text-align: center;
+			color: #cccccc;
+		}
+
+		.ticketDetails{
+			// height: 30vh;
+			background-color: #FFFFFF;
+			padding: 1.5vh 0;
+			.useTime,.address,.attention{
+				display: flex;
+				justify-content: space-between;
+				margin-top: 1.5vh;
+				font-size: 14px;
+				.left{
+					// width: 20vw;
+					margin-left: 3vw;
+					margin-right: 6vw;
+					white-space: nowrap;
+				}
+				.right{
+					margin-right: 3vw;
+				}
+			}
+			.attention{
+				.right{
+					view{
+						// text-align: right;
+						// white-space: pre-wrap;
+						margin-bottom: 2vh;
+						color: red;
+					}
+				}
+			}
+		}
+	}
+	.footer{
+		box-sizing: border-box;
+		width: 100vw;
+		height: 9vh;
+		padding: 5vw;
+		position: fixed;
+		bottom: 0;
+		background-color: #FFFFFF;
+		display: flex;
+		align-items: center;
+		flex-direction: row;
+		justify-content: space-between;
+		.goodsSale{
+			height: 3vh;
+			display: flex;
+			align-items:flex-end;
+			color: red;
+			flex-grow: 1;
+			.saleBean,.salePrice{
+				font-size: 22px;
+			}
+		}
+		button{
+			// margin-right: 10vw;
+			// width: 28vw;
+			// height: 3vh;
+			padding: 6px 12px;
+			background-color: red;
+			color: #FFFFFF;
+			line-height: 3vh;
+			text-align: center;
+			border-radius: 100px;
+		}
+		.overTime{
+			background-color: grey;
+		}
+	}
+}

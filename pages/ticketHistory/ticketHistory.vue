@@ -9,7 +9,7 @@
 		<view class="content">
 			<!-- 优惠券 -->
 			<view class="item" v-for="(item, index) in displayTicket" :key="index">
-				<img class="itemPic" height="100" :src="item.coupons.main_picture" alt="">
+				<img class="itemPic" height="80" :src="item.coupons.main_picture" alt="">
 				<view class="itemInfo">
 					<view class="itemDescription">
 						<view v-if="item.star > 0" class="itemStar">{{item.coupons.star}}星</view>
@@ -22,24 +22,26 @@
 					<view class="itemDateWrapper">
 						<view class="itemDate">截止日期: {{item.coupons.exchange_deadline.split(" ")[0]}}</view>
 						<!-- <view class="itemDate" v-else>使用日期: {{item.exchangeDDL.split(" ")[0]}}</view> -->
-						<button class="exchangeButton" @click="onExchangeClicked(item.coupons,item.exchange.coupons_item_id)">兑换纸质券</button>
+						<button class="goodsButton" @click="onExchangeClicked(item.coupons,item.exchange.coupons_item_id)">兑换纸质券</button>
 					</view>
 				</view>
 			</view>
 			<!-- 商品 -->
 			<view class="item" v-for="(item, index) in displayItems" :key="item.id">
-				<img class="itemPic" height="100" :src="item.goods.goods_main_picture" alt="">
+				<img class="itemPic" height="80" :src="item.goods.goods_main_picture" alt="">
 				<view class="itemInfo">
 					<view class="itemDescription">
 						<view v-if="item.star > 0" class="itemStar">{{item.goods.star}}星</view>
 						<view class="itemTitle">{{item.goods.goods_name}}</view>
 					</view>
-					<view class="itemPriceWrapper">
-						<view class="itemPriceText1">鲜豆</view>
-						<view class="itemBean itemPriceText2">{{item.goods.goods_price}}</view>
-					</view>
 					<view class="itemDateWrapper">
-						<view class="buyingDate">下单时间: <br>{{item.exchange.params.orderTime}}</view>
+						<view class="itemDateWrapper-2">
+							<view class="itemPriceWrapper">
+								<view class="itemPriceText1">鲜豆</view>
+								<view class="itemBean itemPriceText2">{{item.goods.goods_price}}</view>
+							</view>
+							<view class="buyingDate">下单时间: <br>{{item.exchange.params.orderTime}}</view>
+						</view>
 						<view class="buttonContainer">
 							<button class="goodsButton" @click="toEvaluate(item)">我要评价</button>
 							<button class="goodsButton" @click="toShowingOrder(item)">查看订单</button>
@@ -99,7 +101,7 @@
 					'Authorization':"Bearer "+app.globalData.Authorization,
 				},//请求头
 				dataType: "json",
-				sslVerify: false, 
+				sslVerify: false,
 				success: res => {
 					let arr = jsonToBigint(xhr).object
 					arr.forEach((item,index) => {
@@ -127,10 +129,10 @@
 					});
 				}
 			})
-			
+
 		},
 		onLoad() {
-			
+
 		},
 		methods: {
 			onNavItemClicked(index) {
@@ -172,7 +174,7 @@
 				}
 			},
 
-			
+
 			onExchangeClicked(item,id) {
 				item = JSON.parse(JSON.stringify(item))
 				item.coupons_item_id = id
@@ -216,7 +218,7 @@
 		padding: 20px 20px 26px;
 		background-color: #ffffff;
 		box-shadow: 0 0 5px 0 #cccccc;
-		font-size: 14px;
+		font-size: 16px;
 
 		.navItem {
 			display: inline-block;
@@ -248,7 +250,7 @@
 		padding: 8px;
 		border-radius: 6px;
 		background-color: #ffffff;
-		font-size: 13px;
+		font-size: 15px;
 
 		.itemPic {
 			border-radius: 6px;
@@ -257,6 +259,7 @@
 		.itemInfo {
 			padding: 0 0 0 10px;
 			position: relative;
+			flex-grow: 1;
 
 			.itemDescription {
 				position: relative;
@@ -277,7 +280,7 @@
 
 				.itemTitle {
 					display: inline;
-
+					font-weight: bold;
 				}
 			}
 
@@ -304,58 +307,58 @@
 			}
 
 			.itemDateWrapper {
-				width: 60vw;
+				// width: 60vw;
 				display: flex;
 				align-items: baseline;
 				justify-content: space-between;
 				.itemDate {
 					flex-grow: 1;
-					font-size: 12px;
+					font-size: 13px;
 				}
 				.buttonContainer{
-					width: 18vw;
-					.goodsButton{
-						height: 24px;
-						font-size: 12px;
-						display: inline-block;
-						line-height: 24px;
-						color: #f53a33;
-						border: solid 1px #f53a33;
-						border-radius: 20px;
-						padding: 0 8px;
-						margin: 2px 0;
-						background-color: #ffffff;
-						&::after {
-							display: none;
-						}
-					}
-					
+					// width: 18vw;
 				}
-				.buyingDate{
-					// padding-top: 2vh;
-					flex-grow: 1;
-					font-size: 12px;
-					font-weight: bold;
-					color: #f53a33;
-				}
-				.exchangeButton {
-					// position: absolute;
-					// bottom: 0;
-					// right: 0;
-					height: 24px;
-					font-size: 12px;
-					display: inline-block;
+				.goodsButton{
+					// height: 24px;
+					font-size: 13px;
+					white-space: nowrap;
+					// display: inline-block;
 					line-height: 24px;
 					color: #f53a33;
 					border: solid 1px #f53a33;
 					border-radius: 20px;
-					padding: 0 8px;
-					margin: 2px 0;
+					padding: 2px 10px;
+					margin-top: 4px;
 					background-color: #ffffff;
 					&::after {
 						display: none;
 					}
 				}
+				.buyingDate{
+					// padding-top: 2vh;
+					flex-grow: 1;
+					font-size: 13px;
+					font-weight: bold;
+					color: #f53a33;
+				}
+				// .exchangeButton {
+				// 	// position: absolute;
+				// 	// bottom: 0;
+				// 	// right: 0;
+				// 	// height: 24px;
+				// 	font-size: 13px;
+				// 	display: inline-block;
+				// 	line-height: 24px;
+				// 	color: #f53a33;
+				// 	border: solid 1px #f53a33;
+				// 	border-radius: 20px;
+				// 	padding: 2px 8px;
+				// 	margin: 2px 0;
+				// 	background-color: #ffffff;
+				// 	&::after {
+				// 		display: none;
+				// 	}
+				// }
 				.button-hover {
 					background-color: #f5f5f5;
 				}

@@ -1,5 +1,5 @@
 <template>
-	<view class="body">
+	<view class="detailsBody">
 		<view class="goods">
 				<view class="goodsPic">
 					<image class="goodsImg" :src="details.goods_main_picture"></image>
@@ -28,13 +28,14 @@
 					</view>
 				</view>
 		</view>
-		<view class="goodsDetails">
+		<view class="goodsDetailsWrapper">
 			<view class="nav">
 				—— 商品详情 ——
 			</view>
-			<view class="details" v-for="(item,index) in describe" :key="index">
-				<image :src="'http://yibinmall.chenglee.top:8080' + item" mode="widthFix"></image>
+			<view class="goodsDetails" v-for="(item,index) in describe" :key="index">
+				<image :src="item" mode="widthFix"></image>
 			</view>
+			<view class="emptyTip" v-show="!describe || describe.length === 0">暂无图片</view>
 		</view>
 		<view class="footer">
 			<view class="goodsSale">
@@ -43,7 +44,7 @@
 				</view>
 				鲜豆  {{details.goods_price}}
 				<!-- <view class="saleBean">
-					
+
 				</view> -->
 				<!-- <view style="color:#000000">+</view>
 				￥
@@ -71,10 +72,12 @@
 				// decodeURIComponent 解密传过来的对象字符串
 				this.details = JSON.parse(decodeURIComponent(option.details));
 				console.log(this.details)
-				this.describe = this.details.goods_describe.split(";")
+				if (this.details.goods_describe) {
+					this.describe = this.details.goods_describe.split(";")
+				}
 				console.log(this.describe)
 			}
-			
+
 		},
 		methods: {
 			buy(){
@@ -100,125 +103,7 @@
 </script>
 
 <style lang="scss">
-	page{
-		background-color: #F5F5F5;
-		image{
-			image-rendering: pixelated;
-		}
-		.body{
-			width: 100vw;
-			height: 100vh;
-			.goods{
-				width: 100vw;
-				// height: 64vh; // 取消固定高度，防止内容溢出
-				background-color: #FFFFFF;
-				.goodsPic{
-					height: 48vh;
-					position: relative;
-					.goodsImg{
-						width: 100%;
-						height: 100%;
-					}
-				}
-				.goodsInfo{
-					height: 20vh;
-					padding-left: 0.5vw;
-					padding-top: 0.5vh;
-					.goodsDes{
-						position: relative;
-						white-space: normal;   //使文本多行显示
-						text-overflow: ellipsis;  //多余的部分用省略号来代替
-						overflow: hidden;      // 隐藏多余的部分
-						display: -webkit-box;       //浮动布局
-						-webkit-line-clamp: 2;      //显示的行数
-						-webkit-box-orient: vertical;   //垂直排列
-						.goodsStar{
-							display: inline-block;
-							padding: 1px 4px;
-							margin-left: 3px;
-							margin-right: 6px;
-							transform: translateY(-2px);
-							vertical-align: middle;
-							text-align: center;
-							background-color: red;
-							border-radius: 5px;
-							font-size: 10px;
-							color: #FFFFFF;
-						}
-						.goodsTxt{
-							white-space: normal;   //使文本多行显示
-							font-weight: bold;
-							display: inline;
-						}
-					}
-					.goodsSaleInfo{
-						margin-top: 1vh;
-						display: flex;
-						font-size: 14px; // 原本的8px太小了
-						color: #999999;
-					}
-					.goodsSale{
-						margin-top: 1vh;
-						height: 3vh;
-						display: flex;
-						align-items:flex-end;
-						color: red;
-						font-size: 14px;
-						.saleBean,.salePrice{
-							font-size: 22px;
-						}
-					}
-				}
-			}
-			.goodsDetails{
-				.nav{
-					height: 4vh;
-					line-height: 4vh;
-					text-align: center;
-					font-size: 10px;
-					color: #cccccc;
-				}
-				.details{
-					height: 60vh;
-					image{
-						width: 100%;
-						height: 100%;
-					}
-				}
-			}
-			.footer{
-				width: 100vw;
-				height: 6vh;
-				position: fixed;
-				bottom: 0;
-				background-color: #FFFFFF;
-				display: flex;
-				align-items: center;
-				flex-direction: row;
-				justify-content: space-between;
-				.goodsSale{
-					margin-left: 4vw;
-					height: 3vh;
-					display: flex;
-					align-items:flex-end;
-					color: red;
-					.saleBean,.salePrice{
-						font-size: 22px;
-					}
-				}
-				button{
-					margin-left: 25vw;
-					width: 28vw;
-					height: 3vh;
-					background-color: red;
-					color: #FFFFFF;
-					line-height: 3vh;
-					text-align: center;
-					border-radius: 12px;
-				}
-			}
-		}
-	}
+	@import "../../styles/detailsPage.scss";
 </style>
 
 
@@ -231,7 +116,7 @@
 			// 		'Authorization':"Bearer "+app.globalData.Authorization,
 			// 	},//请求头
 			// 	dataType: "json",
-			// 	sslVerify: false, 
+			// 	sslVerify: false,
 			// 	success: res => {
 			// 		console.log(res)
 			// 	},

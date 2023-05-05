@@ -1,0 +1,146 @@
+
+.main{
+	height: calc(100vh - var(--window-top));
+	background-color: rgb(245,245,245);
+}
+
+.blockItem{
+	/* height: 70vh; */
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	.head, .body, .foot {
+		margin-bottom: 1.5vh;
+	}
+}
+
+
+.head{
+	height: 17vh;
+	padding: 5vw;
+	background-color: white;
+	&.ticketHead {
+		height: 12vh;
+	}
+	.container{
+		display: flex;
+		flex-wrap: wrap;
+		flex-direction: row;
+		justify-content: space-between;
+		height: 30vw;
+		.goodImg{
+			height: 20vw;
+			width: 20vw;
+			display: inline;
+			border-radius: 5%;
+		}
+
+		.goodText{
+			width: 60vw;
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+			.goodDetail{
+				width: 60vw;
+				height: 13vw;
+				overflow: hidden;
+				font-weight: bold;
+				font-size: 16px;
+			}
+
+			.goodPrice{
+				width: 60vw;
+				height: 12vw;
+				font-size: 15px;
+			}
+		}
+	}
+
+	.deliveryWay{
+		font-size: 15px;
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+	}
+}
+
+.body{
+	font-size: 15px;
+	padding: 5vw;
+	background-color: white;
+}
+
+.foot{
+	font-size: 15px;
+	padding: 5vw;
+	background-color: white;
+}
+
+.blockItem {
+	.option{
+		margin-bottom: 1vh;
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+	}
+
+	.option--rightAligned{
+		justify-content: initial;
+		flex-direction: row-reverse;
+	}
+}
+
+.pay{
+	width: 100vw;
+	height: 4vh;
+	padding: 5vw;
+	position: fixed;
+	bottom: 0;
+	background-color: white;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+
+	.btn{
+		// width: 28vw;
+		/* height: 3vh; */
+		padding: 8px 14px;
+		margin-right: 10vw;
+		background-color: red;
+		color: #FFFFFF;
+		line-height: 3vh;
+		text-align: center;
+		border-radius: 100px;
+	}
+}
+
+/* 弹窗 */
+.modal{
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%,-50%);
+	background-color: white;
+	width: 70vw;
+	border: 1px rgb(195,195,195) solid;
+	padding: 2vh 5vw;
+	.inputItem{
+		display: flex;
+		flex-direction: row;
+		font-size: 15px;
+		margin:2vh 0;
+		vertical-align: sub;
+		.inputLabel {
+			min-width: 4em;
+		}
+		.input{
+			margin-left: 3vw;
+			border-bottom: 1px rgb(195,195,195) solid;
+		}
+		.inputPlaceholder {
+			// font-size: 26rpx;
+			color: grey;
+		}
+	}
+}

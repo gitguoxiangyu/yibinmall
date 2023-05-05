@@ -1,6 +1,6 @@
 <template>
 	<view class="main">
-		<view class="bean">鲜豆<span style="color: red; font-weight: bold;">:  {{details.beans}}</span></view>
+		<view class="bean">鲜豆<span class="beanValue">{{details.beans}}</span></view>
 		<view class="showOption">
 			<view class="option" v-for="(item,index) in nav" :key="index" @click="change(index)">
 				<!-- 若item.active为true ,则该盒子的class为optionactive -->
@@ -13,7 +13,7 @@
 			<view class="item" v-for="(item,index) in displayMsg" :key="index">
 				<view class="volunteer">
 					<view class="volunteerTime">{{item.beans_action_describe}}</view>
-					<view class="beanChange">鲜豆{{item.beans_action_number}}</view>
+					<view class="beanChange">鲜豆{{" " + (item.beans_action_number > 0 ? "+" : "") + item.beans_action_number}}</view>
 				</view>
 				<view class="changeTime">{{item.beans_action_time}}</view>
 			</view>
@@ -59,7 +59,7 @@
 					'Authorization':"Bearer "+app.globalData.Authorization,
 				},//请求头
 				dataType: "json",
-				sslVerify: false, 
+				sslVerify: false,
 				success: res => {
 					console.log(res)
 					let arr = res.data.object
@@ -108,74 +108,84 @@
 	}
 </script>
 
-<style>
+<style lang="scss">
 	.main{
 		height: 100vh;
 		padding: 5vw;
 		background-color: rgb(245,245,245);
+		.bean {
+			font-size: 16px;
+			font-weight: bold;
+			.beanValue {
+				margin-left: 10px;
+				color: red;
+				font-size: 3em;
+			}
+		}
 	}
-	
-	.item{
-		height: 70vh;
-		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
-	}
-		
+
 	.msg{
 		margin: 2vh 0vw;
 		font-size: 10px;
 		color: rgb(152,152,152);
 	}
-	
+
 	.showOption{
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
-		margin-top: 5vh;
+		margin-top: 2vh;
 	}
-	
+
 	.option{
-		width: 14vw;
-		height: 4vh;
+		// width: 14vw;
+		// height: 4vh;
 		color: rgb(152,152,152);
 		background-color: white;
-		font-size: 10px;
+		font-size: 14px;
+		padding: 4px 14px;
 		text-align: center;
 		line-height: 4vh;
 		border-radius: 10%;
 	}
 	.optionactive{
 		color: red;
+		font-weight: bold;
 	}
-	
+
 	.item{
-		margin-top: 3vh;
-		height: 7vh;
-		padding: 3vw;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		margin-top: 2vh;
+		// height: 7vh;
+		padding: 12px 14px;
 		background-color: white;
-		border-radius: 5%;
+		border-radius: 5px;
 	}
-	
+
 	.volunteer{
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
 	}
-	
+
 	.volunteerTime{
-		font-size: 10px;
+		font-size: 14px;
 		font-weight: bold;
+		padding-right: 8px;
 	}
-	
+
 	.beanChange{
 		color: red;
-		font-size: 12px;
+		font-size: 14px;
 		font-weight: bold;
+		white-space: nowrap;
 	}
-	
+
 	.changeTime{
 		color: rgb(152,152,152);
 		font-size: 13px;
+		margin-top: 4px;
 	}
 </style>

@@ -16,7 +16,7 @@
 					<view class="usrInfoCenter">
 						<view class="starRate" :style="{'width' : this.starRate + '%'}"></view>
 					</view>
-					<view class="usrInfoFooter">青年成长值300,还需要700升级为4星青年</view>
+					<view class="usrInfoFooter">青年成长值300，还需要700升级为4星青年</view>
 				</view>
 			</view>
 			<view class="wallet">
@@ -44,7 +44,7 @@
 		<view class="header" v-if="!hasUserInfo">
 			<view class="headerBac">
 				<image src="../../static/img/headerBac.png"></image>
-				<view class="login" @click="toLogin">登录</view>	
+				<view class="login" @click="toLogin">登录</view>
 			</view>
 			<view class="wallet">
 				<view class="bean" @click="toBeanDetails">
@@ -96,7 +96,7 @@
 							</view>
 							<view class="goodsSaleInfo">
 								<view class="goodsNum" v-if="item.stock">
-									仅剩{{item.stock}}件
+									仅剩 {{item.stock}} 件
 								</view>
 							</view>
 							<view class="goodsSale">
@@ -124,28 +124,28 @@
 							</view>
 							<view class="goodsSaleInfo">
 								<!-- v-if="item.panicBuyingGoods.panic_buying_goods_stock" -->
-								<view class="goodsNum" >
-									仅剩{{item.panicBuyingGoods.panic_buying_goods_stock}}件
-								</view>
+								<text class="goodsNum" >
+									仅剩 {{item.panicBuyingGoods.panic_buying_goods_stock}} 件
+								</text>
 								<view class="flashTime" v-if="item.panicBuyingGoods">
 									抢购
-									<view style="color: red">
+									<text style="color: red">
 										{{item.panicBuyingGoods.panic_buying_start_time}}
-									</view>
+									</text>
 									开始
 								</view>
 								<view class="flashTime" v-if="!(item.remainBeginSeconds == -1 || item.remainBeginSeconds == -2)">
 									抢购还剩
-									<view style="color: red">
+									<text style="color: red">
 										{{Math.floor( item.remainBeginSeconds / 3600)}}时{{Math.floor((item.remainBeginSeconds / 60)%60)}}分{{item.remainBeginSeconds % 60}}
-									</view>
+									</text>
 									秒开始
 								</view>
 								<view class="flashTime" v-else-if="!(item.remainEndSeconds == -1 || item.remainEndSeconds == -2)">
 									抢购还剩
-									<view style="color: red">
+									<text style="color: red">
 										{{Math.floor( item.remainEndSeconds / 3600)}}时{{Math.floor((item.remainEndSeconds / 60)%60)}}分{{item.remainEndSeconds % 60}}
-									</view>
+									</text>
 									秒结束
 								</view>
 							</view>
@@ -174,27 +174,27 @@
 							</view>
 							<view class="goodsSaleInfo">
 								<view class="goodsNum">
-									仅剩{{item.panicBuyingCoupons.panic_buying_coupons_stock}}件
+									仅剩 {{item.panicBuyingCoupons.panic_buying_coupons_stock}} 件
 								</view>
 								<view class="flashTime" v-if="item.panicBuyingCoupons.panic_buying_start_time">
 									抢购
-									<view style="color: red">
+									<text style="color: red">
 										{{item.panicBuyingCoupons.panic_buying_start_time}}
-									</view>
+									</text>
 									开始
 								</view>
 								<view class="flashTime" v-if="!(item.remainBeginSeconds == -1 || item.remainBeginSeconds == -2)">
 									抢购还剩
-									<view style="color: red">
+									<text style="color: red">
 										{{Math.floor( item.remainBeginSeconds / 3600)}}时{{Math.floor((item.remainBeginSeconds / 60)%60)}}分{{item.remainBeginSeconds % 60}}
-									</view>
+									</text>
 									秒开始
 								</view>
 								<view class="flashTime" v-else-if="!(item.remainEndSeconds == -1 || item.remainEndSeconds == -2)">
 									抢购还剩
-									<view style="color: red">
+									<text style="color: red">
 										{{Math.floor( item.remainEndSeconds / 3600)}}时{{Math.floor((item.remainEndSeconds / 60)%60)}}分{{item.remainEndSeconds % 60}}
-									</view>
+									</text>
 									秒结束
 								</view>
 							</view>
@@ -224,7 +224,7 @@
 							</view>
 							<view class="goodsSaleInfo">
 								<view class="goodsNum">
-									仅剩{{item.stock}}件
+									仅剩 {{item.stock}} 件
 								</view>
 								<view class="flashTime" v-if="item.panic_buying_start">
 									抢购
@@ -243,7 +243,7 @@
 						</view>
 				</view>
 			</view>
-			
+
 			<view class="generalPreferential" v-if="navArr[3].active == true">
 				<view class="goods" v-for="(item,index) in displayMerchantCoupons" :key="index" @click="toTicketDetails(item)">
 						<view class="goodsPic">
@@ -258,7 +258,7 @@
 							</view>
 							<view class="goodsSaleInfo">
 								<view class="goodsNum">
-									仅剩{{item.stock}}件
+									仅剩 {{item.stock}} 件
 								</view>
 								<view class="flashTime" v-if="item.panic_buying_start">
 									抢购
@@ -286,7 +286,7 @@
 	import panicCreateSetinterval from '../../publicAPI/panicCreateSetInterval.js'
 	import updatePersonMsg from '../../publicAPI/updataPersonMsg.js'
 	import {baseURL} from '../../publicAPI/baseData.js'
-	
+
 	export default {
 		components:{"uni-icons":icons},
 		data() {
@@ -596,7 +596,7 @@
 						'Authorization':"Bearer "+app.globalData.Authorization,
 					},//请求头
 					dataType: "json",
-					sslVerify: false, 
+					sslVerify: false,
 					success: res => {
 						let Jsonbig = require('json-bigint')({storeAsString: true})
 						console.log(Jsonbig.parse(xhr._xhr.response).rows)
@@ -611,7 +611,7 @@
 							icon: 'none',
 							title: "获取商品信息失败，请重试！"
 						});
-					}	
+					}
 				})
 			},
 			//获取抢购商品信息
@@ -625,7 +625,7 @@
 						'Authorization':"Bearer "+app.globalData.Authorization,
 					},//请求头
 					dataType: "json",
-					sslVerify: false, 
+					sslVerify: false,
 					success: res => {
 						let Jsonbig = require('json-bigint')({storeAsString: true})
 						console.log(Jsonbig.parse(xhr._xhr.response))
@@ -655,7 +655,7 @@
 							icon: 'none',
 							title: "获取商品信息失败，请重试！"
 						});
-					}	
+					}
 				})
 			},
 			//获取优惠券信息
@@ -669,7 +669,7 @@
 						'Authorization':"Bearer "+app.globalData.Authorization,
 					},//请求头
 					dataType: "json",
-					sslVerify: false, 
+					sslVerify: false,
 					success: res => {
 						console.log(res.data.rows)
 						let Jsonbig = require('json-bigint')({storeAsString: true})
@@ -712,7 +712,7 @@
 						'Authorization':"Bearer "+app.globalData.Authorization,
 					},//请求头
 					dataType: "json",
-					sslVerify: false, 
+					sslVerify: false,
 					success: res => {
 						console.log(res.data.object)
 						let Jsonbig = require('json-bigint')({storeAsString: true})
@@ -750,11 +750,11 @@
 				password: "123456Aa."
 			}
 			uni.request({
-				url: 'http://yibinmall.chenglee.top:82/prod-api/auth/get_token',//开发者服务器接口地址
+				url: '/prod-api/auth/get_token',//开发者服务器接口地址
 				method: "POST",
 				data: msg,//请求的参数
 				dataType: "json",
-				sslVerify: false, 
+				sslVerify: false,
 				success: res => {
 					//将token存入全局变量中
 					let app = getApp();
@@ -779,7 +779,7 @@
 					});
 				}
 			})
-			
+
 			setInterval(() => {
 				(async() => {
 					try{
@@ -856,9 +856,9 @@
 							height: 100%;
 						}
 					}
-					
+
 					.usrInfo{
-						width: 60vw;
+						// width: 60vw;
 						margin-left: 4vw;
 						.usrInfoHeader{
 							width: 50vw;
@@ -911,7 +911,7 @@
 						}
 						.usrInfoFooter{
 							height: 3vh;
-							font-size: 8px;
+							font-size: 11px;
 							color: #8e8b85;
 						}
 					}
@@ -989,7 +989,7 @@
 						padding: 0 3vw;
 						display: flex;
 						.adviceIcon{
-							
+
 						}
 						.adviceName{
 							margin-left: 1vw;
@@ -1015,7 +1015,20 @@
 				}
 				.navActive{
 					font-weight: bold;
-					border-bottom: 2px solid red;
+					position: relative;
+					// border-bottom: 2px solid red;
+				}
+				.navActive::after{
+					content: "";
+					display: block;
+					position: absolute;
+					left: 30%;
+					top: 60%;
+					width: 40%;
+					height: 4px;
+					background-color: red;
+					transform: translateY(8px);
+					border-radius: 50px;
 				}
 			}
 			.subNav{
@@ -1032,7 +1045,7 @@
 					line-height: 5vh;
 					text-align: center;
 					color: #999999;
-					border-radius: 10%;
+					border-radius: 10px;
 				}
 				view:first-child{
 					width: 14vw;
@@ -1045,8 +1058,9 @@
 				margin-top: 1vh;
 				.hot,.flashSale,.generalPreferential,.merchantPreferential{
 					display: flex;
-					justify-content: center;
+					justify-content: flex-start; // 左对齐
 					flex-wrap: wrap;/*换行*/
+					padding: 2.5vw;
 					.goods:nth-child(even){
 						margin-left: 3vw;
 					}
@@ -1058,7 +1072,7 @@
 						margin-top: 1vh;
 						overflow: hidden;
 						.goodsPic{
-							width: 45vw;
+							// width: 45vw;
 							height: 20vh;
 							position: relative;
 							.goodsImg{
@@ -1075,7 +1089,7 @@
 							}
 						}
 						.goodsInfo{
-							width: 45vw;
+							// width: 45vw;
 							// height: 10vh;
 							padding: 6px;
 							.goodsDes{
@@ -1098,7 +1112,7 @@
 									color: #FFFFFF;
 								}
 								.goodsTxt{
-									font-size: 12px;
+									font-size: 14px;
 									white-space: normal;   //使文本多行显示
 									font-weight: bold;
 									display: inline; // 适配无星级要求的商品
@@ -1108,8 +1122,8 @@
 								font-size: 12px;
 								margin-top: 0.5vh;
 								.flashTime,.goodsNum{
-									display: flex;
-									font-size: 10px; // 原本是8px，太小了
+									// display: flex;
+									font-size: 12px;
 									color: #999999;
 								}
 							}
@@ -1119,10 +1133,11 @@
 								display: flex;
 								align-items:flex-end;
 								color: red;
-								font-size: 10px;
+								font-size: 12px;
 								font-weight: bold;
 								.saleBean,.salePrice{
-									font-size: 15px;
+									margin-left: 3px;
+									font-size: 16px;
 								}
 							}
 							.overTime{
@@ -1189,7 +1204,7 @@
 	url:'../../static/img/goods.png',
 	recommedUrl:'../../static/img/recommendReason.png'
 	} -->
-	
+
 <!-- {
 	mallName:'万达广场',
 	money:100,
