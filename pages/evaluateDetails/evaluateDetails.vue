@@ -12,9 +12,9 @@
 				<form @submit="submit()" class="content">
 						<view class="contentHead">评价内容</view>
 						<view class="uni-textarea">
-							<textarea placeholder-style="color:#999999" placeholder="请输入详细评价，不超过200字" maxlength="200" name="advice"/>
+							<textarea v-model="evaluation" placeholder-style="color:#999999" placeholder="请输入详细评价，不超过200字" maxlength="200" name="advice"/>
 						</view>
-						<button form-type="submit" class="submit" >提交</button>
+						<button :disabled="submitted" form-type="submit" class="submit" >提交</button>
 				</form>
 			</view>
 		</view>
@@ -29,6 +29,8 @@ export default {
 	data() {
 		return {
 			showPop: false,
+			evaluation: "",
+			submitted: false,
 			details:{},
 			person:{},
 		}
@@ -41,10 +43,18 @@ export default {
 		}
 	},
 	methods: {
-		submit(details){
-			console.log(details)
+		submit(){
+			const app = getApp()
+			const goods = this.details.goods
+			const data = {
+				storeId: goods.store_id,
+				userId: app.globalData.UserInfo.id,
+				goodsId: goods.goods_id,
+				evaluationPicture: [],
+				goodsEvaluation: this.evaluation,
+			}
 			uni.request({
-				url: baseURL + '/complaint',
+				url: baseURL + '/goodsEvaluation',
 				method: 'POST',
 				header: {
 					'Authorization':"Bearer " + app.globalData.Authorization,
