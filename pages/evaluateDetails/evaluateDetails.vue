@@ -16,7 +16,7 @@
 				<view class="contentHead">图片 (最多 3 张)</view>
 				<uni-file-picker ref="upload" :limit="3" fileMediatype="image" mode="grid" @select="uploadImage"
 					@fail="uploadFailed" @delete="deleteImage"></uni-file-picker>
-				<view style="margin-top: 2vh;" v-show="imageList.length || uploadFailedFlag">
+				<view style="margin-top: 4vw;" v-show="imageList.length || uploadFailedFlag">
 					<view v-if="!uploadFinished">图片上传中...</view>
 					<view v-else-if="uploadFailedFlag" style="color: red;">图片上传失败，请稍后重试</view>
 					<view v-else>图片上传成功</view>
@@ -210,7 +210,6 @@ export default {
 
 <style lang="scss">
 	page{
-		// height: 100vh;
 		background-color: #f5f5f5;
 	}
 
@@ -221,7 +220,7 @@ export default {
 		justify-content: space-between;
 		height: 20vw;
 		background-color: white;
-		padding: 5vw 3vh;
+		padding: 5vw 6vw;
 		.goodImg{
 			height: 20vw;
 			width: 20vw;
@@ -250,15 +249,15 @@ export default {
 	}
 
 	.content{
-		// height: 40vh;
+		// height: 80vw;
 		background-color: white;
-		padding: 0 5vw 3vh;
-		margin: 3vh 0;
+		padding: 0 5vw 6vw;
+		margin: 6vw 0;
 		font-size: 16px;
 		.contentHead{
 			font-size: 16px;
-			height: 6vh;
-			line-height: 6vh;
+			height: 12vw;
+			line-height: 12vw;
 			font-weight: 400;
 			color: #2a2a2a;
 		}
@@ -281,13 +280,16 @@ export default {
 
 		.submit {
 			width: 20vw;
-			// height: 6vh;
-			line-height: 5vh;
+			// height: 12vw;
+			line-height: 10vw;
 			font-size: 15px;
-			margin-top: 3vh;
+			margin-top: 6vw;
 			margin-right: 0;
 			border: 1px #999999 solid;
 			border-radius: 200px;
+			&::after {
+				display: none;
+			}
 		}
 	}
 </style>

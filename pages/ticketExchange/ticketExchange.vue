@@ -89,7 +89,7 @@
 			}
 		},
 		onReady() {
-			
+
 		},
 		onLoad(item) {
 			this.detail = JSON.parse(decodeURIComponent(item.details))
@@ -102,7 +102,7 @@
 					'Authorization':"Bearer "+app.globalData.Authorization,
 				},//请求头
 				dataType: "json",
-				sslVerify: false, 
+				sslVerify: false,
 				success: res => {
 					console.log(res)
 					// 根据核销码生成二维码
@@ -122,14 +122,13 @@
 					});
 				}
 			})
-			
+
 		},
 	}
 </script>
 
 <style lang="scss">
-	.ticket {
-		height: 100vh;
+	page {
 		background-color: #b30600;
 		padding: 12px 16px;
 

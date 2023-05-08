@@ -869,10 +869,10 @@
 			}
 			.header{
 				position: relative;
-				height: 23vh;
+				height: 46vw;
 				.headerBac{
 					width: 100vw;
-					height: 19vh;
+					height: 38vw;
 					position: absolute;
 					top: 0;
 					z-index: 1;
@@ -884,11 +884,11 @@
 				.login{
 					font-size: 18px;
 					color: #f57b6f;
-					height: 5vh;
-					line-height: 5vh;
+					height: 10vw;
+					line-height: 10vw;
 					width: 40vw;
 					position: absolute;
-					top: 4vh;
+					top: 8vw;
 					left: 30vw;
 					text-align: center;
 					// border: #FFFFFF 1px solid;
@@ -898,10 +898,10 @@
 				}
 				.usr{
 					position: absolute;
-					top: 4vh;
+					top: 8vw;
 					z-index: 2;
 					width: 100vw;
-					height: 9vh;
+					height: 18vw;
 					display: flex;
 					flex-direction: row;
 					align-items: center;
@@ -920,17 +920,17 @@
 						margin-left: 4vw;
 						.usrInfoHeader{
 							width: 50vw;
-							height: 4vh;
+							height: 8vw;
 							display: flex;
 							.name{
 								width: 15vw;
-								line-height: 4vh;
+								line-height: 8vw;
 								color: #f53a33;
 								font-weight: bold;
 								font-size: 18px;
 							}
 							.star{
-								height: 4vh;
+								height: 8vw;
 								width: 22vw;
 								position: relative;
 								image{
@@ -943,7 +943,7 @@
 									position: absolute;
 									right: 1vw;
 									font-size: 14px;
-									line-height: 4vh;
+									line-height: 8vw;
 									color: #f53a33;
 									font-style: italic;
 									font-weight: bold;
@@ -951,10 +951,10 @@
 							}
 						}
 						.usrInfoCenter{
-							margin-top: 1vh;
-							margin-bottom: 1vh;
+							margin-top: 2vw;
+							margin-bottom: 2vw;
 							width: 40vw;
-							height: 1vh;
+							height: 2vw;
 							background-color: rgb(255, 255, 255);
 							opacity: 0.502;
 							border-radius: 2vw;
@@ -968,7 +968,7 @@
 							}
 						}
 						.usrInfoFooter{
-							height: 3vh;
+							height: 6vw;
 							font-size: 11px;
 							color: #8e8b85;
 						}
@@ -976,10 +976,10 @@
 				}
 				.wallet{
 					position: absolute;
-					top: 15vh;
+					top: 30vw;
 					z-index: 2;
 					width: 94vw;
-					height: 8vh;
+					height: 16vw;
 					border-radius: 5vw;
 					background-color: rgb(255, 255, 255);
 					margin: 0 0 0 3vw;
@@ -992,8 +992,8 @@
 						border-right: #95928c 1px solid;
 						.beanHeader{
 							width: 24vw;
-							height: 3vh;
-							line-height: 3vh;
+							height: 6vw;
+							line-height: 6vw;
 							display: flex;
 							justify-content: space-between;
 							.beanName{
@@ -1010,9 +1010,9 @@
 						}
 						.beanFooter{
 							width: 35vw;
-							height: 3vh;
-							line-height: 3vh;
-							left: 3vh;
+							height: 6vw;
+							line-height: 6vw;
+							left: 6vw;
 							font-size: 10px;
 							color: #9b9b9b;
 						}
@@ -1023,8 +1023,8 @@
 						border-right: #95928c 1px solid;
 						.ticketHeader{
 							width: 26vw;
-							height: 3vh;
-							line-height: 3vh;
+							height: 6vw;
+							line-height: 6vw;
 							display: flex;
 							.ticketIcon{
 
@@ -1036,8 +1036,8 @@
 						}
 						.ticketFooter{
 							width: 45vw;
-							height: 3vh;
-							line-height: 3vh;
+							height: 6vw;
+							line-height: 6vw;
 							font-size: 10px;
 							color: #9b9b9b;
 						}
@@ -1059,13 +1059,13 @@
 			.nav{
 				pointer-events: auto;
 				width: 100vw;
-				height: 3vh;
-				margin-top: 2vh;
+				height: 6vw;
+				margin-top: 4vw;
 				display: flex;
 				justify-content: space-around;
 				view{
 					font-size: 18px;
-					line-height: 2vh;
+					line-height: 4vw;
 					text-align: center;
 				}
 				view:last-child{
@@ -1090,17 +1090,17 @@
 				}
 			}
 			.subNav{
-				top: 20vh;
+				top: 40vw;
 				width: 100vw;
-				height: 5vh;
-				margin-top: 2vh;
+				height: 10vw;
+				margin-top: 4vw;
 				display: flex;
 				justify-content: space-around;
 				view{
 					background-color: #FFFFFF;
 					width: 22vw;
-					height: 5vh;
-					line-height: 5vh;
+					height: 10vw;
+					line-height: 10vw;
 					text-align: center;
 					color: #999999;
 					border-radius: 10px;
@@ -1113,7 +1113,7 @@
 				}
 			}
 			.content{
-				margin-top: 1vh;
+				margin-top: 2vw;
 				.hot,.flashSale,.generalPreferential,.merchantPreferential{
 					display: flex;
 					justify-content: flex-start; // 左对齐
@@ -1124,10 +1124,10 @@
 					}
 					.goods{
 						width: 46vw;
-						// height: 32vh;
+						// height: 64vw;
 						background-color: #FFFFFF;
 						border-radius: 8px;
-						margin-top: 1vh;
+						margin-top: 2vw;
 						overflow: hidden;
 						.goodsPic{
 							width: 46vw;
@@ -1140,15 +1140,15 @@
 							.flashLogo{
 								position: absolute;
 								z-index: 1;
-								top: 1vh;
+								top: 2vw;
 								left: 1vw;
 								width: 18vw;
-								height: 2vh;
+								height: 4vw;
 							}
 						}
 						.goodsInfo{
 							// width: 45vw;
-							// height: 10vh;
+							// height: 20vw;
 							padding: 6px;
 							.goodsDes{
 								position: relative;
@@ -1178,7 +1178,7 @@
 							}
 							.goodsSaleInfo{
 								font-size: 12px;
-								margin-top: 0.5vh;
+								margin-top: 1vw;
 								.flashTime,.goodsNum{
 									// display: flex;
 									font-size: 12px;
@@ -1186,8 +1186,8 @@
 								}
 							}
 							.goodsSale{
-								margin-top: 0.5vh;
-								height: 3vh;
+								margin-top: 1vw;
+								height: 6vw;
 								display: flex;
 								align-items:flex-end;
 								color: red;
