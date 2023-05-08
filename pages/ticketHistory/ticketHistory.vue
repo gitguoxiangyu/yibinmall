@@ -162,7 +162,7 @@
 					this.displayItems = null
 				}
 				else if(index === 3){
-					console.log("0000")
+					// console.log("0000")
 					let arr = []
 					this.ticket.forEach((item,index)=>{
 						if(item.exchange.exchange_status == "已使用"){
@@ -338,8 +338,8 @@
 					// padding-top: 2vh;
 					flex-grow: 1;
 					font-size: 13px;
-					font-weight: bold;
-					color: #f53a33;
+					// font-weight: bold;
+					// color: #f53a33;
 				}
 				// .exchangeButton {
 				// 	// position: absolute;

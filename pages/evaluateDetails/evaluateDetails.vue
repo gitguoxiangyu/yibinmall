@@ -157,6 +157,9 @@ export default {
 			font-weight: 400;
 			color: #2a2a2a;
 		}
+		uni-textarea {
+			width: unset;
+		}
 		.submit{
 			width: 18vw;
 			height: 5vh;
