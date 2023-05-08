@@ -2,17 +2,17 @@
 	<view class="main">
 		<view class="head">
 			<img src="../../static/img/hand.png" width="50" height="50" alt="">
-			<span class="title">鲜豆商城</span>
+			<span class="title">志愿四川·宜宾专区</span>
 		</view>
 		<!-- <img class="handBackgroundSmall" src="../../static/img/hand-bg.png" width="100" height="100" alt=""> -->
 		<div class="handBackgroundSmall"></div>
 		<view class="body">
 			<form @submit="formSubmit">
-				<view class="cardWord">
-					<input placeholder-class="login-input-placeholder" class="login-input" type="number" name="ICBC_card_num" placeholder="请输入社保卡号">
-				</view>
 				<view class="identifyWord">
 					<input placeholder-class="login-input-placeholder" class="login-input" type="text" name="idCard" placeholder="请输入身份证号">
+				</view>
+				<view class="cardWord">
+					<input placeholder-class="login-input-placeholder" class="login-input" type="number" name="ICBC_card_num" placeholder="请输入宜宾工行社保卡号">
 				</view>
 				<button form-type="submit" class="login" >授权登录</button>
 			</form>

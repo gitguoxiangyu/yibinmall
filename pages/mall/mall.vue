@@ -1,5 +1,11 @@
 <template>
-	<view class="body">
+	<view class="body" :style="'--swiper-height: ' + swiperHeight + 'px;'">
+		<!-- 轮播图 -->
+		<swiper class="swiper" :indicator-dots="true" :autoplay="true" :interval="5000" :duration="1000">
+			<swiper-item v-for="url in swiperUrls">
+				<image class="swiper-item" :src="url" mode="aspectFit"></image>
+			</swiper-item>
+		</swiper>
 		<!-- 顶栏 -->
 		<view class="header" v-if="hasUserInfo">
 			<view class="headerBac"><image src="../../static/img/headerBac.png"></image></view>
@@ -291,6 +297,11 @@
 		components:{"uni-icons":icons},
 		data() {
 			return {
+				swiperHeight: 30,
+				swiperUrls: [
+					"../../static/img/swiper-img.jpg",
+					"../../static/img/swiper-img.jpg",
+				],
 				imageUrl:'http://yibinmall.chenglee.top:81/prod-api/mall/',
 				hasUserInfo:getApp().globalData.hasUserInfo,
 				UserInfo:getApp().globalData.UserInfo,
@@ -739,6 +750,23 @@
 			},
 		},
 		onLoad(){
+			// 根据图片高度计算出swiper的高度
+			uni.getSystemInfo({
+				success: res => {
+					for (const url of this.swiperUrls) {
+						const img = new Image()
+						img.src = url
+						img.onload = () => {
+							const height = img.height * res.windowWidth / img.width
+							console.log("h w w", img.height, res.windowWidth, img.width)
+							if (this.swiperHeight < height) {
+								this.swiperHeight = height
+							}
+						}
+					}
+				}
+			})
+
 			this.hasUserInfo = getApp().globalData.hasUserInfo
 			this.UserInfo = getApp().globalData.UserInfo
 			let app = getApp()
@@ -794,7 +822,7 @@
 		onShow(){
 			this.hasUserInfo = getApp().globalData.hasUserInfo
 			this.UserInfo = getApp().globalData.UserInfo
-			
+
 			console.log(666)
 			let app =getApp()
 			if (app.globalData.UserInfo.id != undefined){
@@ -831,6 +859,14 @@
 		}
 		.body{
 			width: 100vw;
+			// 轮播图
+			.swiper {
+				height: var(--swiper-height);
+				.swiper-item {
+					width: 100%;
+					height: 100%;
+				}
+			}
 			.header{
 				position: relative;
 				height: 23vh;
