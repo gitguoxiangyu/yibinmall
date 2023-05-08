@@ -192,7 +192,7 @@
 															if (res.confirm) {
 																setTimeout(()=>{
 																	uni.navigateTo({
-																		url: '../mall/mall'
+																		url: '../ticketHistory/ticketHistory'
 																	})
 																},500)
 															} else if (res.cancel) {

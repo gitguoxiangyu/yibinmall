@@ -177,7 +177,7 @@
 							// updatePersonMsg()//更新鲜豆信息
 							setTimeout(()=>{
 								uni.navigateTo({
-									url: '../mall/mall'
+									url: '../ticketHistory/ticketHistory'
 								})
 							},1000)
 						},

@@ -121,6 +121,7 @@
 					})
 					console.log(this.ticket)
 					console.log(this.goods)
+					this.displayItems = this.displayItems.reverse()
 				},
 				fail: err => {
 					uni.showToast({
