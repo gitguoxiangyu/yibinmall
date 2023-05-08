@@ -84,7 +84,6 @@
 			<view class="hot" v-if="navArr[0].active == true">
 				<view class="goods" v-for="(item,index) in displayGoods" :key="index" @click="toGoodsDetails(item)">
 						<view class="goodsPic">
-							<image class="flashLogo" src="../../static/img/flashSale.png"></image>
 							<image class="goodsImg" :src="item.goods_main_picture"></image>
 						</view>
 						<view class="goodsInfo">
@@ -163,6 +162,7 @@
 				<!-- 抢购优惠券 -->
 				<view class="goods" v-for="(item,index) in displayPanicBuyingCoupons" :key="item.coupons.coupon_id" @click="toPanicTicket(item)">
 						<view class="goodsPic">
+							<image class="flashLogo" src="../../static/img/flashSale.png"></image>
 							<image class="goodsImg" :src="item.coupons.main_picture"></image>
 						</view>
 						<view class="goodsInfo">
@@ -547,20 +547,17 @@
 				}
 			},
 			toAdviceDetails(){
-				uni.navigateTo({
-					url:"../adviceDetails/adviceDetails"
-				})
-				// let app = getApp()
-				// if (app.globalData.hasUserInfo == 1){
-				// 	uni.navigateTo({
-				// 		url:"../../adviceDetails/adviceDetails"
-				// 	})
-				// }else{
-				// 	uni.showToast({
-				// 		icon: 'none',
-				// 		title: "请登入"
-				// 	});
-				// }
+				let app = getApp()
+				if (app.globalData.hasUserInfo == 1){
+					uni.navigateTo({
+						url:"../adviceDetails/adviceDetails"
+					})
+				}else{
+					uni.showToast({
+						icon: 'none',
+						title: "请登入"
+					});
+				}
 			},
 			toBeanDetails(item){
 				let app = getApp()
@@ -1097,8 +1094,8 @@
 						margin-top: 1vh;
 						overflow: hidden;
 						.goodsPic{
-							// width: 45vw;
-							height: 20vh;
+							width: 46vw;
+							height: 46vw; // 主图一定是正方形
 							position: relative;
 							.goodsImg{
 								width: 100%;

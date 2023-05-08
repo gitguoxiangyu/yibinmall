@@ -1,5 +1,6 @@
 <template>
 	<view class="detailsBody">
+		<!-- 顶部，主图，基本信息 -->
 		<view class="goods">
 				<view class="goodsPic">
 					<image class="goodsImg" :src="details.goods_main_picture"></image>
@@ -28,6 +29,25 @@
 					</view>
 				</view>
 		</view>
+		<!-- 商品评价 -->
+		<view class="evaluationWrapper" @click="goToEvaluation">
+			<view class="evaluationHeader">
+				<view class="title">商品评价 ({{evaluationCount}})</view>
+				<view class="more" v-show="evaluationCount"><uni-icons type="right"></uni-icons></view>
+			</view>
+			<view class="evaluation" v-if="evaluationCount">
+				<view class="userName">
+					<image class="userAvatar" :src="evaluation.userAvatar" mode="aspectFill"></image>
+					<text>{{evaluation.userName}}</text>
+				</view>
+				<view class="content">{{evaluation.goodsEvaluation}}</view>
+				<view class="evaluationImageList" v-if="evaluation.evaluationPicture && evaluation.evaluationPicture.length">
+					<image class="evaluationImage" mode="aspectFill" v-for="url in evaluation.evaluationPicture" :key="url" :src="url" alt="">
+				</view>
+				<view class="time">{{evaluation.createTime}}</view>
+			</view>
+		</view>
+		<!-- 商品详情（图片） -->
 		<view class="goodsDetailsWrapper">
 			<view class="nav">
 				—— 商品详情 ——
@@ -62,6 +82,16 @@
 	export default {
 		data() {
 			return {
+				evaluationList: [],
+				evaluation: {
+					id: "",
+					userAvatar: "",
+					userName: "",
+					goodsEvaluation: "",
+					evaluationPicture: [],
+					createTime: "",
+				},
+				evaluationCount: 0,
 				details: {},
 				item: {},
 				describe:[],
@@ -78,8 +108,52 @@
 				console.log(this.describe)
 			}
 
+			// 获取商品评价
+			const app = getApp()
+			uni.request({
+				url: baseURL + "/goodsEvaluation/evaluationByGoodsId",
+				method: "GET",
+				header: {
+					'Authorization':"Bearer "+app.globalData.Authorization,
+				},//请求头
+				data: {
+					goodsId: this.details.goods_id,
+				},
+				success: res => {
+					if (res.data.code !== 200) {
+						return
+					}
+					console.log("商品评价列表", res.data)
+					if (Array.isArray(res.data.object)) {
+						res.data.object.forEach(item => {
+							item.createTime= item.createTime.substring(0,10) + " " + item.createTime.substring(11,19)
+							item.userAvatar = item.params.userAvatar
+							item.userName = item.params.userName
+							if (!item.userName) {
+								item.userName = "*" + "**"
+							} else {
+								item.userName = item.userName[0] + "**"
+							}
+						})
+						this.evaluationList = res.data.object
+						this.evaluation = res.data.object[0]
+						this.evaluationCount = res.data.object.length;
+						console.log("商品评价", this.evaluation)
+					}
+
+				}
+			})
 		},
 		methods: {
+			goToEvaluation() {
+				if (!Array.isArray(this.evaluationList) || this.evaluationList.length === 0) {
+					return
+				}
+				const list = encodeURIComponent(JSON.stringify(this.evaluationList))
+				uni.navigateTo({
+					url: "/pages/evaluatePage/evaluatePage?list=" + list,
+				})
+			},
 			buy(){
 				if(getApp().globalData.hasUserInfo == 0){
 					uni.showToast({

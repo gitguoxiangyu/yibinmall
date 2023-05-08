@@ -1,17 +1,20 @@
 <template>
 	<view class="main">
 		<view class="head">
-			志愿四川·宜宾专区
+			<img src="../../static/img/hand.png" width="50" height="50" alt="">
+			<span class="title">鲜豆商城</span>
 		</view>
+		<!-- <img class="handBackgroundSmall" src="../../static/img/hand-bg.png" width="100" height="100" alt=""> -->
+		<div class="handBackgroundSmall"></div>
 		<view class="body">
 			<form @submit="formSubmit">
 				<view class="cardWord">
-					<input placeholder-class="login-input" class="login-input" type="number" name="ICBC_card_num" placeholder="请输入社保卡号">
+					<input placeholder-class="login-input-placeholder" class="login-input" type="number" name="ICBC_card_num" placeholder="请输入社保卡号">
 				</view>
 				<view class="identifyWord">
-					<input placeholder-class="login-input" class="login-input" type="text" name="idCard" placeholder="请输入身份证号">
+					<input placeholder-class="login-input-placeholder" class="login-input" type="text" name="idCard" placeholder="请输入身份证号">
 				</view>
-				<button form-type="submit" class="login" >登入</button>
+				<button form-type="submit" class="login" >授权登录</button>
 			</form>
 		</view>
 	</view>
@@ -155,35 +158,73 @@
 	}
 </script>
 
-<style>
+<style lang="scss" scoped>
 	.main{
+		position: fixed;
 		box-sizing: border-box;
 		height: calc(100vh - var(--window-top));
-		padding: 10vh 5vw;
-		background-image: url(../../static/img/login.jpg);
+		width: 100%;
+		padding: 6vh 8vw 0;
+		background-color: #FFF3DC;
+		background-image: url(../../static/img/login.png);
+		background-size: cover;
 	}
 	.head{
-		text-align: center;
-		color: red;
-		font-size: 30px;
+		color: #666666;
+		font-size: 24px;
 		font-weight: bolder;
-		margin-bottom: 10vh;
+		margin-bottom: 4vh;
+		display: flex;
+		align-items: center;
+		.title {
+			margin-left: 16px;
+			// font-style: italic;
+		}
 	}
-	input{
-		height: 5vh;
-		width: 74vw;
-		padding: 0 3vw;
-		margin: 3vh auto;
-		border: 1px rgb(200, 200, 200) solid;
-		border-radius: 3px;
+	.handBackgroundSmall {
+		position: absolute;
+		top: 1vh;
+		right: 8vw;
+		background-image: url(../../static/img/hand-bg.png);
+		width: 40vw;
+		height: 40vw;
+		background-size: contain;
+		background-repeat: no-repeat;
 	}
-	.login-input {
-		font-size: 36rpx;
-		color: white;
-	}
+	.body {
+		position: relative; // 必须加上，否则z-index失效
+		z-index: 2;
+		font-size: 16px;
+		.login-input{
+			box-sizing: border-box;
+			height: 6vh;
+			// width: 74vw;
+			// padding: 14px 30px;
+			padding: 0 8vw;
+			margin: 3vh auto;
+			// border: 1px rgb(200, 200, 200) solid;
+			background-color: #FFFFFF;
+			border-radius: 200px;
+		}
+		.login-input, .login-input-placeholder {
+			color: #666666;
+		}
 
-	.login{
-		width: 80vw;
+		.login-input-placeholder {
+			color: #CCCCCC;
+		}
+
+		.login{
+			margin-top: 60px;
+			// width: 90vw;
+			height: 6vh;
+			line-height: 6vh;
+			background-color: #E81E00;
+			color: #FFFFFF;
+			border-radius: 200px;
+			font-weight: bold;
+			font-size: inherit;
+		}
 	}
 
 </style>

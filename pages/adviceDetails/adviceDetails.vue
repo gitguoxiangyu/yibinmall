@@ -2,7 +2,7 @@
 	<view class="main">
 		<form @submit="adviceSubmit">
 			<view class="type">
-				<view class="typeName">请选择投诉类型</view>
+				<view class="typeName">投诉类型</view>
 				<view class="typeOptions">
 					<!-- @change="optionChange" -->
 					<picker :value="index" :range="adviceType" name="adviceType" @change="onAdviceTypeChange">
@@ -13,47 +13,28 @@
 			<view class="content">
 				<view class="contentHead">投诉详情</view>
 				<view class="uni-textarea">
-					<textarea v-model="advice" placeholder-style="color:#999999" placeholder="请输入详细描述，不超过200字"
+					<textarea v-model="advice" placeholder-style="color:#999999" placeholder="请输入投诉内容，不超过200字"
 						maxlength="200" name="advice" />
 				</view>
-				<view>
-					<form>
-						<view class="cu-bar bg-white margin-top">
-							<view class="action">
-								图片上传
-							</view>
-							<view class="action">
-								{{imgList.length}}/4
-							</view>
-						</view>
-						<view class="cu-form-group">
-							<view class="flex-sub">
-								<view class="bg-img" v-for="(item,index) in imgList" :key="index" @tap="ViewImage"
-									:data-url="imgList[index]">
-									<view class="totalImg">
-										<view class="cu-tag bg-red" @tap.stop="DelImg" :data-index="index">
-											<text class='cuIcon-close'>×</text>
-										</view>
-										<image :src="imgList[index]" mode="widthFix" style="width: 15vw;"></image>
-									</view>
-								</view>
-								<view class="solids" @tap="ChooseImage" v-if="imgList.length<4">
-									<img src="../../static/img/camera.png" alt="" srcset="">
-								</view>
-							</view>
-						</view>
-
-					</form>
+				<view class="contentHead">图片 (最多 3 张)</view>
+				<uni-file-picker ref="upload" :limit="3" fileMediatype="image" mode="grid" @select="uploadImage"
+					@fail="uploadFailed" @delete="deleteImage"></uni-file-picker>
+				<view style="margin-top: 2vh;" v-show="imageList.length || uploadFailedFlag">
+					<view v-if="!uploadFinished">图片上传中...</view>
+					<view v-else-if="uploadFailedFlag" style="color: red;">图片上传失败，请稍后重试</view>
+					<view v-else>图片上传成功</view>
 				</view>
 				<button :disabled="submitted" form-type="submit" class="submit">提交</button>
 			</view>
+
 		</form>
 	</view>
 </template>
 
 <script>
 	import {
-		baseURL
+		baseURL,
+		rootURL
 	} from '../../publicAPI/baseData'
 	export default {
 		data() {
@@ -61,145 +42,185 @@
 				adviceType: ["商品问题", "优惠券问题", "商城体验不佳", "其他"],
 				index: 0,
 				advice: "",
+				imageList: [
+					// {
+					// 	url: "",
+					// 	remoteUrl: "",
+					// 	status: "", // pending, success, fail, canceled, invalid
+					// }
+				],
+				uploadFailedFlag: false, // 本次上传是否失败
 				submitted: false, // 是否已提交，用于阻止重复提交
-				imgList: [],
-				uploadedImgList: []
 			}
+		},
+		computed: {
+			// 是否上传结束，包括成功和失败
+			uploadFinished() {
+				return !this.imageList.find(image => image.status === "pending")
+			},
 		},
 		methods: {
 			onAdviceTypeChange(e) {
 				this.index = e.detail.value;
 			},
-			adviceSubmit() {
-				const app = getApp()
-				
-				this.uploadImage().then((res)=>{
-					const data = {
-						complaintUserId: app.globalData.UserInfo.id,
-						complaintContent: this.advice,
-						complaintPicture: res,
-						complaintType: this.index + 1,
-						complaintUserName: app.globalData.UserInfo.real_name,
+			// el-file-picker组件的上传函数，支持一次性上传多张图片
+			uploadImage(temp) {
+				console.log("上传图片", temp)
+				for (const file of temp.tempFiles) {
+					let invalid = false
+					if (file.size / 1024 / 1024 > 3.0) {
+						uni.showToast({
+							icon: "none",
+							title: "图片大小不能超过 3MB",
+						})
+						invalid = true
 					}
-					uni.request({
-						url: baseURL + '/complaint',
-						method: 'POST',
+					this.imageList.push({
+						url: file.path,
+						remoteUrl: "",
+						uid: file.uuid,
+						status: invalid ? "invalid" : "pending",
+						uploadTask: null,
+					})
+				}
+				// 删除无效图片
+				for (let i = 0; i < temp.tempFiles.length;) {
+					const targetIndex = this.imageList.findIndex(image => image.uid === temp.tempFiles[i].uuid)
+					if (targetIndex > -1 && this.imageList[targetIndex].status === "invalid") {
+						this.imageList.splice(targetIndex, 1)
+						this.$refs.upload.clearFiles(targetIndex)
+						temp.tempFiles.splice(i, 1)
+					} else {
+						++i
+					}
+				}
+				console.log("imageList", this.imageList)
+				console.log("tempFiles", temp.tempFiles)
+
+				// 开始上传
+				this.uploadFailedFlag = false; // 清除失败标记
+				const app = getApp()
+				temp.tempFiles.forEach(file => {
+					const targetImage = this.imageList.find(image => image.uid === file.uuid)
+					targetImage.uploadTask = uni.uploadFile({
+						url: rootURL + "/file/upload",
+						file: file.file,
+						name: "file",
 						header: {
 							'Authorization': "Bearer " + app.globalData.Authorization,
-						}, //请求头
-						data: data,
-						dataType: "json",
-						sslVerify: false,
+						},
 						success: res => {
-							if (res.data.code !== 200) {
-								console.error(res.data);
-								uni.showToast({
-									icon: 'none',
-									title: '提交失败，请稍后重试！',
-								})
-								return;
+							const data = JSON.parse(res.data)
+							if (data.code !== 200) {
+								this.uploadFailedFlag = true;
+								console.error(file.name + "上传失败", data)
+								// 删除上传失败的文件
+								const targetIndex = this.imageList.findIndex(image => image.uid ===
+									file.uuid)
+								this.imageList.splice(targetIndex, 1)
+								this.$refs.upload.clearFiles(targetIndex)
+								return
 							}
-							uni.showToast({
-								icon: 'success',
-								title: '提交成功！',
-							})
-							this.submitted = true
-							setTimeout(() => {
-								uni.navigateBack()
-							}, 1000)
+							console.log(file.name + "上传成功", data)
+							if (Array.isArray(data.object)) {
+								const targetIndex = this.imageList.findIndex(image => image.uid ===
+									file.uuid);
+								if (targetIndex > -1) {
+									this.imageList[targetIndex].status = "success"
+									this.imageList[targetIndex].remoteUrl = data.object[0]
+								}
+							}
 						},
 						fail: res => {
-							console.error(res);
+							const data = res.data
+							// 删除上传失败的文件
+							const targetIndex = this.imageList.findIndex(image => image.uid === file.uuid)
+							this.imageList.splice(targetIndex, 1)
+							if (targetImage.status === "pending") {
+								// 网络原因导致失败（不是用户手动取消），需要手动从组件中删除图片
+								this.$refs.upload.clearFiles(targetIndex)
+								this.uploadFailedFlag = true;
+								console.error(file.name + "上传失败", data)
+							}
+						},
+
+					})
+				})
+			},
+			deleteImage(temp) {
+				console.log("deleteImage", temp)
+				const targetIndex = this.imageList.findIndex(image => image.uid === temp.tempFile.uuid)
+				if (targetIndex === -1) return
+				const image = this.imageList[targetIndex]
+				if (image.status === "pending") {
+					// 正在上传时主动删除
+					image.status = "canceled" // 不显示失败信息
+					image.uploadTask.abort() // 取消上传，会执行uploadFile中的fail部分
+				} else {
+					// success状态下主动删除
+					this.imageList.splice(targetIndex, 1)
+				}
+			},
+			adviceSubmit() {
+				if (!this.uploadFinished) {
+					uni.showToast({
+						icon: "none",
+						title: "请等待图片上传完成"
+					})
+					return
+				}
+
+				const app = getApp()
+				const data = {
+					complaintUserId: app.globalData.UserInfo.id,
+					complaintContent: this.advice,
+					complaintPicture: this.imageList.map(image => image.remoteUrl),
+					complaintType: this.index + 1,
+					complaintUserName: app.globalData.UserInfo.real_name,
+				}
+				uni.request({
+					url: baseURL + '/complaint',
+					method: 'POST',
+					header: {
+						'Authorization': "Bearer " + app.globalData.Authorization,
+					},
+					data: data,
+					dataType: "json",
+					sslVerify: false,
+					success: res => {
+						if (res.data.code !== 200) {
+							console.error(res.data);
 							uni.showToast({
 								icon: 'none',
 								title: '提交失败，请稍后重试！',
 							})
+							return;
 						}
-					})
-				})
-				
-			},
-			ChooseImage() {
-				uni.chooseImage({
-					count: 4, //默认9
-					sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
-					sourceType: ['album'], //从相册选择
-					success: (res) => {
-						if (this.imgList.length != 0) {
-							this.imgList = this.imgList.concat(res.tempFilePaths)
-						} else {
-							this.imgList = res.tempFilePaths
-						}
-					}
-				});
-			},
-			ViewImage(e) {
-				uni.previewImage({
-					urls: this.imgList,
-					current: e.currentTarget.dataset.url
-				});
-			},
-			//删除
-			DelImg(e) {
-				uni.showModal({
-					title: '删除',
-					content: '确定要删除这张图片？',
-					cancelText: '取消',
-					confirmText: '删除',
-					success: res => {
-						if (res.confirm) {
-							this.imgList.splice(e.currentTarget.dataset.index, 1)
-						}
-					}
-				})
-			},
-
-			uploadImage() {
-				let app =getApp()
-				let xhrArr = []
-				this.imgList.forEach((item) => {
-					let xhr = new Promise((reslove,reject)=>{
-						uni.uploadFile({
-							url: '/prod-api/file/upload', //post请求的地址
-							filePath: item,
-							name: 'file',
-							header: {
-								'Authorization': "Bearer " + app.globalData.Authorization,
-							}, //请求头
-							success: (uploadFileRes) => {
-								
-								reslove(JSON.parse(uploadFileRes.data).object[0])
-							},
-							fail: (error) => {
-								reject(error)
-							}
+						uni.showToast({
+							icon: 'success',
+							title: '提交成功！',
 						})
-					})
-					xhrArr.push(xhr)
+						this.submitted = true
+						setTimeout(() => {
+							uni.navigateBack()
+						}, 1000)
+					},
+					fail: res => {
+						console.error(res);
+						uni.showToast({
+							icon: 'none',
+							title: '提交失败，请稍后重试！',
+						})
+					}
 				})
-				return Promise.all(xhrArr)
-			// uni.uploadFile({
-			// 	url: '/prod-api/file/upload', //post请求的地址
-			// 	files: this.imgList,
-			// 	name: 'file',
-			// 	header: {
-			// 		'Authorization': "Bearer " + app.globalData.Authorization,
-			// 	}, //请求头
-			// 	success: (uploadFileRes) => {
-			
-			// 	},
-			// 	fail: (error) => {
-			
-			// 	}
-			// })
-		 }
+			}
 		}
 	}
 </script>
 
-<style lang="scss">
-	.main {
-		height: 100vh;
+<style lang="scss" scoped>
+	page {
+		// height: 100vh;
 		background-color: #f5f5f5;
 	}
 
@@ -224,9 +245,9 @@
 	}
 
 	.content {
-		height: 70vh;
+		// height: 40vh;
 		background-color: white;
-		padding: 0 5vw;
+		padding: 0 5vw 3vh;
 		margin: 3vh 0;
 		font-size: 16px;
 
@@ -238,27 +259,33 @@
 		}
 
 		uni-textarea {
-			width: unset;
+			width: unset; // 扩大响应区域
+		}
+
+		// uni-file-picker加上图片圆角、隐藏进度条
+		/deep/ .uni-file-picker {
+			.file-image {
+				border-radius: 6px;
+			}
+
+			.uni-progress-bar {
+				display: none;
+			}
+
+			.file-picker__box-content.is-add {
+				border-radius: 6px !important;
+			}
 		}
 
 		.submit {
-			width: 18vw;
-			height: 5vh;
+			width: 20vw;
+			// height: 6vh;
 			line-height: 5vh;
 			font-size: 15px;
-			float: right;
 			margin-top: 3vh;
+			margin-right: 0;
 			border: 1px #999999 solid;
-			// position: relative;
-			// bottom: 2vh;
-			// right: 10vw;
-		}
-	}
-	.flex-sub{
-		display: flex;
-		flex-direction: row;
-		.totalImg{
-			width: 15vw;
+			border-radius: 200px;
 		}
 	}
 </style>
