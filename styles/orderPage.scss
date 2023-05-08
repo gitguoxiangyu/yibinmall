@@ -1,26 +1,25 @@
 
-.main{
-	height: calc(100vh - var(--window-top));
+page{
 	background-color: rgb(245,245,245);
 }
 
 .blockItem{
-	/* height: 70vh; */
+	/* height: 140vw; */
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
 	.head, .body, .foot {
-		margin-bottom: 1.5vh;
+		margin-bottom: 3vw;
 	}
 }
 
 
 .head{
-	height: 17vh;
+	height: 34vw;
 	padding: 5vw;
 	background-color: white;
 	&.ticketHead {
-		height: 12vh;
+		height: 24vw;
 	}
 	.container{
 		display: flex;
@@ -78,7 +77,7 @@
 
 .blockItem {
 	.option{
-		margin-bottom: 1vh;
+		margin-bottom: 2vw;
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
@@ -92,7 +91,7 @@
 
 .pay{
 	width: 100vw;
-	height: 4vh;
+	height: 8vw;
 	padding: 5vw;
 	position: fixed;
 	bottom: 0;
@@ -104,12 +103,12 @@
 
 	.btn{
 		// width: 28vw;
-		/* height: 3vh; */
+		/* height: 6vw; */
 		padding: 8px 14px;
 		margin-right: 10vw;
 		background-color: red;
 		color: #FFFFFF;
-		line-height: 3vh;
+		line-height: 6vw;
 		text-align: center;
 		border-radius: 100px;
 	}
@@ -118,18 +117,18 @@
 /* 弹窗 */
 .modal{
 	position: absolute;
-	top: 50%;
+	top: 40%; // 使弹窗上移一些
 	left: 50%;
 	transform: translate(-50%,-50%);
 	background-color: white;
 	width: 70vw;
 	border: 1px rgb(195,195,195) solid;
-	padding: 2vh 5vw;
+	padding: 4vw 5vw;
 	.inputItem{
 		display: flex;
 		flex-direction: row;
 		font-size: 15px;
-		margin:2vh 0;
+		margin: 4vw 0;
 		vertical-align: sub;
 		.inputLabel {
 			min-width: 4em;

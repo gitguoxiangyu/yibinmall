@@ -335,7 +335,7 @@
 					}
 				}
 				.buyingDate{
-					// padding-top: 2vh;
+					// padding-top: 4vw;
 					flex-grow: 1;
 					font-size: 13px;
 					// font-weight: bold;
@@ -374,9 +374,9 @@
 		transform: translate(-50%,-50%);
 		background-color: grey;
 		width: 70vw;
-		height: 30vh;
+		height: 60vw;
 		border: 1px rgb(195,195,195) solid;
-		padding: 1vh 3vw;
+		padding: 2vw 3vw;
 	}
 </style>
 // if(index === 0) {

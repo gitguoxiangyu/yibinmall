@@ -159,12 +159,9 @@
 </script>
 
 <style lang="scss" scoped>
-	.main{
-		position: fixed;
-		box-sizing: border-box;
-		height: calc(100vh - var(--window-top));
+	page{
 		width: 100%;
-		padding: 6vh 8vw 0;
+		padding: 12vw 8vw 0;
 		background-color: #FFF3DC;
 		background-image: url(../../static/img/login.png);
 		background-size: cover;
@@ -173,7 +170,7 @@
 		color: #666666;
 		font-size: 24px;
 		font-weight: bolder;
-		margin-bottom: 4vh;
+		margin-bottom: 8vw;
 		display: flex;
 		align-items: center;
 		.title {
@@ -183,7 +180,7 @@
 	}
 	.handBackgroundSmall {
 		position: absolute;
-		top: 1vh;
+		top: 2vw;
 		right: 8vw;
 		background-image: url(../../static/img/hand-bg.png);
 		width: 40vw;
@@ -197,11 +194,11 @@
 		font-size: 16px;
 		.login-input{
 			box-sizing: border-box;
-			height: 6vh;
+			height: 12vw;
 			// width: 74vw;
 			// padding: 14px 30px;
 			padding: 0 8vw;
-			margin: 3vh auto;
+			margin: 6vw auto;
 			// border: 1px rgb(200, 200, 200) solid;
 			background-color: #FFFFFF;
 			border-radius: 200px;
@@ -217,8 +214,8 @@
 		.login{
 			margin-top: 60px;
 			// width: 90vw;
-			height: 6vh;
-			line-height: 6vh;
+			height: 12vw;
+			line-height: 12vw;
 			background-color: #E81E00;
 			color: #FFFFFF;
 			border-radius: 200px;

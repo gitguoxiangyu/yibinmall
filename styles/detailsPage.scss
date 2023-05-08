@@ -7,13 +7,13 @@ page{
 }
 .detailsBody{
 	width: 100vw;
-	height: calc(100vh - var(--window-top));
+	// height: calc(100vh - var(--window-top));
 	.goods{
 		width: 100vw;
-		// height: 64vh; // 取消固定高度，防止内容溢出
+		// height: 128vw; // 取消固定高度，防止内容溢出
 		background-color: #FFFFFF;
 		.goodsPic{
-			height: 48vh;
+			height: 96vw;
 			position: relative;
 			.goodsImg{
 				width: 100%;
@@ -21,7 +21,7 @@ page{
 			}
 		}
 		.goodsInfo{
-			// height: 20vh;
+			// height: 40vw;
 			padding: 16px 20px;
 			font-size: 15px; // 原本的8px太小了
 			.goodsDes{
@@ -53,13 +53,13 @@ page{
 				}
 			}
 			.goodsSaleInfo{
-				margin-top: 1vh;
+				margin-top: 2vw;
 				display: flex;
 				color: #999999;
 			}
 			.goodsSale{
-				margin-top: 1vh;
-				height: 3vh;
+				margin-top: 2vw;
+				height: 6vw;
 				display: flex;
 				align-items:flex-end;
 				color: red;
@@ -70,10 +70,10 @@ page{
 		}
 	}
 	.goodsDetailsWrapper{
-		padding-bottom: 9vh; // 对应footer的height，防止footer挡住图片
+		padding-bottom: 18vw; // 对应footer的height，防止footer挡住图片
 		.nav{
-			height: 4vh;
-			line-height: 4vh;
+			height: 8vw;
+			line-height: 8vw;
 			text-align: center;
 			font-size: 14px;
 			color: #cccccc;
@@ -92,13 +92,13 @@ page{
 		}
 
 		.ticketDetails{
-			// height: 30vh;
+			// height: 60vw;
 			background-color: #FFFFFF;
-			padding: 1.5vh 0;
+			padding: 3vw 0;
 			.useTime,.address,.attention{
 				display: flex;
 				justify-content: space-between;
-				margin-top: 1.5vh;
+				margin-top: 3vw;
 				font-size: 14px;
 				.left{
 					// width: 20vw;
@@ -115,7 +115,7 @@ page{
 					view{
 						// text-align: right;
 						// white-space: pre-wrap;
-						margin-bottom: 2vh;
+						margin-bottom: 4vw;
 						color: red;
 					}
 				}
@@ -167,7 +167,7 @@ page{
 	.footer{
 		box-sizing: border-box;
 		width: 100vw;
-		height: 9vh;
+		height: 18vw;
 		padding: 5vw;
 		position: fixed;
 		bottom: 0;
@@ -177,7 +177,7 @@ page{
 		flex-direction: row;
 		justify-content: space-between;
 		.goodsSale{
-			height: 3vh;
+			height: 6vw;
 			display: flex;
 			align-items:flex-end;
 			color: red;
@@ -189,11 +189,11 @@ page{
 		button{
 			// margin-right: 10vw;
 			// width: 28vw;
-			// height: 3vh;
+			// height: 6vw;
 			padding: 6px 12px;
 			background-color: red;
 			color: #FFFFFF;
-			line-height: 3vh;
+			line-height: 6vw;
 			text-align: center;
 			border-radius: 100px;
 		}

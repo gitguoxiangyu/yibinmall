@@ -110,7 +110,7 @@
 
 <style lang="scss">
 	.main{
-		height: 100vh;
+		height: 200vw;
 		padding: 5vw;
 		background-color: rgb(245,245,245);
 		.bean {
@@ -125,7 +125,7 @@
 	}
 
 	.msg{
-		margin: 2vh 0vw;
+		margin: 4vw 0vw;
 		font-size: 10px;
 		color: rgb(152,152,152);
 	}
@@ -134,18 +134,18 @@
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
-		margin-top: 2vh;
+		margin-top: 4vw;
 	}
 
 	.option{
 		// width: 14vw;
-		// height: 4vh;
+		// height: 8vw;
 		color: rgb(152,152,152);
 		background-color: white;
 		font-size: 14px;
 		padding: 4px 14px;
 		text-align: center;
-		line-height: 4vh;
+		line-height: 8vw;
 		border-radius: 10%;
 	}
 	.optionactive{
@@ -157,8 +157,8 @@
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
-		margin-top: 2vh;
-		// height: 7vh;
+		margin-top: 4vw;
+		// height: 14vw;
 		padding: 12px 14px;
 		background-color: white;
 		border-radius: 5px;
