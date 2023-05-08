@@ -108,7 +108,7 @@
 						</view>
 				</view>
 			</view>
-			<view class="hot" v-if="navArr[1].active == true">
+			<view class="hot" v-if="navArr[3].active == true">
 				<!-- 抢购商品 -->
 				<view class="goods" v-for="(item,index) in displayPanicBuyingGoods" :key="index" @click="toPanicGood(item)">
 						<view class="goodsPic">
@@ -210,7 +210,7 @@
 						</view>
 				</view>
 			</view>
-			<view class="generalPreferential" v-if="navArr[2].active == true">
+			<view class="generalPreferential" v-if="navArr[1].active == true">
 				<view class="goods" v-for="(item,index) in displayTickets" :key="index" @click="toTicketDetails(item)">
 						<view class="goodsPic">
 							<image class="goodsImg" :src="item.main_picture"></image>
@@ -244,7 +244,7 @@
 				</view>
 			</view>
 
-			<view class="generalPreferential" v-if="navArr[3].active == true">
+			<view class="generalPreferential" v-if="navArr[2].active == true">
 				<view class="goods" v-for="(item,index) in displayMerchantCoupons" :key="index" @click="toTicketDetails(item)">
 						<view class="goodsPic">
 							<image class="goodsImg" :src="item.main_picture"></image>
@@ -301,17 +301,17 @@
 						active:true
 					},
 					{
-						name:'限时抢购',
-						active:false
-					},
-					{
 						name:'通用优惠',
 						active:false
 					},
 					{
 						name:'商家优惠',
 						active:false
-					}
+					},
+					{
+						name:'限时抢购',
+						active:false
+					},
 				],
 				subNavArr:[
 					{

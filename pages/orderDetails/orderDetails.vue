@@ -33,6 +33,19 @@
 				</view>
 			</view>
 			<view class="foot">
+				<!-- 选择团支部分区 -->
+				<view class="uni-list">
+					<view class="option">
+						<view class="uni-list-cell-left" style="width: 20vw;">
+							团支部分区
+						</view>
+						<view class="uni-list-cell-db" style="width: 60vw;">
+							<picker @change="bindPickerChange" :value="post.volunteer_area" :range="range">
+								<view class="uni-input" style="text-align: right;">{{range[post.volunteer_area]}}</view>
+							</picker>
+						</view>
+					</view>
+				</view>
 				<view class="option">
 					<view>商品鲜豆</view>
 					<view>{{details.goods_price}}</view>
@@ -103,7 +116,9 @@
 					deliver_type: undefined,
 					order_time: undefined,
 					deliver_time: undefined,
+					volunteer_area: 0,
 				},
+				range: ['请选择','翠屏区', '南溪区', '叙州区', '江安县','长宁县','高县','筠连县','珙县','兴文县','屏山县','三江新区','“两海”示范区']
 			}
 		},
 		onLoad(option) {
@@ -119,13 +134,19 @@
 		methods: {
 
 			buy(){
-				console.log(this.person.beans>= this.person.number * this.details.goods_price)
+				if (this.post.volunteer_area == 0){
+					uni.showToast({
+						icon: 'none',
+						title: "请选择团支部分区"
+					});
+					return 0;
+				}
 				if (this.person.address && this.person.tel && this.person.real_name && this.person.star >= this.details.star && this.person.beans >= this.person.number * this.details.goods_price){
 					this.post.order_user_id = this.person.id
 					this.post.store_id = this.details.store_id
 					this.post.goods_id = this.details.goods_id
 					this.post.coupons_id = this.details.coupons_id
-					this.post.number = this.person.number * this.details.goods_price
+					this.post.number = this.person.number
 					this.post.order_status = "已支付"
 					this.post.consignee_name = this.person.real_name
 					this.post.consignee_phone = this.person.tel
@@ -133,6 +154,7 @@
 					this.post.deliver_type = "线下厂商配送"
 					this.post.order_time = new Date().getTime()
 					this.post.deliver_time = undefined
+					this.post.volunteer_area = this.range[this.post.volunteer_area]
 
 					console.log(this.post)
 					let app = getApp()
@@ -193,7 +215,11 @@
 			closeModal(){
 				this.showPop = false
 			},
-		}
+			bindPickerChange(e){
+				this.post.volunteer_area = e.detail.value
+			}
+		},
+		
 	}
 </script>
 
