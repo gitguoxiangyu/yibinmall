@@ -72,17 +72,17 @@
     "h5" : {
         "devServer" : {
             "https" : false,
-			"disableHostCheck": true,
-			"proxy": {
-				"/prod-api": {
-					"target": "http://yibinmall.chenglee.top:82/",
-					"changeOrigin": true
-				},
-				"/province": {
-					"target": "http://yibinmall.chenglee.top:82/",
-					"changeOrigin": true
-				}
-			}
+            "disableHostCheck" : true,
+            "proxy" : {
+                "/prod-api" : {
+                    "target" : "http://yibinmall.chenglee.top:82/",
+                    "changeOrigin" : true
+                },
+                "/province" : {
+                    "target" : "http://yibinmall.chenglee.top:82/",
+                    "changeOrigin" : true
+                }
+            }
         }
     }
 }

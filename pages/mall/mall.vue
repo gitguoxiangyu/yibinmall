@@ -13,10 +13,10 @@
 							<view class="starTxt">{{UserInfo.star}}星青年</view>
 						</view>
 					</view>
-					<view class="usrInfoCenter">
+<!-- 					<view class="usrInfoCenter">
 						<view class="starRate" :style="{'width' : this.starRate + '%'}"></view>
-					</view>
-					<view class="usrInfoFooter">青年成长值300，还需要700升级为4星青年</view>
+					</view> -->
+<!-- 					<view class="usrInfoFooter">青年成长值300，还需要700升级为4星青年</view> -->
 				</view>
 			</view>
 			<view class="wallet">
@@ -797,6 +797,31 @@
 		onShow(){
 			this.hasUserInfo = getApp().globalData.hasUserInfo
 			this.UserInfo = getApp().globalData.UserInfo
+			
+			console.log(666)
+			let app =getApp()
+			if (app.globalData.UserInfo.id != undefined){
+				uni.request({
+					url: baseURL + '/user_info/userBeans?userId=' + app.globalData.UserInfo.id,
+					method: "GET",
+					// data: msg,
+					header: {
+						'Authorization':"Bearer "+app.globalData.Authorization,
+					},//请求头
+					dataType: "json",
+					sslVerify: false,
+					success: res => {
+						console.log(res)
+						getApp().globalData.UserInfo.beans = res.data.object
+					},
+					fail: err => {
+						uni.showToast({
+							icon: 'none',
+							title: "更新鲜豆失败！"
+						});
+					}
+				})
+			}
 		}
 	}
 </script>
