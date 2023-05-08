@@ -38,6 +38,10 @@
 			</view>
 			<view class="foot">
 				<view class="option">
+					<view>团支部分区</view>
+					<view>{{order.volunteer_area}}</view>
+				</view>
+				<view class="option">
 					<view>商品鲜豆</view>
 					<view>{{details.goods.goods_price}}</view>
 				</view>
