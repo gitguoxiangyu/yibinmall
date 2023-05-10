@@ -69,9 +69,6 @@
 				<view class="inputItem">
 					收货电话<input v-model="person.tel" class="input" type="text" name="phone" placeholder="请输入收货电话" placeholder-style="font-size:26rpx;color:grey;">
 				</view>
-				<view class="inputItem">
-					货物数量<input v-model="person.number" class="input" type="text" name="phone" placeholder="请输入货物数量" placeholder-style="font-size:26rpx;color:grey;">
-				</view>
 				<button @click="closeModal()" class="login" >确定</button>
 			<!-- </form> -->
 		</view>

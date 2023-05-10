@@ -71,10 +71,6 @@
 					<text class="inputLabel">收货电话</text>
 					<input v-model="person.tel" class="input" placeholder-class="inputPlaceholder" type="text" name="phone" placeholder="请输入收货电话">
 				</view>
-				<view class="inputItem">
-					<text class="inputLabel">货物数量</text>
-					<input v-model="person.number" class="input" placeholder-class="inputPlaceholder" type="text" name="phone" placeholder="请输入货物数量">
-				</view>
 				<button @click="closeModal()" class="login" >确定</button>
 			<!-- </form> -->
 		</view>
