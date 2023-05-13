@@ -17,19 +17,31 @@
 			<view class="body" @click="change">
 				<view class="option">
 					<view>收货人</view>
-					<view>{{person.real_name}}</view>
+					<view>
+						<text v-if="person.real_name">{{person.real_name}}</text>
+						<text v-else class="optionPlaceholder">请输入</text>
+					</view>
 				</view>
 				<view class="option">
 					<view>收货电话</view>
-					<view>{{person.tel}}</view>
+					<view>
+						<text v-if="person.tel">{{person.tel}}</text>
+						<text v-else class="optionPlaceholder">请输入</text>
+					</view>
 				</view>
 				<view class="option">
 					<view>收货地址</view>
-					<view>{{person.address}}</view>
+					<view>
+						<text v-if="person.address">{{person.address}}</text>
+						<text v-else class="optionPlaceholder">请输入</text>
+					</view>
 				</view>
 				<view class="option">
 					<view>货物数量</view>
-					<view>{{person.number}}</view>
+					<view>
+						<text v-if="person.number">{{person.number}}</text>
+						<text v-else class="optionPlaceholder">请输入</text>
+					</view>
 				</view>
 			</view>
 			<view class="foot">
@@ -41,7 +53,10 @@
 						</view>
 						<view class="uni-list-cell-db" style="width: 60vw;">
 							<picker @change="bindPickerChange" :value="post.volunteer_area" :range="range">
-								<view class="uni-input" style="text-align: right;">{{range[post.volunteer_area]}}</view>
+								<view class="uni-input" style="text-align: right;">
+									<text v-if="post.volunteer_area != -1">{{range[post.volunteer_area]}}</text>
+									<text v-else class="optionPlaceholder">请选择</text>
+								</view>
 							</picker>
 						</view>
 					</view>
@@ -69,22 +84,29 @@
 		</view>
 
 		<!-- 弹窗 -->
-		<view v-if="showPop" class="modal">
-			<!-- <form @submit="formSubmit"> -->
-				<view class="inputItem">
-					收货人<input v-model="person.real_name" class="input" placeholder-class="inputPlaceholder" type="text" name="name" placeholder="请输入收货人姓名">
-				</view>
-				<view class="inputItem">
-					收货电话<input v-model="person.tel" class="input" placeholder-class="inputPlaceholder" type="text" name="phone" placeholder="请输入收货电话">
-				</view>
-				<view class="inputItem">
-					收货地址<input v-model="person.address" class="input" placeholder-class="inputPlaceholder" type="text" name="address" placeholder="请输入收货地址">
-				</view>
-				<view class="inputItem">
-					货物数量<input v-model="person.number" class="input" placeholder-class="inputPlaceholder" type="text" name="phone" placeholder="请输入货物数量">
-				</view>
-				<button @click="closeModal()" class="login" >确定</button>
-			<!-- </form> -->
+		<view v-if="showPop" class="modalWrapper">
+			<view class="modal">
+				<!-- <form @submit="formSubmit"> -->
+					<view class="inputItem">
+						<text class="inputLabel">收货人</text>
+						<input v-model="person.real_name" class="input" placeholder-class="inputPlaceholder" type="text" name="name" placeholder="请输入收货人姓名">
+					</view>
+					<view class="inputItem">
+						<text class="inputLabel">收货电话</text>
+						<input v-model="person.tel" class="input" placeholder-class="inputPlaceholder" type="tel" name="phone" placeholder="请输入收货电话"
+							@input="(e) => person.tel = e.detail.value.replace(/[^\d+-]/g, '')">
+					</view>
+					<view class="inputItem">
+						<text class="inputLabel">收货地址</text>
+						<input v-model="person.address" class="input" placeholder-class="inputPlaceholder" type="text" name="address" placeholder="请输入收货地址">
+					</view>
+					<view class="inputItem">
+						<text class="inputLabel">货物数量</text>
+						<input v-model="person.number" class="input" placeholder-class="inputPlaceholder" type="text" name="phone" placeholder="请输入货物数量">
+					</view>
+					<button @click="closeModal()" class="login" >确定</button>
+				<!-- </form> -->
+			</view>
 		</view>
 
 	</view>
@@ -113,9 +135,9 @@ export default {
 				deliver_type: undefined,
 				order_time: undefined,
 				deliver_time: undefined,
-				volunteer_area: 0,
+				volunteer_area: -1,
 			},
-			range: ['请选择','翠屏区', '南溪区', '叙州区', '江安县','长宁县','高县','筠连县','珙县','兴文县','屏山县','三江新区','“两海”示范区']
+			range: ['翠屏区', '南溪区', '叙州区', '江安县','长宁县','高县','筠连县','珙县','兴文县','屏山县','三江新区','“两海”示范区']
 		}
 	},
 	onLoad(option) {
@@ -130,156 +152,154 @@ export default {
 	},
 	methods: {
 		buy(){
-			if (this.post.volunteer_area == 0){
-				uni.showToast({
-					icon: 'none',
-					title: "请选择团支部分区"
-				});
-				return 0;
+			let errMsg = ""
+			if (this.person.star < this.details.goods.star) {
+				errMsg = "用户星级不足"
+			} else if (this.person.beans < this.person.number * this.details.panicBuyingGoods.panic_buying_price) {
+				errMsg = "用户鲜豆不足"
+			} else if (!this.person.real_name) {
+				errMsg = "请输入收货人"
+			} else if (!this.person.tel) {
+				errMsg = "请输入收货电话"
+			} else if (!this.person.address) {
+				errMsg = "请输入收获地址"
+			} else if (!this.person.number) {
+				errMsg = "请输入货物数量"
+			} else if (this.post.volunteer_area == -1) {
+				errMsg = "请选择团支部分区"
 			}
-			if (this.person.address && this.person.tel && this.person.real_name && this.person.star >= this.details.goods.star && this.person.beans >= this.person.number * this.details.panicBuyingGoods.panic_buying_price){
-				this.post.order_user_id = this.person.id
-				this.post.store_id = this.details.goods.store_id
-				this.post.goods_id = this.details.goods.goods_id
-				this.post.coupons_id = this.details.goods.coupons_id
-				this.post.number = this.person.number
-				this.post.order_status = "已支付"
-				this.post.consignee_name = this.person.real_name
-				this.post.consignee_phone = this.person.tel
-				this.post.consignee_address = this.person.address
-				this.post.deliver_type = "线下厂商配送"
-				this.post.order_time = new Date().getTime()
-				this.post.deliver_time = undefined
-				this.post.volunteer_area = this.range[this.post.volunteer_area]
+			if (errMsg) {
+				uni.showToast({
+					icon: "none",
+					title: errMsg,
+				})
+				return
+			}
 
-				console.log(this.post)
-				let app = getApp()
-				let poll = {
-					user_id: this.person.id,
-					type: 1,
-					thingsId: this.details.goods.goods_id,
-				}
-				// //getToken获取token，第一个参数是成功的回调，第二个参数是失败的回调
-				// getToken(
-				// res => {
-				// 	//将token存入全局变量中
-				// 	let app = getApp()
-				// 	app.globalData.Authorization = res.data
-				// 	//发送购买请求
+			this.post.order_user_id = this.person.id
+			this.post.store_id = this.details.goods.store_id
+			this.post.goods_id = this.details.goods.goods_id
+			this.post.coupons_id = this.details.goods.coupons_id
+			this.post.number = this.person.number
+			this.post.order_status = "已支付"
+			this.post.consignee_name = this.person.real_name
+			this.post.consignee_phone = this.person.tel
+			this.post.consignee_address = this.person.address
+			this.post.deliver_type = "线下厂商配送"
+			this.post.order_time = new Date().getTime()
+			this.post.deliver_time = undefined
+			this.post.volunteer_area = this.range[this.post.volunteer_area]
 
-				// },
-				// err => {
-				// 	uni.showToast({
-				// 		icon: 'none',
-				// 		title: "获取token失败，请重试！"
-				// 	});
-				// }
-				// )
+			console.log(this.post)
+			let app = getApp()
+			let poll = {
+				user_id: this.person.id,
+				type: 1,
+				thingsId: this.details.goods.goods_id,
+			}
+			// //getToken获取token，第一个参数是成功的回调，第二个参数是失败的回调
+			// getToken(
+			// res => {
+			// 	//将token存入全局变量中
+			// 	let app = getApp()
+			// 	app.globalData.Authorization = res.data
+			// 	//发送购买请求
 
-				uni.request({
-					url: baseURL + '/pb_orders',
-					method: "POST",
-					data: this.post,
-					header: {
-						'Authorization':"Bearer "+app.globalData.Authorization,
-					},//请求头
-					dataType: "json",
-					sslVerify: false,
-					success: res => {
-						console.log(res)
-						//轮询抢购结果
-						if (res.data.code == 200){
-							uni.showLoading({
-								title: res.data.message
-							});
-							let timer = setInterval(()=>{
-								uni.request({
-									url: baseURL + '/pb_orders/result/'+poll.user_id+'/'+poll.type+'/'+poll.thingsId,
-									method: "GET",
-									// data: poll,
-									header: {
-										'Authorization':"Bearer "+app.globalData.Authorization,
-									},//请求头
-									dataType: "json",
-									sslVerify: false,
-									success: res => {
-										console.log(res)
-										uni.hideLoading()
-										if (res.data.code == 200){
-											uni.showModal({
-												title: '抢购成功',
-												// content: '是否查看订单详情',
-												success: function (res) {
-													// updatePersonMsg()//更新鲜豆信息
-													if (res.confirm) {
-														setTimeout(()=>{
-															uni.navigateTo({
-																url: '../ticketHistory/ticketHistory'
-															})
-														},500)
-													} else if (res.cancel) {
-														setTimeout(()=>{
-															uni.navigateTo({
-																url: '../mall/mall'
-															})
-														},500)
-													}
+			// },
+			// err => {
+			// 	uni.showToast({
+			// 		icon: 'none',
+			// 		title: "获取token失败，请重试！"
+			// 	});
+			// }
+			// )
+
+			uni.request({
+				url: baseURL + '/pb_orders',
+				method: "POST",
+				data: this.post,
+				header: {
+					'Authorization':"Bearer "+app.globalData.Authorization,
+				},//请求头
+				dataType: "json",
+				sslVerify: false,
+				success: res => {
+					console.log(res)
+					//轮询抢购结果
+					if (res.data.code == 200){
+						uni.showLoading({
+							title: res.data.message
+						});
+						let timer = setInterval(()=>{
+							uni.request({
+								url: baseURL + '/pb_orders/result/'+poll.user_id+'/'+poll.type+'/'+poll.thingsId,
+								method: "GET",
+								// data: poll,
+								header: {
+									'Authorization':"Bearer "+app.globalData.Authorization,
+								},//请求头
+								dataType: "json",
+								sslVerify: false,
+								success: res => {
+									console.log(res)
+									uni.hideLoading()
+									if (res.data.code == 200){
+										uni.showModal({
+											title: '抢购成功',
+											// content: '是否查看订单详情',
+											success: function (res) {
+												// updatePersonMsg()//更新鲜豆信息
+												if (res.confirm) {
+													setTimeout(()=>{
+														uni.navigateTo({
+															url: '../ticketHistory/ticketHistory'
+														})
+													},500)
+												} else if (res.cancel) {
+													setTimeout(()=>{
+														uni.navigateTo({
+															url: '../mall/mall'
+														})
+													},500)
 												}
-											});
-											clearInterval(timer)
-										}else if(res.data.code == 500){
-											uni.hideLoading()
-											uni.showToast({
-												icon: 'none',
-												title: res.data.message
-											});
-											clearInterval(timer)
-										}
-									},
-									fail: err => {
+											}
+										});
+										clearInterval(timer)
+									}else if(res.data.code == 500){
 										uni.hideLoading()
 										uni.showToast({
 											icon: 'none',
-											title: "订单信息获取失败，请重试！"
+											title: res.data.message
 										});
-										uni.hideLoading()
+										clearInterval(timer)
 									}
-								})
-							},1000)
-						}else{
-							uni.showToast({
-								icon: 'none',
-								title: res.data.message
-							});
-						}
-
-					},
-					fail: err => {
+								},
+								fail: err => {
+									uni.hideLoading()
+									uni.showToast({
+										icon: 'none',
+										title: "订单信息获取失败，请重试！"
+									});
+									uni.hideLoading()
+								}
+							})
+						},1000)
+					}else{
 						uni.showToast({
 							icon: 'none',
-							title: "订单信息发送失败，请重试！"
+							title: res.data.message
 						});
 					}
-				})
 
-			}else if(this.person.star < this.details.star){
-				uni.showToast({
-					icon: 'none',
-					title: "用户星级不足"
-				});
-			}else if (this.person.beans < this.person.number * this.details.panicBuyingGoods.panic_buying_price){
-				uni.showToast({
-					icon: 'none',
-					title: "用户鲜豆不足"
-				});
-			}
-			else{
-				console.log(this.person)
-				uni.showToast({
-					icon: 'none',
-					title: "请检查收货信息是否正确"
-				});
-			}
+				},
+				fail: err => {
+					uni.showToast({
+						icon: 'none',
+						title: "订单信息发送失败，请重试！"
+					});
+				}
+			})
+
 			// uni.navigateTo({
 			// 	url:'../mall/mall'
 			// })

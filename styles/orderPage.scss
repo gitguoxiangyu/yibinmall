@@ -81,6 +81,9 @@ page{
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
+		.optionPlaceholder {
+			color: #999999;
+		}
 	}
 
 	.option--rightAligned{
@@ -114,6 +117,16 @@ page{
 	}
 }
 
+// 弹窗背景
+.modalWrapper {
+	position: fixed;
+	z-index: 999; // .uni-page-head是998
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background-color: #000000AA;
+}
 /* 弹窗 */
 .modal{
 	position: absolute;
@@ -122,24 +135,35 @@ page{
 	transform: translate(-50%,-50%);
 	background-color: white;
 	width: 70vw;
-	border: 1px rgb(195,195,195) solid;
-	padding: 4vw 5vw;
+	border: 1px #C3C3C3 solid;
+	padding: 6vw 8vw;
+	font-size: 15px;
+	border-radius: 3vw;
 	.inputItem{
 		display: flex;
 		flex-direction: row;
-		font-size: 15px;
 		margin: 4vw 0;
 		vertical-align: sub;
 		.inputLabel {
 			min-width: 4em;
 		}
 		.input{
+			flex-grow: 1;
 			margin-left: 3vw;
-			border-bottom: 1px rgb(195,195,195) solid;
+			border-bottom: 1px #C3C3C3 solid;
 		}
 		.inputPlaceholder {
 			// font-size: 26rpx;
-			color: grey;
+			color: #999999;
+		}
+	}
+	.login {
+		margin-top: 8vw;
+		border: 1px #C3C3C3 solid;
+		border-radius: 200px;
+		font-size: inherit;
+		&::after {
+			display: none;
 		}
 	}
 }

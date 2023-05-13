@@ -109,10 +109,11 @@
 </script>
 
 <style lang="scss">
-	.main{
-		height: 200vw;
-		padding: 5vw;
+	page {
 		background-color: rgb(245,245,245);
+	}
+	.main{
+		padding: 5vw;
 		.bean {
 			font-size: 16px;
 			font-weight: bold;
