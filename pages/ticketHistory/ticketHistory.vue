@@ -3,7 +3,7 @@
 		<view class="nav">
 			<view v-for="(item, index) in navArr" :key="index" class="navItem"
 				:class="{ 'navItemActive': navActiveIndex === index }" @click="onNavItemClicked(index)">
-				{{item.name}}
+				{{item.name}} ({{item.count}})
 			</view>
 		</view>
 		<view class="content">
@@ -22,7 +22,7 @@
 					<view class="itemDateWrapper">
 						<view class="itemDate">截止日期: {{item.coupons.exchange_deadline.split(" ")[0]}}</view>
 						<!-- <view class="itemDate" v-else>使用日期: {{item.exchangeDDL.split(" ")[0]}}</view> -->
-						<button class="goodsButton" @click="onExchangeClicked(item.coupons,item.exchange.coupons_item_id)">兑换纸质券</button>
+						<button class="goodsButton" @click="onExchangeClicked(item)">兑换立减金</button>
 					</view>
 				</view>
 			</view>
@@ -62,10 +62,13 @@
 <script>
 	import { baseURL } from '../../publicAPI/baseData.js'
 	import { correctTime , jsonToBigint } from '../../utils/common.js'
+	import CryptoJS from "crypto-js"
+
 	export default {
 		data() {
 			return {
-				navArr: [{
+				navArr: [
+					{
 						name: "全部",
 						count: 0,
 					},
@@ -122,6 +125,7 @@
 					console.log(this.ticket)
 					console.log(this.goods)
 					this.displayItems = this.displayItems.reverse()
+					this.updateNavItemCount()
 				},
 				fail: err => {
 					uni.showToast({
@@ -136,6 +140,27 @@
 
 		},
 		methods: {
+			/**
+			 * 更新导航栏计数
+			 */
+			updateNavItemCount() {
+				console.log("navArr", this.navArr)
+				if (Array.isArray(this.ticket) && Array.isArray(this.goods)) {
+					this.navArr[0].count = this.ticket.length + this.goods.length
+					this.navArr[1].count = 0
+					this.navArr[2].count = 0
+					this.navArr[3].count = this.goods.length
+					this.ticket.forEach(item => {
+						if (item.exchange.exchange_status === "已过期") {
+							this.navArr[1].count++
+						} else if (item.exchange.exchange_status === "未使用") {
+							this.navArr[2].count++
+						} else if (item.exchange.exchange_status === "已使用") {
+							this.navArr[3].count++
+						}
+					})
+				}
+			},
 			onNavItemClicked(index) {
 				this.navActiveIndex = index;
 				if(index === 0){
@@ -145,7 +170,7 @@
 				else if(index === 1){
 					let arr = []
 					this.ticket.forEach((item,index)=>{
-						if(item.exchange.exchange_status == "已过期"){
+						if(item.exchange.exchange_status === "已过期"){
 							arr.push(item)
 						}
 					})
@@ -155,7 +180,7 @@
 				else if(index === 2){
 					let arr = []
 					this.ticket.forEach((item,index)=>{
-						if(item.exchange.exchange_status == "未使用"){
+						if(item.exchange.exchange_status === "未使用"){
 							arr.push(item)
 						}
 					})
@@ -166,7 +191,7 @@
 					// console.log("0000")
 					let arr = []
 					this.ticket.forEach((item,index)=>{
-						if(item.exchange.exchange_status == "已使用"){
+						if(item.exchange.exchange_status === "已使用"){
 							arr.push(item)
 						}
 					})
@@ -175,14 +200,197 @@
 				}
 			},
 
+			/**
+			 * 兑换优惠券接口
+			 * @param {Object} item
+			 */
+			async onExchangeClicked(item) {
+				// console.log("displayTicket", this.displayTicket)
+				console.log("item", item)
 
-			onExchangeClicked(item,id) {
-				item = JSON.parse(JSON.stringify(item))
-				item.coupons_item_id = id
-				let details = encodeURIComponent(JSON.stringify(item))
-				uni.navigateTo({
-					url:'../ticketExchange/ticketExchange?details=' + details
-				})
+				// 工行接口兑换链接只会返回一次，之后便再也不会返回
+				// 为了避免兑换链接丢失，如果更新后台状态时出现网络问题，会使用LocalStorage缓存兑换链接
+
+				// 检查exchange中是否保存有链接
+				// if 保存有链接
+				// 		link = 链接
+				// 		直接跳转链接
+				// 		（可以在此处检查LocalStorage，将存在的记录删除）
+				// else
+				// 		向工行发请求
+				// 		if 成功（"000000"）
+				// 			link = 链接
+				// 			向后台发请求，更改兑换状态，并且保存link
+				// 			if 请求成功
+				// 				跳转链接
+				// 			else （网络错误）
+				// 				直接将link保存到LocalStorage
+				// 		else if 已兑换过（100008）
+				// 			从LocalStorage中取出链接
+				// 			if 链接存在
+				// 				link = 链接
+				// 				向后台发请求，更改兑换状态，并保存link（不管成功或失败，都没有任何提示）
+				// 				跳转链接
+				// 			else
+				// 				报错：已被兑换过（无法处理的错误）
+				// 		else if 由于网络原因失败
+				// 			提示网络错误，稍后重试
+				//
+				// if link
+				// 		跳转链接
+
+				const app = getApp()
+				if (!app.globalData.UserInfo || !item.exchange) {
+					return
+				}
+
+				const order_id = item.exchange.order_id
+				// 远端记录中的link
+				let link = item.exchange.link
+				// LocalStorage中用于保存link的对象
+				let storage = uni.getStorageSync("ticketHistoryLinks")
+				// console.log("ticketHistoryLinks before", storage)
+				if (!storage) storage = {}
+
+				if (link) {
+					delete storage[order_id]
+				} else {
+					// 获取兑换链接
+						// console.log("UserInfo", app.globalData.UserInfo)
+						// console.log("exchange", item.exchange)
+
+					const rawData = {
+						user: app.globalData.UserInfo.id + "",
+						cash: 2,
+						order_id: order_id,
+						act_id: "ybApp",
+						task: "test"
+					}
+					// console.log("rawData", JSON.stringify(rawData))
+
+					let key = "V!rGgMk72pk*sW@5"
+					// console.log("===key===", key)
+					key = CryptoJS.enc.Utf8.parse(key)
+					// console.log("===key===", key)
+
+					// AES加密
+					const vlinkdata = CryptoJS.AES.encrypt(JSON.stringify(rawData), key, {
+						mode: CryptoJS.mode.ECB,
+						padding: CryptoJS.pad.Pkcs7,
+					}).toString(CryptoJS.format.OpenSSL)
+					// console.log("vlinkdata encrypted", vlinkdata)
+
+
+					await uni.request({
+						// url: "https://didao.lovemojito.com/icbcMiNi/collection/placeOutOrder.php",
+						url: baseURL + "/exchange/getLink",
+						method: "POST",
+						data: { vlinkdata: vlinkdata },
+						header: {
+							'Authorization': "Bearer " + app.globalData.Authorization,
+							"Content-Type": "application/x-www-form-urlencoded",
+							// "Host": "didao.lovemojito.com",
+						},
+					}).then(res => {
+						console.log("placeOutOrder.php", res)
+						if (!res[1]) {
+							// 网络请求出错
+							return Promise.reject(res[0])
+						}
+
+						let data = res[1].data.object
+						if (typeof data === "string") {
+							data = JSON.parse(data)
+						}
+						if (data.code != "000000") {
+							// 接口返回错误信息
+							return Promise.reject(res[1])
+						}
+
+						// 成功获取link
+						link = data.link
+						console.log("获取立减金兑换链接成功 link:", link)
+
+						// 更新优惠券使用状态
+						return uni.request({
+							url: baseURL + `/exchange/couponStatus/${item.exchange.coupons_item_id}?link=${link}`,
+							method: "POST",
+							header: {
+								'Authorization': "Bearer " + app.globalData.Authorization,
+							},
+						}).then(res => {
+							console.log("/exchange/couponStatus/", res)
+							if (!res[1]) {
+								// 网络请求出错
+								return Promise.reject(res[0])
+							} else if (res[1].data.code !== 200) {
+								// 后台接口返回错误信息
+								return Promise.reject(res[1])
+							}
+						}).catch(res => {
+							console.error("更改优惠券兑换状态失败", res)
+							// 在LocalStorage中保存link
+							storage[order_id] = link
+						})
+					}).catch(res => {
+						console.error("获取立减金兑换链接失败", res)
+						let msg = ""
+						if (res.statusCode === 200) {
+							let data = res.data.object
+							if (typeof data === "string") {
+								data = JSON.parse(data)
+							}
+							if (data.code == 100008) {
+								// 已经兑换过
+								// 检查LocalStorage中是否有记录
+								link = storage[order_id]
+								if (!link) {
+									// LocalStorage中没有记录，无法处理
+									msg = "该优惠券已经兑换过"
+									msg = "未知错误！"
+								} else {
+									// LocalStorage中有记录，则使用记录的链接更新优惠券使用状态
+									uni.request({
+										url: baseURL + `/exchange/couponStatus/${item.exchange.coupons_item_id}?link=${link}`,
+										method: "POST",
+										header: {
+											'Authorization': "Bearer " + app.globalData.Authorization,
+										},
+									}).then(res => {
+										console.log("/exchange/couponStatus/", res)
+										if (!res[1]) {
+											return Promise.reject(res[0])
+										} else if (res[1].data.code !== 200) {
+											return Promise.reject(res[1])
+										}
+									}).catch(res => {
+										console.error("更改优惠券兑换状态失败", res)
+									})
+								}
+							} else {
+								// 除“已兑换过”的其他错误
+								msg = data.msg
+							}
+						} else {
+							// 网络错误
+							msg = "网络错误，请稍后重试"
+						}
+						uni.showToast({
+							icon: "none",
+							title: msg,
+						})
+					})
+				}
+				// console.log("ticketHistoryLinks", storage)
+				uni.setStorageSync("ticketHistoryLinks", storage)
+
+				// 跳转链接，此处是一个引导打开微信小程序的H5页面
+				// #ifdef H5
+				if (link) {
+					console.log("link:", link)
+					location.href = link
+				}
+				// #endif
 			},
 			toShowingOrder(item) {
 				let details = encodeURIComponent(JSON.stringify(item))
