@@ -36,6 +36,7 @@
 		baseURL,
 		rootURL
 	} from '../../publicAPI/baseData'
+	import { request } from '../../publicAPI/request';
 	export default {
 		data() {
 			return {
@@ -178,7 +179,7 @@
 					complaintType: this.index + 1,
 					complaintUserName: app.globalData.UserInfo.real_name,
 				}
-				uni.request({
+				request({
 					url: baseURL + '/complaint',
 					method: 'POST',
 					header: {

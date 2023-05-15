@@ -94,9 +94,10 @@
 </template>
 
 <script>
-	import getToken from '../../publicAPI/getToken.js'
-	import updatePersonMsg from '../../publicAPI/updataPersonMsg.js'
+	// import getToken from '../../publicAPI/getToken.js'
+	// import updatePersonMsg from '../../publicAPI/updataPersonMsg.js'
 	import {baseURL} from '../../publicAPI/baseData.js'
+	import { request } from '../../publicAPI/request.js'
 	export default {
 		data() {
 			return {
@@ -181,7 +182,7 @@
 					type: 2,
 					thingsId: this.details.coupons.coupon_id,
 				}
-				uni.request({
+				request({
 					url: baseURL + '/pb_orders',
 					method: "POST",
 					data: this.post,
@@ -198,7 +199,7 @@
 								title: res.data.message
 							});
 							let timer = setInterval(()=>{
-								uni.request({
+								request({
 									url: baseURL + '/pb_orders/result/'+poll.user_id+'/'+poll.type+'/'+poll.thingsId,
 									method: "GET",
 									header: {

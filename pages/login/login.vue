@@ -23,6 +23,7 @@
 
 <script>
 	import {baseURL} from '../../publicAPI/baseData.js'
+	import { request } from '../../publicAPI/request.js'
 	export default {
 		data() {
 			return {
@@ -45,7 +46,7 @@
 				console.log(data.detail.value.ICBC_card_num.length)
 				app.globalData.idCard = data.detail.value.idCard
 				if (reg.test(data.detail.value.ICBC_card_num) == true && data.detail.value.ICBC_card_num.length == 19){
-					uni.request({
+					request({
 						// http://yibinmall.chenglee.top:81/province/
 						url: '/province/user/info',//开发者服务器接口地址
 						method: "POST",
@@ -70,7 +71,7 @@
 								}
 								console.log(app.globalData.UserInfo)
 
-								uni.request({
+								request({
 									url: baseURL + '/user_info',//开发者服务器接口地址
 									method: "POST",
 									data: app.globalData.UserInfo,//请求的参数
@@ -132,14 +133,10 @@
 				secret:"123456Aa."
 			}
 
-			let app = getApp()
-			uni.request({
+			request({
 				url: '/province/data/getToken',//开发者服务器接口地址
 				method: "POST",
 				data: data,//请求的参数
-				header: {
-					'Authorization':"Bearer "+app.globalData.Authorization,
-				},//请求头
 				dataType: "json",
 				sslVerify: false,
 				success: res => {

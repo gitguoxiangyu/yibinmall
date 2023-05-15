@@ -23,6 +23,7 @@
 
 <script>
 	import {baseURL} from '../../publicAPI/baseData.js'
+	import { request } from '../../publicAPI/request.js'
 	export default {
 		data() {
 			return {
@@ -52,7 +53,7 @@
 		},
 		onShow(){
 			let app = getApp()
-			uni.request({
+			request({
 				url: baseURL + '/beansAction/byUserId/' + this.details.id,
 				method:"GET",
 				header: {

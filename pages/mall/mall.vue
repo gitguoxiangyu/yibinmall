@@ -290,8 +290,9 @@
 <script>
 	import icons from '../../uni_modules/uni-icons/components/uni-icons/uni-icons.vue'
 	import panicCreateSetinterval from '../../publicAPI/panicCreateSetInterval.js'
-	import updatePersonMsg from '../../publicAPI/updataPersonMsg.js'
-	import {baseURL} from '../../publicAPI/baseData.js'
+	// import updatePersonMsg from '../../publicAPI/updataPersonMsg.js'
+	import {baseURL, rootURL} from '../../publicAPI/baseData.js'
+	import { request } from '../../publicAPI/request'
 
 	export default {
 		components:{"uni-icons":icons},
@@ -596,7 +597,7 @@
 			//获取商品信息
 			getGoods(){
 				let app = getApp()
-				const xhr = uni.request({
+				const xhr = request({
 					url: baseURL + '/goods/list',
 					method: "GET",
 					// data: msg,
@@ -625,7 +626,7 @@
 			//获取抢购商品信息
 			getPanicGoods(){
 				let app = getApp()
-				const xhr = uni.request({
+				const xhr = request({
 					url: baseURL + '/pb_goods/list',
 					method: "GET",
 					// data: msg,
@@ -669,7 +670,7 @@
 			//获取优惠券信息
 			getCoupons(){
 				let app = getApp()
-				const xhr = uni.request({
+				const xhr = request({
 					url: baseURL + '/coupons/page',
 					method: "GET",
 					// data: msg,
@@ -712,7 +713,7 @@
 			//获取抢购优惠券信息
 			getPanicCoupons(){
 				let app = getApp()
-				const xhr = uni.request({
+				const xhr = request({
 					url: baseURL + '/pb_coupons/list',
 					method: "GET",
 					// data: msg,
@@ -758,7 +759,7 @@
 						img.src = url
 						img.onload = () => {
 							const height = img.height * res.windowWidth / img.width
-							console.log("h w w", img.height, res.windowWidth, img.width)
+							// console.log("h w w", img.height, res.windowWidth, img.width)
 							if (this.swiperHeight < height) {
 								this.swiperHeight = height
 							}
@@ -774,8 +775,8 @@
 				username: "token",
 				password: "123456Aa."
 			}
-			uni.request({
-				url: '/prod-api/auth/get_token',//开发者服务器接口地址
+			request({
+				url: rootURL + '/auth/get_token',//开发者服务器接口地址
 				method: "POST",
 				data: msg,//请求的参数
 				dataType: "json",
@@ -826,7 +827,7 @@
 			console.log(666)
 			let app =getApp()
 			if (app.globalData.UserInfo.id != undefined){
-				uni.request({
+				request({
 					url: baseURL + '/user_info/userBeans?userId=' + app.globalData.UserInfo.id,
 					method: "GET",
 					// data: msg,

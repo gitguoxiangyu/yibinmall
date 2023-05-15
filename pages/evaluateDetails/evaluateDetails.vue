@@ -28,8 +28,9 @@
 </template>
 
 <script>
-import getToken from '../../publicAPI/getToken.js'
+// import getToken from '../../publicAPI/getToken.js'
 import {baseURL, rootURL} from '../../publicAPI/baseData.js'
+import { request } from '../../publicAPI/request.js';
 export default {
 	data() {
 		return {
@@ -170,7 +171,7 @@ export default {
 				evaluationPicture: this.imageList.map(image => image.remoteUrl),
 				goodsEvaluation: this.evaluation,
 			}
-			uni.request({
+			request({
 				url: baseURL + '/goodsEvaluation',
 				method: 'POST',
 				header: {

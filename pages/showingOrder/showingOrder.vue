@@ -61,10 +61,11 @@
 </template>
 
 <script>
-import getToken from '../../publicAPI/getToken.js'
-import updatePersonMsg from '../../publicAPI/updataPersonMsg.js'
+// import getToken from '../../publicAPI/getToken.js'
+// import updatePersonMsg from '../../publicAPI/updataPersonMsg.js'
 import {baseURL} from '../../publicAPI/baseData.js'
 import { correctTime } from '../../utils/common.js'
+import { request } from '../../publicAPI/request.js'
 export default {
 	data() {
 		return {
@@ -80,7 +81,7 @@ export default {
 			this.details = JSON.parse(decodeURIComponent(option.details));
 			console.log(this.details)
 			let app = getApp()
-			uni.request({
+			request({
 				url: baseURL + '/orders/orderById?orderId=' + this.details.exchange.order_id,
 				method: "GET",
 				header: {

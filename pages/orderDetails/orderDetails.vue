@@ -113,8 +113,9 @@
 </template>
 
 <script>
-	import updatePersonMsg from '../../publicAPI/updataPersonMsg.js'
+	// import updatePersonMsg from '../../publicAPI/updataPersonMsg.js'
 	import {baseURL} from '../../publicAPI/baseData.js'
+	import { request } from '../../publicAPI/request.js';
 	export default {
 		data() {
 			return {
@@ -193,7 +194,7 @@
 				console.log(this.post)
 				let app = getApp()
 				//发送购买请求
-				uni.request({
+				request({
 					url: baseURL + '/orders',
 					method: "POST",
 					data: this.post,

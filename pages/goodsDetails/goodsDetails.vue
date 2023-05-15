@@ -79,6 +79,7 @@
 
 <script>
 	import {baseURL} from '../../publicAPI/baseData.js'
+	import { request } from '../../publicAPI/request.js';
 	export default {
 		data() {
 			return {
@@ -110,7 +111,7 @@
 
 			// 获取商品评价
 			const app = getApp()
-			uni.request({
+			request({
 				url: baseURL + "/goodsEvaluation/evaluationByGoodsId",
 				method: "GET",
 				header: {

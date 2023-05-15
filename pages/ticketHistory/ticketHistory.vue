@@ -63,6 +63,7 @@
 	import { baseURL } from '../../publicAPI/baseData.js'
 	import { correctTime , jsonToBigint } from '../../utils/common.js'
 	import CryptoJS from "crypto-js"
+	import { request } from '../../publicAPI/request.js'
 
 	export default {
 		data() {
@@ -95,7 +96,7 @@
 		},
 		created() {
 			let app = getApp()
-			let xhr = uni.request({
+			let xhr = request({
 				// url: 'http://yibinmall.chenglee.top:8080/exchange/page',
 				url: baseURL + '/exchange/byUserId/' + app.globalData.UserInfo.id,
 				method: "GET",
@@ -281,7 +282,7 @@
 					// console.log("vlinkdata encrypted", vlinkdata)
 
 
-					await uni.request({
+					await request({
 						// url: "https://didao.lovemojito.com/icbcMiNi/collection/placeOutOrder.php",
 						url: baseURL + "/exchange/getLink",
 						method: "POST",
@@ -312,7 +313,7 @@
 						console.log("获取立减金兑换链接成功 link:", link)
 
 						// 更新优惠券使用状态
-						return uni.request({
+						return request({
 							url: baseURL + `/exchange/couponStatus/${item.exchange.coupons_item_id}?link=${link}`,
 							method: "POST",
 							header: {
@@ -350,7 +351,7 @@
 									msg = "未知错误！"
 								} else {
 									// LocalStorage中有记录，则使用记录的链接更新优惠券使用状态
-									uni.request({
+									request({
 										url: baseURL + `/exchange/couponStatus/${item.exchange.coupons_item_id}?link=${link}`,
 										method: "POST",
 										header: {
