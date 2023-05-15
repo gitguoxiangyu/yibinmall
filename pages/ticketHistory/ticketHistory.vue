@@ -294,18 +294,14 @@
 						},
 					}).then(res => {
 						console.log("placeOutOrder.php", res)
-						if (!res[1]) {
-							// 网络请求出错
-							return Promise.reject(res[0])
-						}
-
-						let data = res[1].data.object
+						
+						let data = res.data.object
 						if (typeof data === "string") {
 							data = JSON.parse(data)
 						}
 						if (data.code != "000000") {
 							// 接口返回错误信息
-							return Promise.reject(res[1])
+							return Promise.reject(res)
 						}
 
 						// 成功获取link
@@ -321,12 +317,9 @@
 							},
 						}).then(res => {
 							console.log("/exchange/couponStatus/", res)
-							if (!res[1]) {
-								// 网络请求出错
-								return Promise.reject(res[0])
-							} else if (res[1].data.code !== 200) {
+							if (res.data.code !== 200) {
 								// 后台接口返回错误信息
-								return Promise.reject(res[1])
+								return Promise.reject(res)
 							}
 						}).catch(res => {
 							console.error("更改优惠券兑换状态失败", res)
@@ -359,10 +352,8 @@
 										},
 									}).then(res => {
 										console.log("/exchange/couponStatus/", res)
-										if (!res[1]) {
-											return Promise.reject(res[0])
-										} else if (res[1].data.code !== 200) {
-											return Promise.reject(res[1])
+										if (res.data.code !== 200) {
+											return Promise.reject(res)
 										}
 									}).catch(res => {
 										console.error("更改优惠券兑换状态失败", res)
