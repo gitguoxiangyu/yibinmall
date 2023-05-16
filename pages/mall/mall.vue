@@ -132,26 +132,26 @@
 								<text class="goodsNum" >
 									仅剩 {{item.panicBuyingGoods.panic_buying_goods_stock}} 件
 								</text>
-								<view class="flashTime" v-if="item.panicBuyingGoods">
+								<view class="flashTime" v-if="item.panicBuyingGoods" v-show="item.remainBeginSeconds > 0">
 									抢购
 									<text style="color: red">
-										{{item.panicBuyingGoods.panic_buying_start_time}}
+										{{" " + item.panicBuyingGoods.panic_buying_start_time + " "}}
 									</text>
 									开始
 								</view>
 								<view class="flashTime" v-if="!(item.remainBeginSeconds == -1 || item.remainBeginSeconds == -2)">
 									抢购还剩
 									<text style="color: red">
-										{{Math.floor( item.remainBeginSeconds / 3600)}}时{{Math.floor((item.remainBeginSeconds / 60)%60)}}分{{item.remainBeginSeconds % 60}}
+										{{" " + toFriendlyTime(item.remainBeginSeconds) + " "}}
 									</text>
-									秒开始
+									开始
 								</view>
 								<view class="flashTime" v-else-if="!(item.remainEndSeconds == -1 || item.remainEndSeconds == -2)">
 									抢购还剩
 									<text style="color: red">
-										{{Math.floor( item.remainEndSeconds / 3600)}}时{{Math.floor((item.remainEndSeconds / 60)%60)}}分{{item.remainEndSeconds % 60}}
+										{{" " + toFriendlyTime(item.remainEndSeconds) + " "}}
 									</text>
-									秒结束
+									结束
 								</view>
 							</view>
 							<view class="goodsSale">
@@ -182,26 +182,26 @@
 								<view class="goodsNum">
 									仅剩 {{item.panicBuyingCoupons.panic_buying_coupons_stock}} 件
 								</view>
-								<view class="flashTime" v-if="item.panicBuyingCoupons.panic_buying_start_time">
+								<view class="flashTime" v-if="item.panicBuyingCoupons.panic_buying_start_time" v-show="item.remainBeginSeconds > 0">
 									抢购
 									<text style="color: red">
-										{{item.panicBuyingCoupons.panic_buying_start_time}}
+										{{" " + item.panicBuyingCoupons.panic_buying_start_time + " "}}
 									</text>
 									开始
 								</view>
 								<view class="flashTime" v-if="!(item.remainBeginSeconds == -1 || item.remainBeginSeconds == -2)">
 									抢购还剩
 									<text style="color: red">
-										{{Math.floor( item.remainBeginSeconds / 3600)}}时{{Math.floor((item.remainBeginSeconds / 60)%60)}}分{{item.remainBeginSeconds % 60}}
+										{{" " + toFriendlyTime(item.remainBeginSeconds) + " "}}
 									</text>
-									秒开始
+									开始
 								</view>
 								<view class="flashTime" v-else-if="!(item.remainEndSeconds == -1 || item.remainEndSeconds == -2)">
 									抢购还剩
 									<text style="color: red">
-										{{Math.floor( item.remainEndSeconds / 3600)}}时{{Math.floor((item.remainEndSeconds / 60)%60)}}分{{item.remainEndSeconds % 60}}
+										{{" " + toFriendlyTime(item.remainEndSeconds) + " "}}
 									</text>
-									秒结束
+									结束
 								</view>
 							</view>
 							<view class="goodsSale">
@@ -235,7 +235,7 @@
 								<view class="flashTime" v-if="item.panic_buying_start">
 									抢购
 									<view style="color: red">
-										{{item.panic_buying_start}}
+										{{" " + item.panic_buying_start + " "}}
 									</view>
 									开始
 								</view>
@@ -755,7 +755,24 @@
 				}catch{
 					console.log("无法正常获取商品信息")
 				}
-			}
+			},
+			toFriendlyTime(seconds) {
+				// let day = Math.floor( seconds / 86400)
+				// let h = Math.floor(seconds / 3600) % 24
+
+				let h = Math.floor(seconds / 3600)
+				let m = Math.floor(seconds / 60) % 60
+				let s = seconds % 60
+				if (h < 10) h = "0" + h
+				if (m < 10) m = "0" + m
+				if (s < 10) s = "0" + s
+
+				let str = `${h}:${m}:${s}`
+				// if (day > 0) {
+				// 	str =  `${day}天` + str
+				// }
+				return str
+			},
 		},
 		onLoad(){
 			// 根据图片高度计算出swiper的高度
