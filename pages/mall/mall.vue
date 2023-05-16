@@ -10,7 +10,7 @@
 		<view class="header" v-if="hasUserInfo">
 			<view class="headerBac"><image src="../../static/img/headerBac.png"></image></view>
 			<view class="usr">
-				<view class="headPortait"><image :src="UserInfo.avatar"></image></view>
+				<view class="headPortait" @click="logout"><image :src="UserInfo.avatar"></image></view>
 				<view class="usrInfo">
 					<view class="usrInfoHeader">
 						<view class="name">{{UserInfo.real_name}}</view>
@@ -294,6 +294,7 @@
 	import {baseURL, rootURL} from '../../publicAPI/baseData.js'
 	import { request } from '../../publicAPI/request'
 	import { getAuthorization } from '../../publicAPI/newToken'
+	import { getUserBeans, login } from '../../publicAPI/userInfo'
 
 	export default {
 		components:{"uni-icons":icons},
@@ -756,6 +757,7 @@
 					console.log("无法正常获取商品信息")
 				}
 			},
+			/** 将秒数转换为 hh:mm:ss 形式 */
 			toFriendlyTime(seconds) {
 				// let day = Math.floor( seconds / 86400)
 				// let h = Math.floor(seconds / 3600) % 24
@@ -772,6 +774,23 @@
 				// 	str =  `${day}天` + str
 				// }
 				return str
+			},
+			/** 退出登录 */
+			logout() {
+				uni.showModal({
+					title: "退出登录",
+					content: "确认退出登录？",
+					success: res => {
+						if (res.confirm) {
+							uni.removeStorageSync("loginData")
+							const app = getApp()
+							delete app.globalData.UserInfo
+							delete app.globalData.hasUserInfo
+							this.hasUserInfo = app.globalData.hasUserInfo
+							this.UserInfo = app.globalData.UserInfo
+						}
+					}
+				})
 			},
 		},
 		onLoad(){
@@ -792,8 +811,17 @@
 				}
 			})
 
-			this.hasUserInfo = getApp().globalData.hasUserInfo
-			this.UserInfo = getApp().globalData.UserInfo
+			const app = getApp()
+			// 根据存储的登录信息自动登录
+			const loginData = uni.getStorageSync("loginData")
+			login(loginData).then(() => {
+				console.log("自动登录成功")
+				this.hasUserInfo = app.globalData.hasUserInfo
+				this.UserInfo = app.globalData.UserInfo
+				getUserBeans()
+			}).catch(res => {
+				console.warn("自动登录失败", res)
+			})
 
 			this.getMallData()
 
@@ -802,32 +830,13 @@
 			}, 180000)
 		},
 		onShow(){
-			this.hasUserInfo = getApp().globalData.hasUserInfo
-			this.UserInfo = getApp().globalData.UserInfo
+			let app = getApp()
+			this.hasUserInfo = app.globalData.hasUserInfo
+			this.UserInfo = app.globalData.UserInfo
 
 			console.log(666)
-			let app =getApp()
 			if (app.globalData.UserInfo.id != undefined){
-				request({
-					url: baseURL + '/user_info/userBeans?userId=' + app.globalData.UserInfo.id,
-					method: "GET",
-					// data: msg,
-					header: {
-						'Authorization':"Bearer " + getAuthorization(),
-					},//请求头
-					dataType: "json",
-					sslVerify: false,
-					success: res => {
-						console.log(res)
-						getApp().globalData.UserInfo.beans = res.data.object
-					},
-					fail: err => {
-						uni.showToast({
-							icon: 'none',
-							title: "更新鲜豆失败！"
-						});
-					}
-				})
+				getUserBeans()
 			}
 		}
 	}
@@ -901,9 +910,10 @@
 						// width: 60vw;
 						margin-left: 4vw;
 						.usrInfoHeader{
-							width: 50vw;
+							// width: 50vw;
 							height: 8vw;
 							display: flex;
+							align-items: center;
 							.name{
 								width: 15vw;
 								line-height: 8vw;

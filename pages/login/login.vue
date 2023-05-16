@@ -25,6 +25,7 @@
 	import {baseURL} from '../../publicAPI/baseData.js'
 	import { getAuthorization } from '../../publicAPI/newToken.js'
 	import { request } from '../../publicAPI/request.js'
+	import { login } from '../../publicAPI/userInfo.js'
 	export default {
 		data() {
 			return {
@@ -38,86 +39,46 @@
 				// 51253419720212703X
 				// 510524200203160384
 				let reg = /^6217212314/
-				let app = getApp()
-				//请求体
-				let msg = {
-					idCard: data.detail.value.idCard,
-					token: app.globalData.token
-				}
 				console.log(data.detail.value.ICBC_card_num.length)
-				app.globalData.idCard = data.detail.value.idCard
-				if (reg.test(data.detail.value.ICBC_card_num) == true && data.detail.value.ICBC_card_num.length == 19){
-					request({
-						// http://yibinmall.chenglee.top:81/province/
-						url: '/province/user/info',//开发者服务器接口地址
-						method: "POST",
-						data: msg,//请求的参数
-						dataType: "json",
-						sslVerify: false,
-						success: res => {
-							console.log(res)
-							if (res.data.code == "200"){
-								//重新封装属性名，发向服务器
-								app.globalData.UserInfo = {
-									id: res.data.data.id,
-									real_name: res.data.data.realname,
-									card_num: res.data.data.cardNum,
-									card_type: res.data.data.cardType,
-									icbc_card_num: data.detail.value.ICBC_card_num,
-									avatar: res.data.data.avatar,
-									mobile: res.data.data.mobile,
-									beans: res.data.data.score,
-									star: res.data.data.certificate,
-									hours: res.data.data.hours
-								}
-								console.log(app.globalData.UserInfo)
-
-								request({
-									url: baseURL + '/user_info',//开发者服务器接口地址
-									method: "POST",
-									data: app.globalData.UserInfo,//请求的参数
-									header: {
-										'Authorization':"Bearer " + getAuthorization(),
-									},//请求头
-									dataType: "json",
-									sslVerify: false,
-									success: res => {
-										app.globalData.hasUserInfo = 1
-										app.globalData.UserInfo.beans = res.data.object
-										console.log(res)
-										uni.navigateTo({
-											url: '../mall/mall'
-										})
-									},
-									fail: err => {
-										console.log(err)
-										uni.showToast({
-											icon: 'none',
-											title: '登录错误'
-										});
-									}
-								})
-							}else{
-								uni.showToast({
-									icon: 'none',
-									title: res.data.msg
-								})
-							}
-						},
-						fail: err => {
-							uni.hideLoading()
-							uni.showToast({
-								icon: 'none',
-								title: err
-							});
-						}
+				let errMsg = ""
+				if (!data.detail.value.idCard) {
+					errMsg = "请输入身份证号"
+				} else if (!data.detail.value.ICBC_card_num) {
+					errMsg = "请输入社保卡号"
+				} else if (reg.test(data.detail.value.ICBC_card_num) !== true || data.detail.value.ICBC_card_num.length !== 19) {
+					errMsg = "请检查社保卡号是否正确"
+				}
+				if (errMsg) {
+					uni.showToast({
+						icon: "none",
+						title: errMsg,
 					})
-				}else{
+					return
+				}
+
+				const loginData = {
+					idCard: data.detail.value.idCard,
+					ICBC_card_num: data.detail.value.ICBC_card_num,
+				}
+
+				let app = getApp()
+				app.globalData.idCard = data.detail.value.idCard
+				login(loginData).then(res => {
+					uni.setStorageSync("loginData", loginData)
+					app.globalData.hasUserInfo = 1
+					// app.globalData.UserInfo.beans = res.data.object
+					console.log(res)
+
+					uni.navigateTo({
+						url: '../mall/mall'
+					})
+				}).catch(res => {
+					console.error("登录错误", res)
 					uni.showToast({
 						icon: 'none',
-						title: "请检查社保卡号是否正确"
+						title: '登录错误'
 					});
-				}
+				})
 
 			}
 		},

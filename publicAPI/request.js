@@ -28,7 +28,7 @@ export const request = (options, count = 1) => {
 				if (count === 1) {
 					// 如果刷新Authorization失败或重新发送request失败，都算preprocessSuccess失败
 					getNewAuthorization().then(auth => {
-						console.log("自动刷新Authorization成功", auth)
+						// console.log("自动刷新Authorization成功", auth)
 						const _options2 = {..._options}
 						if (_options2.success) {
 							_options2.success = res => {
@@ -154,7 +154,11 @@ export const request = (options, count = 1) => {
 
 			// 为方便使用，这里将返回res[1]或res[0]
 			if (res[1]) {
-				return preprocessSuccess(res[1])
+				if (found) {
+					return preprocessSuccess(res[1])
+				} else {
+					return res[1]
+				}
 			} else {
 				// 网络请求失败时，res[0] = { errMsg: string }
 				return Promise.reject(res[0])
