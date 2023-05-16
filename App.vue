@@ -1,15 +1,17 @@
 <script>
+	import { autoLogin } from './publicAPI/userInfo'
 	export default {
-		globalData: {  
+		globalData: {
 		  toekn:"",
 			idCard:"",
 			hasUserInfo:0,
 			UserInfo:{},
 			Authorization:"",
 			serveURL:"http://yibinmall.chenglee.top:8080",
-		}, 
+		},
 		onLaunch: function() {
 			console.log('App Launch')
+			autoLogin()
 		},
 		onShow: function() {
 			console.log('App Show')

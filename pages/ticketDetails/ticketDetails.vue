@@ -91,7 +91,7 @@
 		},
 		methods: {
 			buy(){
-				if(getApp().globalData.hasUserInfo == 0){
+				if(getApp().globalData.hasUserInfo != 1){
 					uni.showToast({
 						icon: 'none',
 						title: "用户未登录"

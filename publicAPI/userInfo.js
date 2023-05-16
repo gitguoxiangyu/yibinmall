@@ -15,6 +15,30 @@ export function getUserBeans() {
 	})
 }
 
+export async function autoLogin() {
+	const app = getApp()
+	// 根据存储的登录信息自动登录
+	const loginData = uni.getStorageSync("loginData")
+	app.globalData.loginTask = login(loginData).then(() => {
+		console.log("自动登录成功")
+		return getUserBeans().then(() => {
+			// app.globalData.loginTask = null
+		})
+	}).catch(res => {
+		console.warn("自动登录失败", res)
+		app.globalData.loginTask = null
+	})
+}
+
+export async function getLoginTask() {
+	const app = getApp()
+	if (app.globalData.loginTask instanceof Promise) {
+		return app.globalData.loginTask
+	} else {
+		return Promise.resolve()
+	}
+}
+
 export async function login(loginData) {
 	if (!loginData || !loginData.idCard || !loginData.ICBC_card_num) {
 		throw new Error("loginData为空或数据不完整", loginData)
@@ -76,7 +100,7 @@ export async function login(loginData) {
 					star: res.data.data.certificate,
 					hours: res.data.data.hours
 				}
-				// console.log(UserInfo)
+				// console.log("UserInfo", UserInfo)
 
 				return request({
 					url: baseURL + '/user_info',//开发者服务器接口地址

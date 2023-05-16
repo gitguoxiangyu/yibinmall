@@ -109,7 +109,7 @@
 						icon: 'none',
 						title: "抢购时间已过"
 					});
-				}else if(getApp().globalData.hasUserInfo == 0){
+				}else if(getApp().globalData.hasUserInfo != 1){
 					uni.showToast({
 						icon: 'none',
 						title: "用户未登录"

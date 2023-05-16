@@ -32,6 +32,7 @@
 import {baseURL, rootURL} from '../../publicAPI/baseData.js'
 import { getAuthorization } from '../../publicAPI/newToken.js';
 import { request } from '../../publicAPI/request.js';
+import { getLoginTask } from '../../publicAPI/userInfo.js';
 export default {
 	data() {
 		return {
@@ -170,47 +171,49 @@ export default {
 			}
 		},
 		submit(){
-			const app = getApp()
-			const goods = this.details.goods
-			const data = {
-				storeId: goods.store_id,
-				userId: app.globalData.UserInfo.id,
-				goodsId: goods.goods_id,
-				evaluationPicture: this.imageList.map(image => image.remoteUrl),
-				goodsEvaluation: this.evaluation,
-			}
-			request({
-				url: baseURL + '/goodsEvaluation',
-				method: 'POST',
-				header: {
-					'Authorization':"Bearer " + getAuthorization(),
-				},//请求头
-				data: data,
-				dataType: "json",
-				sslVerify: false,
-				success: res => {
-					if (res.data.code !== 200) {
+			getLoginTask().then(() => {
+				const app = getApp()
+				const goods = this.details.goods
+				const data = {
+					storeId: goods.store_id,
+					userId: app.globalData.UserInfo.id,
+					goodsId: goods.goods_id,
+					evaluationPicture: this.imageList.map(image => image.remoteUrl),
+					goodsEvaluation: this.evaluation,
+				}
+				request({
+					url: baseURL + '/goodsEvaluation',
+					method: 'POST',
+					header: {
+						'Authorization':"Bearer " + getAuthorization(),
+					},//请求头
+					data: data,
+					dataType: "json",
+					sslVerify: false,
+					success: res => {
+						if (res.data.code !== 200) {
+							uni.showToast({
+								icon: 'none',
+								title: '提交失败，请稍后重试！',
+							})
+							return;
+						}
+						uni.showToast({
+							icon:'success',
+							title: '提交成功！',
+						})
+						this.submitted = true
+						setTimeout(() => {
+							uni.navigateBack()
+						}, 1000)
+					},
+					fail: res => {
 						uni.showToast({
 							icon: 'none',
 							title: '提交失败，请稍后重试！',
 						})
-						return;
 					}
-					uni.showToast({
-						icon:'success',
-						title: '提交成功！',
-					})
-					this.submitted = true
-					setTimeout(() => {
-						uni.navigateBack()
-					}, 1000)
-				},
-				fail: res => {
-					uni.showToast({
-						icon: 'none',
-						title: '提交失败，请稍后重试！',
-					})
-				}
+				})
 			})
 		}
 	}

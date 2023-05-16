@@ -294,7 +294,7 @@
 	import {baseURL, rootURL} from '../../publicAPI/baseData.js'
 	import { request } from '../../publicAPI/request'
 	import { getAuthorization } from '../../publicAPI/newToken'
-	import { getUserBeans, login } from '../../publicAPI/userInfo'
+	import { getLoginTask, getUserBeans, login } from '../../publicAPI/userInfo'
 
 	export default {
 		components:{"uni-icons":icons},
@@ -306,8 +306,8 @@
 					"../../static/img/swiper-img.jpg",
 				],
 				imageUrl:'http://yibinmall.chenglee.top:81/prod-api/mall/',
-				hasUserInfo:getApp().globalData.hasUserInfo,
-				UserInfo:getApp().globalData.UserInfo,
+				hasUserInfo: 0,
+				UserInfo: {},
 				starRate:20,
 				navArr:[
 					{
@@ -779,13 +779,13 @@
 			logout() {
 				uni.showModal({
 					title: "退出登录",
-					content: "确认退出登录？",
+					content: "确定退出登录？",
 					success: res => {
 						if (res.confirm) {
 							uni.removeStorageSync("loginData")
 							const app = getApp()
-							delete app.globalData.UserInfo
 							delete app.globalData.hasUserInfo
+							delete app.globalData.UserInfo
 							this.hasUserInfo = app.globalData.hasUserInfo
 							this.UserInfo = app.globalData.UserInfo
 						}
@@ -812,32 +812,28 @@
 			})
 
 			const app = getApp()
-			// 根据存储的登录信息自动登录
-			const loginData = uni.getStorageSync("loginData")
-			login(loginData).then(() => {
-				console.log("自动登录成功")
-				this.hasUserInfo = app.globalData.hasUserInfo
-				this.UserInfo = app.globalData.UserInfo
-				getUserBeans()
-			}).catch(res => {
-				console.warn("自动登录失败", res)
+			getLoginTask().then(() => {
+				// this.hasUserInfo = app.globalData.hasUserInfo
+				// this.UserInfo = app.globalData.UserInfo
+				this.getMallData()
+
+				setInterval(() => {
+					this.getMallData()
+				}, 180000)
 			})
 
-			this.getMallData()
-
-			setInterval(() => {
-				this.getMallData()
-			}, 180000)
 		},
 		onShow(){
-			let app = getApp()
-			this.hasUserInfo = app.globalData.hasUserInfo
-			this.UserInfo = app.globalData.UserInfo
+			getLoginTask().then(() => {
+				let app = getApp()
+				this.hasUserInfo = app.globalData.hasUserInfo
+				this.UserInfo = app.globalData.UserInfo
 
-			console.log(666)
-			if (app.globalData.UserInfo.id != undefined){
-				getUserBeans()
-			}
+				console.log(666)
+				if (app.globalData.UserInfo.id != undefined){
+					getUserBeans()
+				}
+			})
 		}
 	}
 </script>

@@ -65,6 +65,7 @@
 	import CryptoJS from "crypto-js"
 	import { request } from '../../publicAPI/request.js'
 	import { getAuthorization } from '../../publicAPI/newToken.js'
+	import { getLoginTask } from '../../publicAPI/userInfo.js'
 
 	export default {
 		data() {
@@ -95,48 +96,49 @@
 				showPop:false,
 			}
 		},
-		created() {
-			let app = getApp()
-			request({
-				// url: 'http://yibinmall.chenglee.top:8080/exchange/page',
-				url: baseURL + '/exchange/byUserId/' + app.globalData.UserInfo.id,
-				method: "GET",
-				// data: msg,
-				header: {
-					'Authorization':"Bearer " + getAuthorization(),
-				},//请求头
-				dataType: "jsonbigint",
-				sslVerify: false,
-				success: res => {
-					let arr = res.data.object
-					arr.forEach((item,index) => {
-						if (item.coupons != null){
-							item.coupons.date_use_begin = correctTime(item.coupons.date_use_begin)
-							item.coupons.date_use_end = correctTime(item.coupons.date_use_end)
-							item.coupons.exchange_deadline = correctTime(item.coupons.exchange_deadline)
-							this.ticket.push(item)
-							this.displayTicket.push(item)
-						}else if(item.goods != null){
-							item.goods.exchange_deadline = correctTime(item.goods.exchange_deadline)
-							item.goods.update_time = correctTime(item.goods.update_time)
-							item.exchange.params.orderTime = correctTime(item.exchange.params.orderTime)
-							this.goods.push(item)
-							this.displayItems.push(item)
-						}
-					})
-					console.log(this.ticket)
-					console.log(this.goods)
-					this.displayItems = this.displayItems.reverse()
-					this.updateNavItemCount()
-				},
-				fail: err => {
-					uni.showToast({
-						icon: 'none',
-						title: "获取商品信息失败，请重试！"
-					});
-				}
+		onShow() {
+			getLoginTask().then(() => {
+				let app = getApp()
+				request({
+					// url: 'http://yibinmall.chenglee.top:8080/exchange/page',
+					url: baseURL + '/exchange/byUserId/' + app.globalData.UserInfo.id,
+					method: "GET",
+					// data: msg,
+					header: {
+						'Authorization':"Bearer " + getAuthorization(),
+					},//请求头
+					dataType: "jsonbigint",
+					sslVerify: false,
+					success: res => {
+						let arr = res.data.object
+						arr.forEach((item,index) => {
+							if (item.coupons != null){
+								item.coupons.date_use_begin = correctTime(item.coupons.date_use_begin)
+								item.coupons.date_use_end = correctTime(item.coupons.date_use_end)
+								item.coupons.exchange_deadline = correctTime(item.coupons.exchange_deadline)
+								this.ticket.push(item)
+								this.displayTicket.push(item)
+							}else if(item.goods != null){
+								item.goods.exchange_deadline = correctTime(item.goods.exchange_deadline)
+								item.goods.update_time = correctTime(item.goods.update_time)
+								item.exchange.params.orderTime = correctTime(item.exchange.params.orderTime)
+								this.goods.push(item)
+								this.displayItems.push(item)
+							}
+						})
+						console.log(this.ticket)
+						console.log(this.goods)
+						this.displayItems = this.displayItems.reverse()
+						this.updateNavItemCount()
+					},
+					fail: err => {
+						uni.showToast({
+							icon: 'none',
+							title: "获取商品信息失败，请重试！"
+						});
+					}
+				})
 			})
-
 		},
 		onLoad() {
 
@@ -241,149 +243,151 @@
 				// if link
 				// 		跳转链接
 
-				const app = getApp()
-				if (!app.globalData.UserInfo || !item.exchange) {
-					return
-				}
-
-				const order_id = item.exchange.order_id
-				// 远端记录中的link
-				let link = item.exchange.link
-				// LocalStorage中用于保存link的对象
-				let storage = uni.getStorageSync("ticketHistoryLinks")
-				// console.log("ticketHistoryLinks before", storage)
-				if (!storage) storage = {}
-
-				if (link) {
-					delete storage[order_id]
-				} else {
-					// 获取兑换链接
-						// console.log("UserInfo", app.globalData.UserInfo)
-						// console.log("exchange", item.exchange)
-
-					const rawData = {
-						user: app.globalData.UserInfo.id + "",
-						cash: 2,
-						order_id: order_id,
-						act_id: "ybApp",
-						task: "test"
+				return getLoginTask().then(async () => {
+					const app = getApp()
+					if (!app.globalData.UserInfo || !item.exchange) {
+						return
 					}
-					// console.log("rawData", JSON.stringify(rawData))
 
-					let key = "V!rGgMk72pk*sW@5"
-					// console.log("===key===", key)
-					key = CryptoJS.enc.Utf8.parse(key)
-					// console.log("===key===", key)
+					const order_id = item.exchange.order_id
+					// 远端记录中的link
+					let link = item.exchange.link
+					// LocalStorage中用于保存link的对象
+					let storage = uni.getStorageSync("ticketHistoryLinks")
+					// console.log("ticketHistoryLinks before", storage)
+					if (!storage) storage = {}
 
-					// AES加密
-					const vlinkdata = CryptoJS.AES.encrypt(JSON.stringify(rawData), key, {
-						mode: CryptoJS.mode.ECB,
-						padding: CryptoJS.pad.Pkcs7,
-					}).toString(CryptoJS.format.OpenSSL)
-					// console.log("vlinkdata encrypted", vlinkdata)
+					if (link) {
+						delete storage[order_id]
+					} else {
+						// 获取兑换链接
+							// console.log("UserInfo", app.globalData.UserInfo)
+							// console.log("exchange", item.exchange)
 
-
-					await request({
-						// url: "https://didao.lovemojito.com/icbcMiNi/collection/placeOutOrder.php",
-						url: baseURL + "/exchange/getLink",
-						method: "POST",
-						data: { vlinkdata: vlinkdata },
-						header: {
-							'Authorization': "Bearer " + getAuthorization(),
-							"Content-Type": "application/x-www-form-urlencoded",
-							// "Host": "didao.lovemojito.com",
-						},
-					}).then(res => {
-						console.log("placeOutOrder.php", res)
-
-						let data = res.data.object
-						if (typeof data === "string") {
-							data = JSON.parse(data)
+						const rawData = {
+							user: app.globalData.UserInfo.id + "",
+							cash: 2,
+							order_id: order_id,
+							act_id: "ybApp",
+							task: "test"
 						}
-						if (data.code != "000000") {
-							// 接口返回错误信息
-							return Promise.reject(res)
-						}
+						// console.log("rawData", JSON.stringify(rawData))
 
-						// 成功获取link
-						link = data.link
-						console.log("获取立减金兑换链接成功 link:", link)
+						let key = "V!rGgMk72pk*sW@5"
+						// console.log("===key===", key)
+						key = CryptoJS.enc.Utf8.parse(key)
+						// console.log("===key===", key)
 
-						// 更新优惠券使用状态
-						return request({
-							url: baseURL + `/exchange/couponStatus/${item.exchange.coupons_item_id}?link=${link}`,
+						// AES加密
+						const vlinkdata = CryptoJS.AES.encrypt(JSON.stringify(rawData), key, {
+							mode: CryptoJS.mode.ECB,
+							padding: CryptoJS.pad.Pkcs7,
+						}).toString(CryptoJS.format.OpenSSL)
+						// console.log("vlinkdata encrypted", vlinkdata)
+
+
+						await request({
+							// url: "https://didao.lovemojito.com/icbcMiNi/collection/placeOutOrder.php",
+							url: baseURL + "/exchange/getLink",
 							method: "POST",
+							data: { vlinkdata: vlinkdata },
 							header: {
 								'Authorization': "Bearer " + getAuthorization(),
+								"Content-Type": "application/x-www-form-urlencoded",
+								// "Host": "didao.lovemojito.com",
 							},
 						}).then(res => {
-							console.log("/exchange/couponStatus/", res)
-							if (res.data.code !== 200) {
-								// 后台接口返回错误信息
-								return Promise.reject(res)
-							}
-						}).catch(res => {
-							console.error("更改优惠券兑换状态失败", res)
-							// 在LocalStorage中保存link
-							storage[order_id] = link
-						})
-					}).catch(res => {
-						console.error("获取立减金兑换链接失败", res)
-						let msg = ""
-						if (res.statusCode === 200) {
+							console.log("placeOutOrder.php", res)
+
 							let data = res.data.object
 							if (typeof data === "string") {
 								data = JSON.parse(data)
 							}
-							if (data.code == 100008) {
-								// 已经兑换过
-								// 检查LocalStorage中是否有记录
-								link = storage[order_id]
-								if (!link) {
-									// LocalStorage中没有记录，无法处理
-									msg = "该优惠券已经兑换过"
-									msg = "未知错误！"
+							if (data.code != "000000") {
+								// 接口返回错误信息
+								return Promise.reject(res)
+							}
+
+							// 成功获取link
+							link = data.link
+							console.log("获取立减金兑换链接成功 link:", link)
+
+							// 更新优惠券使用状态
+							return request({
+								url: baseURL + `/exchange/couponStatus/${item.exchange.coupons_item_id}?link=${link}`,
+								method: "POST",
+								header: {
+									'Authorization': "Bearer " + getAuthorization(),
+								},
+							}).then(res => {
+								console.log("/exchange/couponStatus/", res)
+								if (res.data.code !== 200) {
+									// 后台接口返回错误信息
+									return Promise.reject(res)
+								}
+							}).catch(res => {
+								console.error("更改优惠券兑换状态失败", res)
+								// 在LocalStorage中保存link
+								storage[order_id] = link
+							})
+						}).catch(res => {
+							console.error("获取立减金兑换链接失败", res)
+							let msg = ""
+							if (res.statusCode === 200) {
+								let data = res.data.object
+								if (typeof data === "string") {
+									data = JSON.parse(data)
+								}
+								if (data.code == 100008) {
+									// 已经兑换过
+									// 检查LocalStorage中是否有记录
+									link = storage[order_id]
+									if (!link) {
+										// LocalStorage中没有记录，无法处理
+										msg = "该优惠券已经兑换过"
+										msg = "未知错误！"
+									} else {
+										// LocalStorage中有记录，则使用记录的链接更新优惠券使用状态
+										request({
+											url: baseURL + `/exchange/couponStatus/${item.exchange.coupons_item_id}?link=${link}`,
+											method: "POST",
+											header: {
+												'Authorization': "Bearer " + getAuthorization(),
+											},
+										}).then(res => {
+											console.log("/exchange/couponStatus/", res)
+											if (res.data.code !== 200) {
+												return Promise.reject(res)
+											}
+										}).catch(res => {
+											console.error("更改优惠券兑换状态失败", res)
+										})
+									}
 								} else {
-									// LocalStorage中有记录，则使用记录的链接更新优惠券使用状态
-									request({
-										url: baseURL + `/exchange/couponStatus/${item.exchange.coupons_item_id}?link=${link}`,
-										method: "POST",
-										header: {
-											'Authorization': "Bearer " + getAuthorization(),
-										},
-									}).then(res => {
-										console.log("/exchange/couponStatus/", res)
-										if (res.data.code !== 200) {
-											return Promise.reject(res)
-										}
-									}).catch(res => {
-										console.error("更改优惠券兑换状态失败", res)
-									})
+									// 除“已兑换过”的其他错误
+									msg = data.msg
 								}
 							} else {
-								// 除“已兑换过”的其他错误
-								msg = data.msg
+								// 网络错误
+								msg = "网络错误，请稍后重试"
 							}
-						} else {
-							// 网络错误
-							msg = "网络错误，请稍后重试"
-						}
-						uni.showToast({
-							icon: "none",
-							title: msg,
+							uni.showToast({
+								icon: "none",
+								title: msg,
+							})
 						})
-					})
-				}
-				// console.log("ticketHistoryLinks", storage)
-				uni.setStorageSync("ticketHistoryLinks", storage)
+					}
+					// console.log("ticketHistoryLinks", storage)
+					uni.setStorageSync("ticketHistoryLinks", storage)
 
-				// 跳转链接，此处是一个引导打开微信小程序的H5页面
-				// #ifdef H5
-				if (link) {
-					console.log("link:", link)
-					location.href = link
-				}
-				// #endif
+					// 跳转链接，此处是一个引导打开微信小程序的H5页面
+					// #ifdef H5
+					if (link) {
+						console.log("link:", link)
+						location.href = link
+					}
+					// #endif
+				})
 			},
 			toShowingOrder(item) {
 				let details = encodeURIComponent(JSON.stringify(item))

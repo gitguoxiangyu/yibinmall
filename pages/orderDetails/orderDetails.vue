@@ -117,13 +117,13 @@
 	import {baseURL} from '../../publicAPI/baseData.js'
 	import { getAuthorization } from '../../publicAPI/newToken.js';
 	import { request } from '../../publicAPI/request.js';
-	import { getUserBeans } from '../../publicAPI/userInfo.js';
+	import { getLoginTask, getUserBeans } from '../../publicAPI/userInfo.js';
 	export default {
 		data() {
 			return {
 				showPop: false,
 				details:{},
-				person: getApp().globalData.UserInfo,
+				person: {},
 				post:{
 					order_user_id: undefined,
 					store_id: undefined,
@@ -149,12 +149,17 @@
 				this.details = JSON.parse(decodeURIComponent(option.details));
 				console.log(this.details)
 			}
-			this.person.number = 1
-			console.log(getApp().globalData.UserInfo)
+			getLoginTask().then(() => {
+				this.person = {...getApp().globalData.UserInfo}
+				this.person.number = 1
+				console.log(this.person)
+			})
 		},
 		onShow() {
-			// 增加一个网络请求，降低Authorization过期的概率
-			getUserBeans()
+			getLoginTask().then(() => {
+				// 增加一个网络请求，降低Authorization过期的概率
+				getUserBeans()
+			})
 		},
 		methods: {
 
@@ -162,83 +167,85 @@
 				if (this.submitted) return
 				this.submitted = true
 
-				let errMsg = ""
-				if (this.person.star < this.details.star) {
-					errMsg = "用户星级不足"
-				} else if (this.person.beans < this.person.number * this.details.goods_price) {
-					errMsg = "用户鲜豆不足"
-				} else if (!this.person.real_name) {
-					errMsg = "请输入收货人"
-				} else if (!this.person.tel) {
-					errMsg = "请输入收货电话"
-				} else if (!this.person.address) {
-					errMsg = "请输入收货地址"
-				} else if (!this.person.number) {
-					errMsg = "请输入货物数量"
-				} else if (this.post.volunteer_area == -1) {
-					errMsg = "请选择团支部分区"
-				}
-				if (errMsg) {
-					uni.showToast({
-						icon: 'none',
-						title: errMsg,
-					})
-					return
-				}
-
-				this.post.order_user_id = this.person.id
-				this.post.store_id = this.details.store_id
-				this.post.goods_id = this.details.goods_id
-				this.post.coupons_id = this.details.coupons_id
-				this.post.number = this.person.number
-				this.post.order_status = "已支付"
-				this.post.consignee_name = this.person.real_name
-				this.post.consignee_phone = this.person.tel
-				this.post.consignee_address = this.person.address
-				this.post.deliver_type = "线下厂商配送"
-				this.post.order_time = new Date().getTime()
-				this.post.deliver_time = undefined
-				this.post.volunteer_area = this.range[this.post.volunteer_area]
-
-				console.log(this.post)
-				let app = getApp()
-				//发送购买请求
-				request({
-					url: baseURL + '/orders',
-					method: "POST",
-					data: this.post,
-					header: {
-						'Authorization':"Bearer " + getAuthorization(),
-					},//请求头
-					dataType: "json",
-					sslVerify: false,
-					success: res => {
-						console.log(res)
-						uni.showToast({
-							icon: 'none',
-							title: res.data.message
-						});
-						if (res.data.code !== 200) {
-							this.submitted = false
-						}
-						// updatePersonMsg()//更新鲜豆信息
-						setTimeout(()=>{
-							uni.redirectTo({
-								url: '../ticketHistory/ticketHistory'
-							})
-						},1000)
-					},
-					fail: err => {
-						this.submitted = false
-						uni.showToast({
-							icon: 'none',
-							title: "下单失败，请稍后重试！"
-						});
+				getLoginTask().then(() => {
+					let errMsg = ""
+					if (this.person.star < this.details.star) {
+						errMsg = "用户星级不足"
+					} else if (this.person.beans < this.person.number * this.details.goods_price) {
+						errMsg = "用户鲜豆不足"
+					} else if (!this.person.real_name) {
+						errMsg = "请输入收货人"
+					} else if (!this.person.tel) {
+						errMsg = "请输入收货电话"
+					} else if (!this.person.address) {
+						errMsg = "请输入收货地址"
+					} else if (!this.person.number) {
+						errMsg = "请输入货物数量"
+					} else if (this.post.volunteer_area == -1) {
+						errMsg = "请选择团支部分区"
 					}
+					if (errMsg) {
+						uni.showToast({
+							icon: 'none',
+							title: errMsg,
+						})
+						return
+					}
+
+					this.post.order_user_id = this.person.id
+					this.post.store_id = this.details.store_id
+					this.post.goods_id = this.details.goods_id
+					this.post.coupons_id = this.details.coupons_id
+					this.post.number = this.person.number
+					this.post.order_status = "已支付"
+					this.post.consignee_name = this.person.real_name
+					this.post.consignee_phone = this.person.tel
+					this.post.consignee_address = this.person.address
+					this.post.deliver_type = "线下厂商配送"
+					this.post.order_time = new Date().getTime()
+					this.post.deliver_time = undefined
+					this.post.volunteer_area = this.range[this.post.volunteer_area]
+
+					console.log(this.post)
+					let app = getApp()
+					//发送购买请求
+					request({
+						url: baseURL + '/orders',
+						method: "POST",
+						data: this.post,
+						header: {
+							'Authorization':"Bearer " + getAuthorization(),
+						},//请求头
+						dataType: "json",
+						sslVerify: false,
+						success: res => {
+							console.log(res)
+							uni.showToast({
+								icon: 'none',
+								title: res.data.message
+							});
+							if (res.data.code !== 200) {
+								this.submitted = false
+							}
+							// updatePersonMsg()//更新鲜豆信息
+							setTimeout(()=>{
+								uni.redirectTo({
+									url: '../ticketHistory/ticketHistory'
+								})
+							},1000)
+						},
+						fail: err => {
+							this.submitted = false
+							uni.showToast({
+								icon: 'none',
+								title: "下单失败，请稍后重试！"
+							});
+						}
+					})
+					// uni.navigateTo({
+					// 	url:'../mall/mall'
+					// })
 				})
-				// uni.navigateTo({
-				// 	url:'../mall/mall'
-				// })
 			},
 			change(){
 				this.showPop = true

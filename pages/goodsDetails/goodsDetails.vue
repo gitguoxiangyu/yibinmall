@@ -81,6 +81,7 @@
 	import {baseURL} from '../../publicAPI/baseData.js'
 	import { getAuthorization } from '../../publicAPI/newToken.js';
 	import { request } from '../../publicAPI/request.js';
+	import { getLoginTask } from '../../publicAPI/userInfo.js';
 	export default {
 		data() {
 			return {
@@ -157,22 +158,24 @@
 				})
 			},
 			buy(){
-				if(getApp().globalData.hasUserInfo == 0){
-					uni.showToast({
-						icon: 'none',
-						title: "用户未登录"
-					});
-					setTimeout(()=>{
+				getLoginTask().then(() => {
+					if(getApp().globalData.hasUserInfo != 1){
+						uni.showToast({
+							icon: 'none',
+							title: "用户未登录"
+						});
+						setTimeout(()=>{
+							uni.navigateTo({
+								url: '../login/login'
+							})
+						},1000)
+					}else{
+						let details = encodeURIComponent(JSON.stringify(this.details))
 						uni.navigateTo({
-							url: '../login/login'
+							url:'../orderDetails/orderDetails?details='+details
 						})
-					},1000)
-				}else{
-					let details = encodeURIComponent(JSON.stringify(this.details))
-					uni.navigateTo({
-						url:'../orderDetails/orderDetails?details='+details
-					})
-				}
+					}
+				})
 			}
 		}
 	}

@@ -25,6 +25,7 @@
 	import {baseURL} from '../../publicAPI/baseData.js'
 	import { getAuthorization } from '../../publicAPI/newToken.js'
 	import { request } from '../../publicAPI/request.js'
+	import { getLoginTask } from '../../publicAPI/userInfo.js'
 	export default {
 		data() {
 			return {
@@ -49,35 +50,39 @@
 			}
 		},
 		onLoad(option) {
-			this.details = getApp().globalData.UserInfo
-			console.log(this.details)
+			getLoginTask().then(() => {
+				this.details = getApp().globalData.UserInfo
+				console.log(this.details)
+			})
 		},
 		onShow(){
-			let app = getApp()
-			request({
-				url: baseURL + '/beansAction/byUserId/' + this.details.id,
-				method:"GET",
-				header: {
-					'Authorization':"Bearer " + getAuthorization(),
-				},//请求头
-				dataType: "json",
-				sslVerify: false,
-				success: res => {
-					console.log(res)
-					let arr = res.data.object
-					arr.forEach((item,index)=>{
-						item.beans_action_time = item.beans_action_time.substring(0,10) + " " + item.beans_action_time.substring(11,19)
-					})
-					arr.reverse()
-					this.msg = arr
-					this.displayMsg = arr
-				},
-				fail: err => {
-					uni.showToast({
-						icon: 'none',
-						title: "获取鲜豆收支信息失败，请重试！"
-					});
-				}
+			getLoginTask().then(() => {
+				let app = getApp()
+				request({
+					url: baseURL + '/beansAction/byUserId/' + this.details.id,
+					method:"GET",
+					header: {
+						'Authorization':"Bearer " + getAuthorization(),
+					},//请求头
+					dataType: "json",
+					sslVerify: false,
+					success: res => {
+						console.log(res)
+						let arr = res.data.object
+						arr.forEach((item,index)=>{
+							item.beans_action_time = item.beans_action_time.substring(0,10) + " " + item.beans_action_time.substring(11,19)
+						})
+						arr.reverse()
+						this.msg = arr
+						this.displayMsg = arr
+					},
+					fail: err => {
+						uni.showToast({
+							icon: 'none',
+							title: "获取鲜豆收支信息失败，请重试！"
+						});
+					}
+				})
 			})
 		},
 		methods: {

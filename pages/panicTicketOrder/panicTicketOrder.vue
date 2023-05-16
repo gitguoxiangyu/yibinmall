@@ -99,13 +99,13 @@
 	import {baseURL} from '../../publicAPI/baseData.js'
 	import { getAuthorization } from '../../publicAPI/newToken.js';
 	import { request } from '../../publicAPI/request.js'
-	import { getUserBeans } from '../../publicAPI/userInfo.js';
+	import { getLoginTask, getUserBeans } from '../../publicAPI/userInfo.js';
 	export default {
 		data() {
 			return {
 				showPop: false,
 				details:{},
-				person: getApp().globalData.UserInfo,
+				person: {},
 				post:{
 					order_user_id: undefined,
 					store_id: undefined,
@@ -134,11 +134,16 @@
 				this.details = JSON.parse(decodeURIComponent(option.details));
 				console.log(this.details)
 			}
-			this.person.number = 1
-			console.log(getApp().globalData.UserInfo)
+			getLoginTask().then(() => {
+				this.person = {...getApp().globalData.UserInfo}
+				this.person.number = 1
+				console.log(this.person)
+			})
 		},
 		onShow() {
-			getUserBeans()
+			getLoginTask().then(() => {
+				getUserBeans()
+			})
 		},
 		methods: {
 
@@ -146,137 +151,139 @@
 				if (this.submitted) return
 				this.submitted = true
 
-				let errMsg = ""
-				if (this.person.star < this.details.coupons.star) {
-					errMsg = "用户星级不足"
-				} else if (this.person.beans < this.person.number * this.details.panicBuyingCoupons.panic_buying_price) {
-					errMsg = "用户鲜豆不足"
-				} else if (!this.person.real_name) {
-					errMsg = "请输入收货人"
-				} else if (!this.person.tel) {
-					errMsg = "请输入收货电话"
-				} else if (this.post.volunteer_area == -1) {
-					errMsg = "请选择团支部分区"
-				}
-				if (errMsg) {
-					uni.showToast({
-						icon: 'none',
-						title: errMsg,
-					})
-					return
-				}
+				getLoginTask().then(() => {
+					let errMsg = ""
+					if (this.person.star < this.details.coupons.star) {
+						errMsg = "用户星级不足"
+					} else if (this.person.beans < this.person.number * this.details.panicBuyingCoupons.panic_buying_price) {
+						errMsg = "用户鲜豆不足"
+					} else if (!this.person.real_name) {
+						errMsg = "请输入收货人"
+					} else if (!this.person.tel) {
+						errMsg = "请输入收货电话"
+					} else if (this.post.volunteer_area == -1) {
+						errMsg = "请选择团支部分区"
+					}
+					if (errMsg) {
+						uni.showToast({
+							icon: 'none',
+							title: errMsg,
+						})
+						return
+					}
 
-				this.post.order_user_id = this.person.id
-				this.post.store_id = this.details.coupons.store_id ? this.details.coupons.store_id : 1
-				this.post.goods_id = this.details.coupons.goods_id
-				this.post.coupons_id = this.details.coupons.coupon_id
-				this.post.number = this.person.number
-				this.post.order_status = "已支付"
-				this.post.consignee_name = this.person.real_name
-				this.post.consignee_phone = this.person.tel
-				this.post.consignee_address = '0'
-				this.post.deliver_type = '0'
-				this.post.order_time = new Date().getTime()
-				this.post.deliver_time = undefined
-				this.post.volunteer_area = this.range[this.post.volunteer_area]
+					this.post.order_user_id = this.person.id
+					this.post.store_id = this.details.coupons.store_id ? this.details.coupons.store_id : 1
+					this.post.goods_id = this.details.coupons.goods_id
+					this.post.coupons_id = this.details.coupons.coupon_id
+					this.post.number = this.person.number
+					this.post.order_status = "已支付"
+					this.post.consignee_name = this.person.real_name
+					this.post.consignee_phone = this.person.tel
+					this.post.consignee_address = '0'
+					this.post.deliver_type = '0'
+					this.post.order_time = new Date().getTime()
+					this.post.deliver_time = undefined
+					this.post.volunteer_area = this.range[this.post.volunteer_area]
 
-				console.log(this.post)
-				let app = getApp()
-				let msg = {
-					username: "admin",
-					password: "admin123"
-				}
-				let poll = {
-					user_id: this.person.id,
-					type: 2,
-					thingsId: this.details.coupons.coupon_id,
-				}
-				request({
-					url: baseURL + '/pb_orders',
-					method: "POST",
-					data: this.post,
-					header: {
-						'Authorization':"Bearer " + getAuthorization(),
-					},//请求头
-					dataType: "json",
-					sslVerify: false,
-					success: res => {
-						console.log(res)
-						//轮询抢购结果
-						if (res.data.code == 200){
-							uni.showLoading({
-								title: res.data.message
-							});
-							let timer = setInterval(()=>{
-								request({
-									url: baseURL + '/pb_orders/result/'+poll.user_id+'/'+poll.type+'/'+poll.thingsId,
-									method: "GET",
-									header: {
-										'Authorization':"Bearer " + getAuthorization(),
-									},//请求头
-									dataType: "json",
-									sslVerify: false,
-									success: res => {
-										console.log(res)
-										uni.hideLoading()
-										if (res.data.code == 200){
-											uni.showModal({
-												title: '抢购成功',
-												// content: '是否查看订单详情',
-												confirmText: "查看订单",
-												cancelText: "返回",
-												success: function (res) {
-													// updatePersonMsg()//更新鲜豆信息
-													if (res.confirm) {
-														setTimeout(()=>{
-															uni.redirectTo({
-																url: '../ticketHistory/ticketHistory'
-															})
-														},500)
-													} else if (res.cancel) {
-														setTimeout(()=>{
-															uni.navigateBack()
-														},500)
+					console.log(this.post)
+					let app = getApp()
+					let msg = {
+						username: "admin",
+						password: "admin123"
+					}
+					let poll = {
+						user_id: this.person.id,
+						type: 2,
+						thingsId: this.details.coupons.coupon_id,
+					}
+					request({
+						url: baseURL + '/pb_orders',
+						method: "POST",
+						data: this.post,
+						header: {
+							'Authorization':"Bearer " + getAuthorization(),
+						},//请求头
+						dataType: "json",
+						sslVerify: false,
+						success: res => {
+							console.log(res)
+							//轮询抢购结果
+							if (res.data.code == 200){
+								uni.showLoading({
+									title: res.data.message
+								});
+								let timer = setInterval(()=>{
+									request({
+										url: baseURL + '/pb_orders/result/'+poll.user_id+'/'+poll.type+'/'+poll.thingsId,
+										method: "GET",
+										header: {
+											'Authorization':"Bearer " + getAuthorization(),
+										},//请求头
+										dataType: "json",
+										sslVerify: false,
+										success: res => {
+											console.log(res)
+											uni.hideLoading()
+											if (res.data.code == 200){
+												uni.showModal({
+													title: '抢购成功',
+													// content: '是否查看订单详情',
+													confirmText: "查看订单",
+													cancelText: "返回",
+													success: function (res) {
+														// updatePersonMsg()//更新鲜豆信息
+														if (res.confirm) {
+															setTimeout(()=>{
+																uni.redirectTo({
+																	url: '../ticketHistory/ticketHistory'
+																})
+															},500)
+														} else if (res.cancel) {
+															setTimeout(()=>{
+																uni.navigateBack()
+															},500)
+														}
 													}
-												}
-											});
-											clearInterval(timer)
-										}else if(res.data.code == 500){
+												});
+												clearInterval(timer)
+											}else if(res.data.code == 500){
+												uni.hideLoading()
+												uni.showToast({
+													icon: 'none',
+													title: res.data.message
+												});
+												clearInterval(timer)
+												this.submitted = false
+											}
+										},
+										fail: err => {
+											this.submitted = false
 											uni.hideLoading()
 											uni.showToast({
 												icon: 'none',
-												title: res.data.message
+												title: "下单失败，请稍后重试！"
 											});
-											clearInterval(timer)
-											this.submitted = false
 										}
-									},
-									fail: err => {
-										this.submitted = false
-										uni.hideLoading()
-										uni.showToast({
-											icon: 'none',
-											title: "下单失败，请稍后重试！"
-										});
-									}
-								})
-							},1000)
-						}else{
+									})
+								},1000)
+							}else{
+								uni.showToast({
+									icon: 'none',
+									title: res.data.message
+								});
+							}
+
+						},
+						fail: err => {
 							uni.showToast({
 								icon: 'none',
-								title: res.data.message
+								title: "订单信息发送失败，请重试！"
 							});
 						}
-
-					},
-					fail: err => {
-						uni.showToast({
-							icon: 'none',
-							title: "订单信息发送失败，请重试！"
-						});
-					}
+					})
 				})
-
+			
 			},
 			change(){
 				this.showPop = true

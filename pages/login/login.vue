@@ -9,10 +9,10 @@
 		<view class="body">
 			<form @submit="formSubmit">
 				<view class="identifyWord">
-					<input placeholder-class="login-input-placeholder" class="login-input" type="text" name="idCard" placeholder="请输入身份证号">
+					<input placeholder-class="login-input-placeholder" class="login-input" maxlength="18" type="text" name="idCard" placeholder="请输入身份证号">
 				</view>
 				<view class="cardWord">
-					<input placeholder-class="login-input-placeholder" class="login-input" type="number" name="ICBC_card_num" placeholder="请输入宜宾工行社保卡号">
+					<input placeholder-class="login-input-placeholder" class="login-input" maxlength="19" type="number" name="ICBC_card_num" placeholder="请输入宜宾工行社保卡号">
 				</view>
 				<button form-type="submit" class="login" >授权登录</button>
 			</form>
@@ -38,6 +38,7 @@
 				// 6217212314999999999
 				// 51253419720212703X
 				// 510524200203160384
+				const idReg = /^(\d{14}[0-9Xx]|\d{18})$/
 				let reg = /^6217212314/
 				console.log(data.detail.value.ICBC_card_num.length)
 				let errMsg = ""
@@ -45,6 +46,8 @@
 					errMsg = "请输入身份证号"
 				} else if (!data.detail.value.ICBC_card_num) {
 					errMsg = "请输入社保卡号"
+				} else if (idReg.test(data.detail.value.idCard) !== true) {
+					errMsg = "请检查身份证号是否正确"
 				} else if (reg.test(data.detail.value.ICBC_card_num) !== true || data.detail.value.ICBC_card_num.length !== 19) {
 					errMsg = "请检查社保卡号是否正确"
 				}
@@ -74,9 +77,10 @@
 					})
 				}).catch(res => {
 					console.error("登录错误", res)
+					const msg = res.data.msg || res.data.message
 					uni.showToast({
 						icon: 'none',
-						title: '登录错误'
+						title: '登录错误: ' + msg
 					});
 				})
 
