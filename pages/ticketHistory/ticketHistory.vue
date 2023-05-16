@@ -61,9 +61,10 @@
 
 <script>
 	import { baseURL } from '../../publicAPI/baseData.js'
-	import { correctTime , jsonToBigint } from '../../utils/common.js'
+	import { correctTime } from '../../utils/common.js'
 	import CryptoJS from "crypto-js"
 	import { request } from '../../publicAPI/request.js'
+	import { getAuthorization } from '../../publicAPI/newToken.js'
 
 	export default {
 		data() {
@@ -96,18 +97,18 @@
 		},
 		created() {
 			let app = getApp()
-			let xhr = request({
+			request({
 				// url: 'http://yibinmall.chenglee.top:8080/exchange/page',
 				url: baseURL + '/exchange/byUserId/' + app.globalData.UserInfo.id,
 				method: "GET",
 				// data: msg,
 				header: {
-					'Authorization':"Bearer "+app.globalData.Authorization,
+					'Authorization':"Bearer " + getAuthorization(),
 				},//请求头
-				dataType: "json",
+				dataType: "jsonbigint",
 				sslVerify: false,
 				success: res => {
-					let arr = jsonToBigint(xhr).object
+					let arr = res.data.object
 					arr.forEach((item,index) => {
 						if (item.coupons != null){
 							item.coupons.date_use_begin = correctTime(item.coupons.date_use_begin)
@@ -154,7 +155,7 @@
 					this.ticket.forEach(item => {
 						if (item.exchange.exchange_status === "已过期") {
 							this.navArr[1].count++
-						} else if (item.exchange.exchange_status === "未使用") {
+						} else if (item.exchange.exchange_status === "已兑换未使用") {
 							this.navArr[2].count++
 						} else if (item.exchange.exchange_status === "已使用") {
 							this.navArr[3].count++
@@ -181,7 +182,7 @@
 				else if(index === 2){
 					let arr = []
 					this.ticket.forEach((item,index)=>{
-						if(item.exchange.exchange_status === "未使用"){
+						if(item.exchange.exchange_status === "已兑换未使用"){
 							arr.push(item)
 						}
 					})
@@ -288,13 +289,13 @@
 						method: "POST",
 						data: { vlinkdata: vlinkdata },
 						header: {
-							'Authorization': "Bearer " + app.globalData.Authorization,
+							'Authorization': "Bearer " + getAuthorization(),
 							"Content-Type": "application/x-www-form-urlencoded",
 							// "Host": "didao.lovemojito.com",
 						},
 					}).then(res => {
 						console.log("placeOutOrder.php", res)
-						
+
 						let data = res.data.object
 						if (typeof data === "string") {
 							data = JSON.parse(data)
@@ -313,7 +314,7 @@
 							url: baseURL + `/exchange/couponStatus/${item.exchange.coupons_item_id}?link=${link}`,
 							method: "POST",
 							header: {
-								'Authorization': "Bearer " + app.globalData.Authorization,
+								'Authorization': "Bearer " + getAuthorization(),
 							},
 						}).then(res => {
 							console.log("/exchange/couponStatus/", res)
@@ -348,7 +349,7 @@
 										url: baseURL + `/exchange/couponStatus/${item.exchange.coupons_item_id}?link=${link}`,
 										method: "POST",
 										header: {
-											'Authorization': "Bearer " + app.globalData.Authorization,
+											'Authorization': "Bearer " + getAuthorization(),
 										},
 									}).then(res => {
 										console.log("/exchange/couponStatus/", res)

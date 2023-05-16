@@ -23,6 +23,7 @@
 
 <script>
 	import {baseURL} from '../../publicAPI/baseData.js'
+	import { getAuthorization } from '../../publicAPI/newToken.js'
 	import { request } from '../../publicAPI/request.js'
 	export default {
 		data() {
@@ -76,7 +77,7 @@
 									method: "POST",
 									data: app.globalData.UserInfo,//请求的参数
 									header: {
-										'Authorization':"Bearer "+app.globalData.Authorization,
+										'Authorization':"Bearer " + getAuthorization(),
 									},//请求头
 									dataType: "json",
 									sslVerify: false,

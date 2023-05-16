@@ -66,6 +66,7 @@
 import {baseURL} from '../../publicAPI/baseData.js'
 import { correctTime } from '../../utils/common.js'
 import { request } from '../../publicAPI/request.js'
+import { getAuthorization } from '../../publicAPI/newToken.js'
 export default {
 	data() {
 		return {
@@ -85,7 +86,7 @@ export default {
 				url: baseURL + '/orders/orderById?orderId=' + this.details.exchange.order_id,
 				method: "GET",
 				header: {
-					'Authorization':"Bearer "+app.globalData.Authorization,
+					'Authorization':"Bearer " + getAuthorization(),
 				},//请求头
 				dataType: "json",
 				sslVerify: false,

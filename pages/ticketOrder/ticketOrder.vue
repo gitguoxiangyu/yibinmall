@@ -69,7 +69,7 @@
 			<view style="color: red; font-weight: bold;">
 				鲜豆 {{person.number * details.coupon_price}}
 			</view>
-			<view><button class="btn" @click="buy">立即支付</button></view>
+			<view><button :disabled="submitted" class="btn" @click="buy">立即支付</button></view>
 		</view>
 
 		<!-- 弹窗 -->
@@ -97,6 +97,8 @@
 	import updatePersonMsg from '../../publicAPI/updataPersonMsg.js'
 	import {baseURL} from '../../publicAPI/baseData.js'
 	import { request } from '../../publicAPI/request.js';
+	import { getAuthorization } from '../../publicAPI/newToken.js';
+	import { getUserBeans } from '../../publicAPI/userInfo.js';
 	export default {
 		data() {
 			return {
@@ -118,7 +120,8 @@
 					deliver_time: undefined,
 					volunteer_area: -1,
 				},
-				range: ['翠屏区', '南溪区', '叙州区', '江安县','长宁县','高县','筠连县','珙县','兴文县','屏山县','三江新区','“两海”示范区']
+				range: ['翠屏区', '南溪区', '叙州区', '江安县','长宁县','高县','筠连县','珙县','兴文县','屏山县','三江新区','“两海”示范区'],
+				submitted: false,
 			}
 		},
 		computed:{
@@ -131,9 +134,15 @@
 			}
 			this.person.number = 1
 		},
+		onShow() {
+			getUserBeans()
+		},
 		methods: {
 
 			buy(){
+				if (this.submitted) return
+				this.submitted = true
+
 				let errMsg = ""
 				if (this.person.star < this.details.star) {
 					errMsg = "用户星级不足"
@@ -176,7 +185,7 @@
 					method: "POST",
 					data: this.post,
 					header: {
-						'Authorization':"Bearer "+app.globalData.Authorization,
+						'Authorization':"Bearer " + getAuthorization(),
 					},//请求头
 					dataType: "json",
 					sslVerify: false,
@@ -186,17 +195,21 @@
 							icon: 'none',
 							title: res.data.message
 						})
+						if (res.data.code !== 200) {
+							this.submitted = false
+						}
 						// updatePersonMsg()//更新鲜豆信息
 						setTimeout(()=>{
-							uni.navigateTo({
+							uni.redirectTo({
 								url: '../ticketHistory/ticketHistory'
 							})
 						},1000)
 					},
 					fail: err => {
+						this.submitted = false
 						uni.showToast({
 							icon: 'none',
-							title: "订单信息发送失败，请重试！"
+							title: "下单失败，请稍后重试！"
 						});
 					}
 				})

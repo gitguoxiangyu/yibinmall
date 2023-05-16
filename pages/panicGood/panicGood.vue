@@ -86,6 +86,7 @@
 
 <script>
 import { baseURL } from '../../publicAPI/baseData';
+import { getAuthorization } from '../../publicAPI/newToken';
 import { request } from '../../publicAPI/request';
 	export default {
 		data() {
@@ -122,7 +123,7 @@ import { request } from '../../publicAPI/request';
 				url: baseURL + "/goodsEvaluation/evaluationByGoodsId",
 				method: "GET",
 				header: {
-					'Authorization':"Bearer "+app.globalData.Authorization,
+					'Authorization':"Bearer " + getAuthorization(),
 				},//请求头
 				data: {
 					goodsId: this.details.goods.goods_id,

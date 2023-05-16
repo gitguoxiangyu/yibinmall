@@ -69,7 +69,7 @@
 			<view style="color: red; font-weight: bold;">
 				鲜豆 {{person.number * details.panicBuyingCoupons.panic_buying_price}}
 			</view>
-			<view><button class="btn" @click="buy">立即支付</button></view>
+			<view><button :disabled="submitted" class="btn" @click="buy">立即支付</button></view>
 		</view>
 
 		<!-- 弹窗 -->
@@ -97,7 +97,9 @@
 	// import getToken from '../../publicAPI/getToken.js'
 	// import updatePersonMsg from '../../publicAPI/updataPersonMsg.js'
 	import {baseURL} from '../../publicAPI/baseData.js'
+	import { getAuthorization } from '../../publicAPI/newToken.js';
 	import { request } from '../../publicAPI/request.js'
+	import { getUserBeans } from '../../publicAPI/userInfo.js';
 	export default {
 		data() {
 			return {
@@ -119,7 +121,8 @@
 					deliver_time: undefined,
 					volunteer_area: -1,
 				},
-				range: ['翠屏区', '南溪区', '叙州区', '江安县','长宁县','高县','筠连县','珙县','兴文县','屏山县','三江新区','“两海”示范区']
+				range: ['翠屏区', '南溪区', '叙州区', '江安县','长宁县','高县','筠连县','珙县','兴文县','屏山县','三江新区','“两海”示范区'],
+				submitted: false,
 			}
 		},
 		computed:{
@@ -134,9 +137,15 @@
 			this.person.number = 1
 			console.log(getApp().globalData.UserInfo)
 		},
+		onShow() {
+			getUserBeans()
+		},
 		methods: {
 
 			buy(){
+				if (this.submitted) return
+				this.submitted = true
+
 				let errMsg = ""
 				if (this.person.star < this.details.coupons.star) {
 					errMsg = "用户星级不足"
@@ -187,7 +196,7 @@
 					method: "POST",
 					data: this.post,
 					header: {
-						'Authorization':"Bearer "+app.globalData.Authorization,
+						'Authorization':"Bearer " + getAuthorization(),
 					},//请求头
 					dataType: "json",
 					sslVerify: false,
@@ -203,7 +212,7 @@
 									url: baseURL + '/pb_orders/result/'+poll.user_id+'/'+poll.type+'/'+poll.thingsId,
 									method: "GET",
 									header: {
-										'Authorization':"Bearer "+app.globalData.Authorization,
+										'Authorization':"Bearer " + getAuthorization(),
 									},//请求头
 									dataType: "json",
 									sslVerify: false,
@@ -214,19 +223,19 @@
 											uni.showModal({
 												title: '抢购成功',
 												// content: '是否查看订单详情',
+												confirmText: "查看订单",
+												cancelText: "返回",
 												success: function (res) {
 													// updatePersonMsg()//更新鲜豆信息
 													if (res.confirm) {
 														setTimeout(()=>{
-															uni.navigateTo({
+															uni.redirectTo({
 																url: '../ticketHistory/ticketHistory'
 															})
 														},500)
 													} else if (res.cancel) {
 														setTimeout(()=>{
-															uni.navigateTo({
-																url: '../mall/mall'
-															})
+															uni.navigateBack()
 														},500)
 													}
 												}
@@ -239,15 +248,16 @@
 												title: res.data.message
 											});
 											clearInterval(timer)
+											this.submitted = false
 										}
 									},
 									fail: err => {
+										this.submitted = false
 										uni.hideLoading()
 										uni.showToast({
 											icon: 'none',
-											title: "订单信息获取失败，请重试！"
+											title: "下单失败，请稍后重试！"
 										});
-										uni.hideLoading()
 									}
 								})
 							},1000)

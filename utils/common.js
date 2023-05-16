@@ -8,3 +8,16 @@ export function jsonToBigint(xhr){
 	let items = Jsonbig.parse(xhr._xhr.response)
 	return items
 }
+
+/**
+ * 使用json-bigint完成JSON.parse操作，BigInt类型的数据会被转换为string
+ * @param {string} str
+ * @returns {object}
+ */
+export function jsonParseBigint(str){
+	let Jsonbig = require('json-bigint')({storeAsString: true})
+	// console.log("jsonParseBigint str:", str)
+	// console.log("jsonParseBigint obj:", Jsonbig.parse(str))
+	let data = Jsonbig.parse(str)
+	return data
+}

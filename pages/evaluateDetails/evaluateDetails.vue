@@ -30,6 +30,7 @@
 <script>
 // import getToken from '../../publicAPI/getToken.js'
 import {baseURL, rootURL} from '../../publicAPI/baseData.js'
+import { getAuthorization } from '../../publicAPI/newToken.js';
 import { request } from '../../publicAPI/request.js';
 export default {
 	data() {
@@ -107,7 +108,7 @@ export default {
 					file: file.file,
 					name: "file",
 					header: {
-						'Authorization': "Bearer " + app.globalData.Authorization,
+						'Authorization': "Bearer " + getAuthorization(),
 					},
 					success: res => {
 						const data = JSON.parse(res.data)
@@ -175,7 +176,7 @@ export default {
 				url: baseURL + '/goodsEvaluation',
 				method: 'POST',
 				header: {
-					'Authorization':"Bearer " + app.globalData.Authorization,
+					'Authorization':"Bearer " + getAuthorization(),
 				},//请求头
 				data: data,
 				dataType: "json",

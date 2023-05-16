@@ -36,6 +36,7 @@
 		baseURL,
 		rootURL
 	} from '../../publicAPI/baseData'
+	import { getAuthorization } from '../../publicAPI/newToken';
 	import { request } from '../../publicAPI/request';
 	export default {
 		data() {
@@ -108,7 +109,7 @@
 						file: file.file,
 						name: "file",
 						header: {
-							'Authorization': "Bearer " + app.globalData.Authorization,
+							'Authorization': "Bearer " + getAuthorization(),
 						},
 						success: res => {
 							const data = JSON.parse(res.data)
@@ -183,7 +184,7 @@
 					url: baseURL + '/complaint',
 					method: 'POST',
 					header: {
-						'Authorization': "Bearer " + app.globalData.Authorization,
+						'Authorization': "Bearer " + getAuthorization(),
 					},
 					data: data,
 					dataType: "json",

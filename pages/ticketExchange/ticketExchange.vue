@@ -49,6 +49,7 @@
 	// import getToken from '../../publicAPI/getToken.js'
 	import uQRCode from "@/uni_modules/Sansnn-uQRCode/js_sdk/u-qrcode/module.js"
 	import {baseURL} from '../../publicAPI/baseData.js'
+	import { getAuthorization } from "../../publicAPI/newToken.js"
 	import { request } from '../../publicAPI/request.js'
 	export default {
 		data() {
@@ -100,7 +101,7 @@
 				url: baseURL + '/coupons_stock/page?item_id=' + this.detail.coupons_item_id,
 				method: "GET",
 				header: {
-					'Authorization':"Bearer "+app.globalData.Authorization,
+					'Authorization':"Bearer " + getAuthorization(),
 				},//请求头
 				dataType: "json",
 				sslVerify: false,
