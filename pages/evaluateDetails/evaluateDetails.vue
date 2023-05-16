@@ -277,15 +277,15 @@ export default {
 			width: unset;
 		}
 		/deep/ .uni-file-picker {
-			.file-image {
-				border-radius: 6px;
-			}
+			// .file-image {
+			// 	border-radius: 6px;
+			// }
 
 			.uni-progress-bar {
 				display: none;
 			}
 
-			.file-picker__box-content.is-add {
+			.file-picker__box-content {
 				border-radius: 6px !important;
 			}
 		}

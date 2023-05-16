@@ -275,15 +275,17 @@
 
 		// uni-file-picker加上图片圆角、隐藏进度条
 		/deep/ .uni-file-picker {
-			.file-image {
-				border-radius: 6px;
-			}
+			// 图片
+			// .file-image {
+			// 	border-radius: 6px;
+			// }
 
 			.uni-progress-bar {
 				display: none;
 			}
 
-			.file-picker__box-content.is-add {
+			// 边框
+			.file-picker__box-content {
 				border-radius: 6px !important;
 			}
 		}
