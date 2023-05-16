@@ -149,6 +149,13 @@
 					})
 				})
 			},
+			uploadFailed(temp) {
+				console.error("上传失败", temp)
+				uni.showToast({
+					icon: "none",
+					title: "上传失败，请稍后重试",
+				})
+			},
 			deleteImage(temp) {
 				console.log("deleteImage", temp)
 				const targetIndex = this.imageList.findIndex(image => image.uid === temp.tempFile.uuid)
