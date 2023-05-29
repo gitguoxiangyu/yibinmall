@@ -8,43 +8,54 @@
 		</view>
 		<view class="content">
 			<!-- 优惠券 -->
-			<view class="item" v-for="(item, index) in displayTicket" :key="index">
-				<img class="itemPic" height="80" :src="item.coupons.main_picture" alt="">
-				<view class="itemInfo">
-					<view class="itemDescription">
-						<view v-if="item.star > 0" class="itemStar">{{item.coupons.star}}星</view>
-						<view class="itemTitle">{{item.coupons.coupon_name}}</view>
-					</view>
-					<view class="itemPriceWrapper">
-						<view class="itemPriceText1">鲜豆</view>
-						<view class="itemBean itemPriceText2">{{item.coupons.coupon_price}}</view>
-					</view>
-					<view class="itemDateWrapper">
-						<view class="itemDate">截止日期: {{item.coupons.exchange_deadline.split(" ")[0]}}</view>
-						<!-- <view class="itemDate" v-else>使用日期: {{item.exchangeDDL.split(" ")[0]}}</view> -->
-						<button class="goodsButton" @click="onExchangeClicked(item)">兑换立减金</button>
+			<view :class="{
+				'item': true,
+				'item--used': item.exchange.exchange_status === '已使用',
+				'item--expired': item.exchange.exchange_status === '已过期'
+				}" v-for="(item, index) in displayTicket" :key="index">
+				<view class="itemWrapper">
+					<img class="itemPic" height="80" :src="item.coupons.main_picture" alt="">
+					<img v-show="item.exchange.exchange_status === '已使用'" class="icon-used" src="../../static/img/exchange-icon.svg" alt="">
+					<img v-show="item.exchange.exchange_status === '已过期'" class="icon-expired" src="../../static/img/exchange-icon-2.svg" alt="">
+					<view class="itemInfo">
+						<view class="itemDescription">
+							<view v-if="item.star > 0" class="itemStar">{{item.coupons.star}}星</view>
+							<view class="itemTitle">{{item.coupons.coupon_name}}</view>
+						</view>
+						<view class="itemPriceWrapper">
+							<view class="itemPriceText1">鲜豆</view>
+							<view class="itemBean itemPriceText2">{{item.coupons.coupon_price}}</view>
+						</view>
+						<view class="itemDateWrapper">
+							<!-- <view class="itemDate">兑换截止时间: {{item.coupons.date_use_end.split(" ")[0]}}</view> -->
+							<view class="itemDate">立减金兑换截止时间: <br>{{item.coupons.date_use_end}}</view>
+							<!-- <view class="itemDate" v-else>使用日期: {{item.exchangeDDL.split(" ")[0]}}</view> -->
+							<button v-if="item.exchange.exchange_status !== '已过期'" class="goodsButton" @click="onExchangeClicked(item)">兑换立减金</button>
+						</view>
 					</view>
 				</view>
 			</view>
 			<!-- 商品 -->
 			<view class="item" v-for="(item, index) in displayItems" :key="item.id">
-				<img class="itemPic" height="80" :src="item.goods.goods_main_picture" alt="">
-				<view class="itemInfo">
-					<view class="itemDescription">
-						<view v-if="item.star > 0" class="itemStar">{{item.goods.star}}星</view>
-						<view class="itemTitle">{{item.goods.goods_name}}</view>
-					</view>
-					<view class="itemDateWrapper">
-						<view class="itemDateWrapper-2">
-							<view class="itemPriceWrapper">
-								<view class="itemPriceText1">鲜豆</view>
-								<view class="itemBean itemPriceText2">{{item.goods.goods_price}}</view>
-							</view>
-							<view class="buyingDate">下单时间: <br>{{item.exchange.params.orderTime}}</view>
+				<view class="itemWrapper">
+					<img class="itemPic" height="80" :src="item.goods.goods_main_picture" alt="">
+					<view class="itemInfo">
+						<view class="itemDescription">
+							<view v-if="item.star > 0" class="itemStar">{{item.goods.star}}星</view>
+							<view class="itemTitle">{{item.goods.goods_name}}</view>
 						</view>
-						<view class="buttonContainer">
-							<button class="goodsButton" @click="toEvaluate(item)">我要评价</button>
-							<button class="goodsButton" @click="toShowingOrder(item)">查看订单</button>
+						<view class="itemDateWrapper">
+							<view class="itemDateWrapper-2">
+								<view class="itemPriceWrapper">
+									<view class="itemPriceText1">鲜豆</view>
+									<view class="itemBean itemPriceText2">{{item.goods.goods_price}}</view>
+								</view>
+								<view class="buyingDate">下单时间: <br>{{item.exchange.params.orderTime}}</view>
+							</view>
+							<view class="buttonContainer">
+								<button class="goodsButton" @click="toEvaluate(item)">我要评价</button>
+								<button class="goodsButton" @click="toShowingOrder(item)">查看订单</button>
+							</view>
 						</view>
 					</view>
 				</view>
@@ -451,12 +462,18 @@
 	}
 
 	.item {
-		display: flex;
+		position: relative;
 		margin: 12px;
-		padding: 8px;
 		border-radius: 6px;
 		background-color: #ffffff;
-		font-size: 15px;
+		overflow: hidden;
+
+		.itemWrapper {
+			position: relative;
+			display: flex;
+			padding: 8px;
+			font-size: 15px;
+		}
 
 		.itemPic {
 			border-radius: 6px;
@@ -485,8 +502,9 @@
 				}
 
 				.itemTitle {
-					display: inline;
+					display: inline-block;
 					font-weight: bold;
+					margin-right: 50px;
 				}
 			}
 
@@ -515,11 +533,11 @@
 			.itemDateWrapper {
 				// width: 60vw;
 				display: flex;
-				align-items: baseline;
+				align-items: flex-start;
 				justify-content: space-between;
 				.itemDate {
 					flex-grow: 1;
-					font-size: 13px;
+					font-size: 12px;
 				}
 				.buttonContainer{
 					// width: 18vw;
@@ -543,7 +561,7 @@
 				.buyingDate{
 					// padding-top: 4vw;
 					flex-grow: 1;
-					font-size: 13px;
+					font-size: 12px;
 					// font-weight: bold;
 					// color: #f53a33;
 				}
@@ -570,6 +588,25 @@
 				}
 			}
 
+		}
+
+		// 已使用、已过期优惠券淡化显示
+		&.item--used .itemWrapper, &.item--expired .itemWrapper {
+			opacity: 0.3;
+		}
+		// 已过期优惠券变灰
+		&.item--expired .itemWrapper {
+			filter: saturate(0);
+		}
+		// 已使用、已过期图标
+		.icon-used, .icon-expired {
+			position: absolute;
+			top: -5px;
+			right: 5px;
+			width: 60px;
+			height: 60px;
+			transform: rotate(-20deg);
+			opacity: 0.5;
 		}
 	}
 	/* 弹窗 */
