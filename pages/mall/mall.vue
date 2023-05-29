@@ -87,7 +87,8 @@
 		</view>
 		<!-- 商品列表 -->
 		<view class="content">
-			<view class="hot" v-if="navArr[0].active == true">
+			<!-- 热门商品 -->
+			<view class="hot" v-if="navArr[1].active == true">
 				<view class="goods" v-for="(item,index) in displayGoods" :key="index" @click="toGoodsDetails(item)">
 						<view class="goodsPic">
 							<image class="goodsImg" :src="item.goods_main_picture"></image>
@@ -113,8 +114,9 @@
 						</view>
 				</view>
 			</view>
+
+			<!-- 限时抢购 -->
 			<view class="hot" v-if="navArr[3].active == true">
-				<!-- 抢购商品 -->
 				<view class="goods" v-for="(item,index) in displayPanicBuyingGoods" :key="index" @click="toPanicGood(item)">
 						<view class="goodsPic">
 							<image class="flashLogo" src="../../static/img/flashSale.png"></image>
@@ -216,7 +218,9 @@
 						</view>
 				</view>
 			</view>
-			<view class="generalPreferential" v-if="navArr[1].active == true">
+
+			<!-- 通用优惠 -->
+			<view class="generalPreferential" v-if="navArr[0].active == true">
 				<view class="goods" v-for="(item,index) in displayTickets" :key="index" @click="toTicketDetails(item)">
 						<view class="goodsPic">
 							<image class="goodsImg" :src="item.main_picture"></image>
@@ -250,6 +254,7 @@
 				</view>
 			</view>
 
+			<!-- 商家优惠 -->
 			<view class="generalPreferential" v-if="navArr[2].active == true">
 				<view class="goods" v-for="(item,index) in displayMerchantCoupons" :key="index" @click="toTicketDetails(item)">
 						<view class="goodsPic">
@@ -311,11 +316,11 @@
 				starRate:20,
 				navArr:[
 					{
-						name:'热门商品',
-						active:true
+						name:'通用优惠',
+						active:false
 					},
 					{
-						name:'通用优惠',
+						name:'热门商品',
 						active:false
 					},
 					{
@@ -794,6 +799,7 @@
 			},
 		},
 		onLoad(){
+			this.navArr[0].active = true
 			// 根据图片高度计算出swiper的高度
 			uni.getSystemInfo({
 				success: res => {
