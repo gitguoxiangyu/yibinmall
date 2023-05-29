@@ -168,27 +168,28 @@
 					if (this.submitted) return
 					this.submitted = true
 
-					this.post.order_user_id = this.person.id
-					this.post.store_id = this.details.store_id ? this.details.store_id : 1
-					this.post.goods_id = this.details.goods_id
-					this.post.coupons_id = this.details.coupon_id
-					this.post.number = this.person.number
-					this.post.order_status = "已支付"
-					this.post.consignee_name = this.person.real_name
-					this.post.consignee_phone = this.person.tel
-					this.post.consignee_address = ''
-					this.post.deliver_type = undefined
-					this.post.order_time = new Date().getTime()
-					this.post.deliver_time = undefined
-					this.post.volunteer_area = this.range[this.post.volunteer_area]
+					const postData = {...this.post}
+					postData.order_user_id = this.person.id
+					postData.store_id = this.details.store_id ? this.details.store_id : 1
+					postData.goods_id = this.details.goods_id
+					postData.coupons_id = this.details.coupon_id
+					postData.number = this.person.number
+					postData.order_status = "已支付"
+					postData.consignee_name = this.person.real_name
+					postData.consignee_phone = this.person.tel
+					postData.consignee_address = ''
+					postData.deliver_type = undefined
+					postData.order_time = new Date().getTime()
+					postData.deliver_time = undefined
+					postData.volunteer_area = this.range[this.post.volunteer_area]
 
-					console.log(this.post)
+					console.log(postData)
 					let app = getApp()
 					//发送购买请求
 					request({
 						url: baseURL + '/orders',
 						method: "POST",
-						data: this.post,
+						data: postData,
 						header: {
 							'Authorization':"Bearer " + getAuthorization(),
 						},//请求头
