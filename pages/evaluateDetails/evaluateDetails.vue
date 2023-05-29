@@ -181,6 +181,17 @@ export default {
 					evaluationPicture: this.imageList.map(image => image.remoteUrl),
 					goodsEvaluation: this.evaluation,
 				}
+				data.goodsEvaluation = data.goodsEvaluation.trim()
+				if (!data.goodsEvaluation) {
+					uni.showToast({
+						icon: "none",
+						title: "请输入评价内容",
+					})
+					return
+				}
+
+				if (this.submitted) return
+				this.submitted = true
 				request({
 					url: baseURL + '/goodsEvaluation',
 					method: 'POST',
@@ -192,26 +203,29 @@ export default {
 					sslVerify: false,
 					success: res => {
 						if (res.data.code !== 200) {
+							console.error(res.data)
 							uni.showToast({
 								icon: 'none',
-								title: '提交失败，请稍后重试！',
+								title: res.data.message,
 							})
-							return;
+							this.submitted = false
+							return
 						}
 						uni.showToast({
 							icon:'success',
 							title: '提交成功！',
 						})
-						this.submitted = true
 						setTimeout(() => {
 							uni.navigateBack()
 						}, 1000)
 					},
 					fail: res => {
+						console.error(res)
 						uni.showToast({
 							icon: 'none',
 							title: '提交失败，请稍后重试！',
 						})
+						this.submitted = false
 					}
 				})
 			})

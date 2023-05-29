@@ -189,6 +189,17 @@
 						complaintType: this.index + 1,
 						complaintUserName: app.globalData.UserInfo.real_name,
 					}
+					data.complaintContent = data.complaintContent.trim()
+					if (!data.complaintContent) {
+						uni.showToast({
+							icon: "none",
+							title: "请输入投诉内容",
+						})
+						return
+					}
+
+					if (this.submitted) return
+					this.submitted = true
 					request({
 						url: baseURL + '/complaint',
 						method: 'POST',
@@ -203,15 +214,15 @@
 								console.error(res.data);
 								uni.showToast({
 									icon: 'none',
-									title: '提交失败，请稍后重试！',
+									title: res.data.message,
 								})
+								this.submitted = false
 								return;
 							}
 							uni.showToast({
 								icon: 'success',
 								title: '提交成功！',
 							})
-							this.submitted = true
 							setTimeout(() => {
 								uni.navigateBack()
 							}, 1000)
@@ -222,6 +233,7 @@
 								icon: 'none',
 								title: '提交失败，请稍后重试！',
 							})
+							this.submitted = false
 						}
 					})
 				})
