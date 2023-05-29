@@ -80,7 +80,7 @@
 			<view style="color: red; font-weight: bold;">
 				鲜豆 {{person.number * details.goods_price}}
 			</view>
-			<view><button :disabled="submitted" class="btn" @click="buy">立即支付</button></view>
+			<view><button :disabled="submitted" :class="submitted ? 'btn--disabled' : 'btn'" @click="buy">立即支付</button></view>
 		</view>
 
 		<!-- 弹窗 -->
@@ -164,9 +164,6 @@
 		methods: {
 
 			buy(){
-				if (this.submitted) return
-				this.submitted = true
-
 				getLoginTask().then(() => {
 					let errMsg = ""
 					if (this.person.star < this.details.star) {
@@ -191,6 +188,9 @@
 						})
 						return
 					}
+
+					if (this.submitted) return
+					this.submitted = true
 
 					this.post.order_user_id = this.person.id
 					this.post.store_id = this.details.store_id
@@ -235,11 +235,11 @@
 							},1000)
 						},
 						fail: err => {
-							this.submitted = false
 							uni.showToast({
 								icon: 'none',
 								title: "下单失败，请稍后重试！"
 							});
+							this.submitted = false
 						}
 					})
 					// uni.navigateTo({

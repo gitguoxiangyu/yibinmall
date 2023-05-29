@@ -78,7 +78,7 @@
 					{{details.price}}
 				</view> -->
 			</view>
-			<button type="default" @click="buy" v-if="details.remainEndSeconds >= 0">立即兑换</button>
+			<button type="default" class="btn" @click="buy" v-if="details.remainEndSeconds >= 0">立即兑换</button>
 			<button type="default" class="overTime" @click="buy" v-else>抢购已结束</button>
 		</view>
 	</view>

@@ -80,7 +80,7 @@
 			<view style="color: red; font-weight: bold;">
 				鲜豆 {{person.number * details.panicBuyingGoods.panic_buying_price}}
 			</view>
-			<view><button :disabled="submitted" class="btn" @click="buy">立即支付</button></view>
+			<view><button :disabled="submitted" :class="submitted ? 'btn--disabled' : 'btn'" @click="buy">立即支付</button></view>
 		</view>
 
 		<!-- 弹窗 -->
@@ -164,9 +164,6 @@ export default {
 	},
 	methods: {
 		buy(){
-			if (this.submitted) return
-			this.submitted = true
-
 			getLoginTask().then(() => {
 				let errMsg = ""
 				if (this.person.star < this.details.goods.star) {
@@ -191,6 +188,9 @@ export default {
 					})
 					return
 				}
+
+				if (this.submitted) return
+				this.submitted = true
 
 				this.post.order_user_id = this.person.id
 				this.post.store_id = this.details.goods.store_id
@@ -281,24 +281,26 @@ export default {
 												}
 											});
 											clearInterval(timer)
-										}else if(res.data.code == 500){
+										}else{
+											console.error("下单失败", res)
 											uni.hideLoading()
+											this.submitted = false
+											if (!res.data || !res.data.message) return
 											uni.showToast({
 												icon: 'none',
 												title: res.data.message
 											});
 											clearInterval(timer)
-											this.submitted = false
 										}
 									},
 									fail: err => {
-										this.submitted = false
 										console.error("下单失败", err)
 										uni.hideLoading()
 										uni.showToast({
 											icon: 'none',
 											title: "下单失败，请稍后重试！"
 										});
+										this.submitted = false
 									}
 								})
 							},1000)
@@ -307,6 +309,7 @@ export default {
 								icon: 'none',
 								title: res.data.message
 							});
+							this.submitted = false
 						}
 
 					},
@@ -315,6 +318,7 @@ export default {
 							icon: 'none',
 							title: "订单信息发送失败，请重试！"
 						});
+						this.submitted = false
 					}
 				})
 

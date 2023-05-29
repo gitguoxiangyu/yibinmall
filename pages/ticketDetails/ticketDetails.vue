@@ -71,7 +71,7 @@
 				</view>
 				鲜豆  {{details.coupon_price}}
 			</view>
-			<button type="default" @click="buy">立即兑换</button>
+			<button type="default" class="btn" @click="buy">立即兑换</button>
 		</view>
 	</view>
 </template>
