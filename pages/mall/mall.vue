@@ -19,10 +19,10 @@
 							<view class="starTxt">{{UserInfo.star}}星青年</view>
 						</view>
 					</view>
-<!-- 					<view class="usrInfoCenter">
+					<!-- 					<view class="usrInfoCenter">
 						<view class="starRate" :style="{'width' : this.starRate + '%'}"></view>
 					</view> -->
-<!-- 					<view class="usrInfoFooter">青年成长值300，还需要700升级为4星青年</view> -->
+					<!-- 					<view class="usrInfoFooter">青年成长值300，还需要700升级为4星青年</view> -->
 				</view>
 			</view>
 			<view class="wallet">
@@ -90,202 +90,230 @@
 			<!-- 热门商品 -->
 			<view class="hot" v-if="navArr[1].active == true">
 				<view class="goods" v-for="(item,index) in displayGoods" :key="index" @click="toGoodsDetails(item)">
-						<view class="goodsPic">
-							<image class="goodsImg" :src="item.goods_main_picture"></image>
-						</view>
-						<view class="goodsInfo">
-							<view class="goodsDes">
-								<view v-show="item.star" class="goodsStar">{{item.star}}星</view>
-								<view class="goodsTxt">
-									{{item.goods_name}}
-								</view>
-							</view>
-							<view class="goodsSaleInfo">
-								<view class="goodsNum" v-if="item.stock">
-									仅剩 {{item.stock}} 件
-								</view>
-							</view>
-							<view class="goodsSale">
-								鲜豆
-								<view class="saleBean">
-									{{item.goods_price}}
-								</view>
+					<view class="goodsPic">
+						<image class="goodsImg" :src="item.goods_main_picture"></image>
+					</view>
+					<view class="goodsInfo">
+						<view class="goodsDes">
+							<view v-show="item.star" class="goodsStar">{{item.star}}星</view>
+							<view class="goodsTxt">
+								{{item.goods_name}}
 							</view>
 						</view>
+						<view class="goodsSaleInfo">
+							<view class="goodsNum" v-if="item.stock">
+								仅剩 {{item.stock}} 件
+							</view>
+						</view>
+						<view class="goodsSale">
+							鲜豆
+							<view class="saleBean">
+								{{item.goods_price}}
+							</view>
+						</view>
+					</view>
 				</view>
 			</view>
 
 			<!-- 限时抢购 -->
 			<view class="hot" v-if="navArr[3].active == true">
 				<view class="goods" v-for="(item,index) in displayPanicBuyingGoods" :key="index" @click="toPanicGood(item)">
-						<view class="goodsPic">
-							<image class="flashLogo" src="../../static/img/flashSale.png"></image>
-							<image class="goodsImg" :src="item.goods.goods_main_picture"></image>
-						</view>
-						<view class="goodsInfo">
-							<view class="goodsDes">
-								<view v-show="item.goods.star" class="goodsStar">{{item.goods.star}}星</view>
-								<view class="goodsTxt">
-									{{item.goods.goods_name}}
-								</view>
+					<view class="goodsPic">
+						<image class="flashLogo" src="../../static/img/flashSale.png"></image>
+						<image class="goodsImg" :src="item.goods.goods_main_picture"></image>
+					</view>
+					<view class="goodsInfo">
+						<view class="goodsDes">
+							<view v-show="item.goods.star" class="goodsStar">{{item.goods.star}}星</view>
+							<view class="goodsTxt">
+								{{item.goods.goods_name}}
 							</view>
-							<view class="goodsSaleInfo">
-								<!-- v-if="item.panicBuyingGoods.panic_buying_goods_stock" -->
+						</view>
+						<view class="goodsSaleInfo">
+							<!-- v-if="item.panicBuyingGoods.panic_buying_goods_stock" -->
 								<text class="goodsNum" >
-									仅剩 {{item.panicBuyingGoods.panic_buying_goods_stock}} 件
+								仅剩 {{item.panicBuyingGoods.panic_buying_goods_stock}} 件
+							</text>
+							<view class="flashTime" v-if="item.panicBuyingGoods" v-show="item.remainBeginSeconds > 0">
+								抢购
+								<text style="color: red">
+									{{" " + item.panicBuyingGoods.panic_buying_start_time + " "}}
 								</text>
-								<view class="flashTime" v-if="item.panicBuyingGoods" v-show="item.remainBeginSeconds > 0">
-									抢购
-									<text style="color: red">
-										{{" " + item.panicBuyingGoods.panic_buying_start_time + " "}}
-									</text>
-									开始
-								</view>
-								<view class="flashTime" v-if="!(item.remainBeginSeconds == -1 || item.remainBeginSeconds == -2)">
-									抢购还剩
-									<text style="color: red">
-										{{" " + toFriendlyTime(item.remainBeginSeconds) + " "}}
-									</text>
-									开始
-								</view>
-								<view class="flashTime" v-else-if="!(item.remainEndSeconds == -1 || item.remainEndSeconds == -2)">
-									抢购还剩
-									<text style="color: red">
-										{{" " + toFriendlyTime(item.remainEndSeconds) + " "}}
-									</text>
-									结束
-								</view>
+								开始
 							</view>
-							<view class="goodsSale">
-								鲜豆
-								<view class="saleBean">
-									{{item.panicBuyingGoods.panic_buying_price}}
-								</view>
+							<view class="flashTime" v-if="!(item.remainBeginSeconds == -1 || item.remainBeginSeconds == -2)">
+								抢购还剩
+								<text style="color: red">
+									{{" " + toFriendlyTime(item.remainBeginSeconds) + " "}}
+								</text>
+								开始
 							</view>
-							<view class="overTime" v-if="item.remainEndSeconds <= 0">
-								抢购已结束
+							<view class="flashTime" v-else-if="!(item.remainEndSeconds == -1 || item.remainEndSeconds == -2)">
+								抢购还剩
+								<text style="color: red">
+									{{" " + toFriendlyTime(item.remainEndSeconds) + " "}}
+								</text>
+								结束
 							</view>
 						</view>
+						<view class="goodsSale">
+							鲜豆
+							<view class="saleBean">
+								{{item.panicBuyingGoods.panic_buying_price}}
+							</view>
+						</view>
+						<view class="overTime" v-if="item.remainEndSeconds <= 0">
+							抢购已结束
+						</view>
+					</view>
 				</view>
 				<!-- 抢购优惠券 -->
 				<view class="goods" v-for="(item,index) in displayPanicBuyingCoupons" :key="item.coupons.coupon_id" @click="toPanicTicket(item)">
-						<view class="goodsPic">
-							<image class="flashLogo" src="../../static/img/flashSale.png"></image>
-							<image class="goodsImg" :src="item.coupons.main_picture"></image>
-						</view>
-						<view class="goodsInfo">
-							<view class="goodsDes">
-								<view class="goodsStar">{{item.coupons.star}}星</view>
-								<view class="goodsTxt">
-									{{item.coupons.coupon_name}}
-								</view>
-							</view>
-							<view class="goodsSaleInfo">
-								<view class="goodsNum">
-									仅剩 {{item.panicBuyingCoupons.panic_buying_coupons_stock}} 件
-								</view>
-								<view class="flashTime" v-if="item.panicBuyingCoupons.panic_buying_start_time" v-show="item.remainBeginSeconds > 0">
-									抢购
-									<text style="color: red">
-										{{" " + item.panicBuyingCoupons.panic_buying_start_time + " "}}
-									</text>
-									开始
-								</view>
-								<view class="flashTime" v-if="!(item.remainBeginSeconds == -1 || item.remainBeginSeconds == -2)">
-									抢购还剩
-									<text style="color: red">
-										{{" " + toFriendlyTime(item.remainBeginSeconds) + " "}}
-									</text>
-									开始
-								</view>
-								<view class="flashTime" v-else-if="!(item.remainEndSeconds == -1 || item.remainEndSeconds == -2)">
-									抢购还剩
-									<text style="color: red">
-										{{" " + toFriendlyTime(item.remainEndSeconds) + " "}}
-									</text>
-									结束
-								</view>
-							</view>
-							<view class="goodsSale">
-								鲜豆
-								<view class="saleBean">
-									{{item.coupons.coupon_price}}
-								</view>
-							</view>
-							<view class="overTime" v-if="item.remainEndSeconds <= 0">
-								抢购已结束
+					<view class="goodsPic">
+						<image class="flashLogo" src="../../static/img/flashSale.png"></image>
+						<image class="goodsImg" :src="item.coupons.main_picture"></image>
+					</view>
+					<view class="goodsInfo">
+						<view class="goodsDes">
+							<view class="goodsStar">{{item.coupons.star}}星</view>
+							<view class="goodsTxt">
+								{{item.coupons.coupon_name}}
 							</view>
 						</view>
+						<view class="goodsSaleInfo">
+							<view class="goodsNum">
+								仅剩 {{item.panicBuyingCoupons.panic_buying_coupons_stock}} 件
+							</view>
+							<view class="flashTime" v-if="item.panicBuyingCoupons.panic_buying_start_time" v-show="item.remainBeginSeconds > 0">
+								抢购
+								<text style="color: red">
+									{{" " + item.panicBuyingCoupons.panic_buying_start_time + " "}}
+								</text>
+								开始
+							</view>
+							<view class="flashTime" v-if="!(item.remainBeginSeconds == -1 || item.remainBeginSeconds == -2)">
+								抢购还剩
+								<text style="color: red">
+									{{" " + toFriendlyTime(item.remainBeginSeconds) + " "}}
+								</text>
+								开始
+							</view>
+							<view class="flashTime" v-else-if="!(item.remainEndSeconds == -1 || item.remainEndSeconds == -2)">
+								抢购还剩
+								<text style="color: red">
+									{{" " + toFriendlyTime(item.remainEndSeconds) + " "}}
+								</text>
+								结束
+							</view>
+						</view>
+						<view class="goodsSale">
+							鲜豆
+							<view class="saleBean">
+								{{item.coupons.coupon_price}}
+							</view>
+						</view>
+						<view class="overTime" v-if="item.remainEndSeconds <= 0">
+							抢购已结束
+						</view>
+					</view>
 				</view>
 			</view>
 
 			<!-- 通用优惠 -->
 			<view class="generalPreferential" v-if="navArr[0].active == true">
 				<view class="goods" v-for="(item,index) in displayTickets" :key="index" @click="toTicketDetails(item)">
-						<view class="goodsPic">
-							<image class="goodsImg" :src="item.main_picture"></image>
-						</view>
-						<view class="goodsInfo">
-							<view class="goodsDes">
-								<view class="goodsStar">{{item.star}}星</view>
-								<view class="goodsTxt">
-									{{item.coupon_name}}
-								</view>
-							</view>
-							<view class="goodsSaleInfo">
-								<view class="goodsNum">
-									仅剩 {{item.stock}} 件
-								</view>
-								<view class="flashTime" v-if="item.panic_buying_start">
-									抢购
-									<view style="color: red">
-										{{" " + item.panic_buying_start + " "}}
-									</view>
-									开始
-								</view>
-							</view>
-							<view class="goodsSale">
-								鲜豆
-								<view class="saleBean">
-									{{item.coupon_price}}
-								</view>
+					<view class="goodsPic">
+						<image class="goodsImg" :src="item.main_picture"></image>
+					</view>
+					<view class="goodsInfo">
+						<view class="goodsDes">
+							<view class="goodsStar">{{item.star}}星</view>
+							<view class="goodsTxt">
+								{{item.coupon_name}}
 							</view>
 						</view>
+						<view class="goodsSaleInfo">
+							<view class="goodsNum">
+								仅剩 {{item.stock}} 件
+							</view>
+							<view class="flashTime" v-if="item.panic_buying_start">
+								抢购
+								<view style="color: red">
+									{{" " + item.panic_buying_start + " "}}
+								</view>
+								开始
+							</view>
+						</view>
+						<view class="goodsSale">
+							鲜豆
+							<view class="saleBean">
+								{{item.coupon_price}}
+							</view>
+						</view>
+					</view>
 				</view>
 			</view>
 
 			<!-- 商家优惠 -->
 			<view class="generalPreferential" v-if="navArr[2].active == true">
 				<view class="goods" v-for="(item,index) in displayMerchantCoupons" :key="index" @click="toTicketDetails(item)">
-						<view class="goodsPic">
-							<image class="goodsImg" :src="item.main_picture"></image>
-						</view>
-						<view class="goodsInfo">
-							<view class="goodsDes">
-								<view class="goodsStar">{{item.star}}星</view>
-								<view class="goodsTxt">
-									{{item.coupon_name}}
-								</view>
-							</view>
-							<view class="goodsSaleInfo">
-								<view class="goodsNum">
-									仅剩 {{item.stock}} 件
-								</view>
-								<view class="flashTime" v-if="item.panic_buying_start">
-									抢购
-									<view style="color: red">
-										{{item.panic_buying_start}}
-									</view>
-									开始
-								</view>
-							</view>
-							<view class="goodsSale">
-								鲜豆
-								<view class="saleBean">
-									{{item.coupon_price}}
-								</view>
+					<view class="goodsPic">
+						<image class="goodsImg" :src="item.main_picture"></image>
+					</view>
+					<view class="goodsInfo">
+						<view class="goodsDes">
+							<view class="goodsStar">{{item.star}}星</view>
+							<view class="goodsTxt">
+								{{item.coupon_name}}
 							</view>
 						</view>
+						<view class="goodsSaleInfo">
+							<view class="goodsNum">
+								仅剩 {{item.stock}} 件
+							</view>
+							<view class="flashTime" v-if="item.panic_buying_start">
+								抢购
+								<view style="color: red">
+									{{item.panic_buying_start}}
+								</view>
+								开始
+							</view>
+						</view>
+						<view class="goodsSale">
+							鲜豆
+							<view class="saleBean">
+								{{item.coupon_price}}
+							</view>
+						</view>
+					</view>
+				</view>
+			</view>
+		</view>
+		<!-- 底部导航栏 -->
+		<view>
+			<view class="bottom-tab">
+				<view class="center bg"></view>
+				<view class="bottom-tab">
+					<view class="bottom-tab-item-sider" @click="goToBottomTab(0)">
+						<view><image class="first-img" src="../../static/img/bottom-tab/icon_01_f.png"></image></view>
+						<text class="text-position">首页</text>
+					</view>
+					<view class="bottom-tab-item-sider" @click="goToBottomTab(1)">
+						<view><image class="first-img" src="../../static/img/bottom-tab/icon_02.png"></image></view>
+						<text class="text-position text-on">积分商城</text>
+					</view>
+					<view class="bottom-tab-item-center" @click="goToBottomTab(2)">
+						<image class="center" src="../../static/img/bottom-tab/center.b1d7cc6a.png"></image>
+						<text class="text-position">报名活动</text>
+					</view>
+					<view class="bottom-tab-item-sider" @click="goToBottomTab(3)">
+						<view><image class="first-img" src="../../static/img/bottom-tab/icon_03.png"></image></view>
+						<text class="text-position">组织</text>
+					</view>
+					<view class="bottom-tab-item-sider" @click="goToBottomTab(4)">
+						<view><image class="first-img" src="../../static/img/bottom-tab/icon_04.png"></image></view>
+						<text class="text-position">个人</text>
+					</view>
 				</view>
 			</view>
 		</view>
@@ -371,6 +399,23 @@
 			}
 		},
 		methods: {
+			goToBottomTab(index) {
+				let url = "https://sczyz.org.cn/fzysc/yb/?state=123"
+				if (index === 0) {
+					url += "#/pages/tabbar/index"
+				} else if (index === 1) {
+					url = "" // 不跳转
+				} else if (index === 2) {
+					url += "#/pages/tabbar/center"
+				} else if (index === 3) {
+					url += "#/pages/tabbar/organization"
+				} else if (index === 4) {
+					url += "#/pages/tabbar/user"
+				}
+				if (url) {
+					location.href = url
+				}
+			},
 			/** 修改第一/第二导航栏的活动视图
 			 * @param {number} index
 			 * @param {Object} item
@@ -848,7 +893,7 @@
 	page{
 		background-color: #f5f5f5;
 		image{
-			image-rendering: pixelated;
+			// image-rendering: pixelated;
 		}
 		.body{
 			width: 100vw;
@@ -1198,6 +1243,83 @@
 								font-weight: 600;
 							}
 						}
+					}
+				}
+			}
+			.bottom-tab {
+				box-sizing: border-box;
+				position: fixed;
+				background-color: #fff;
+				bottom: 0;
+				left: 0;
+				z-index: 10;
+				width: 100%;
+				height: 3rem;
+				padding: 7px 0;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				box-shadow: 0 1px 6px rgba(0, 0, 0, .08);
+				.center {
+					// box-sizing: border-box;
+					width: 54px;
+					height: 54px;
+					border-radius: 50%;
+					margin-top: -27px;
+				}
+				.bg {
+					// box-sizing: border-box;
+					width: 60px;
+					height: 30px;
+					border-radius: 60px 60px 0 0;
+					position: absolute;
+					left: 50%;
+					margin-left: -30px;
+					top: 5px;
+					background-color: #fff;
+					box-shadow: 0 -1px 6px rgba(0, 0, 0, .16);
+					z-index: 0;
+				}
+				.bottom-tab-item-sider {
+					width: 19%;
+					display: flex;
+					flex-direction: column;
+					align-items: center;
+					justify-content: center;
+					// box-sizing: border-box;
+					.first-img {
+						width: 1.5rem;
+						height: 1.5rem;
+					}
+					.text-position {
+						margin-top: 4px; // 0;
+						margin-top: 0;
+						font-size: .6rem;
+						color: #666;
+					}
+					.text-on {
+						color: #000;
+					}
+				}
+				.bottom-tab-item-center {
+					width: 24%;
+					display: flex;
+					flex-direction: column;
+					align-items: center;
+					justify-content: center;
+					box-sizing: border-box;
+					.center {
+						background-color: #fff;
+						border-left: 3px solid #fff;
+						border-right: 3px solid #fff;
+					}
+					.text-position {
+						// margin-top: 0;
+						font-size: .6rem;
+						color: #666;
+					}
+					.text-on {
+						color: #000;
 					}
 				}
 			}
