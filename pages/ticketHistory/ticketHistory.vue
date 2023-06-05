@@ -108,6 +108,8 @@
 			}
 		},
 		onShow() {
+		},
+		onLoad() {
 			getLoginTask().then(() => {
 				let app = getApp()
 				request({
@@ -122,6 +124,10 @@
 					sslVerify: false,
 					success: res => {
 						let arr = res.data.object
+						this.ticket = []
+						this.goods = []
+						this.displayTicket = []
+						this.displayItems = []
 						arr.forEach((item,index) => {
 							if (item.coupons != null){
 								item.coupons.date_use_begin = correctTime(item.coupons.date_use_begin)
@@ -150,8 +156,6 @@
 					}
 				})
 			})
-		},
-		onLoad() {
 
 		},
 		methods: {
