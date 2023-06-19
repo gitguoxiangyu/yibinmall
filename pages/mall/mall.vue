@@ -659,8 +659,12 @@
 					dataType: "jsonbigint",
 					sslVerify: false,
 					success: res => {
-						console.log(res.data.rows)
-						this.goods = res.data.rows
+						let rows = []
+						if (res.data && Array.isArray(res.data.rows)) {
+							rows = res.data.rows
+						}
+						console.log(rows)
+						this.goods = rows
 						this.goods.forEach((item,index)=>{
 							item.exchange_deadline = item.exchange_deadline.substring(0,10) + " " + item.exchange_deadline.substring(11,19)
 						})
@@ -687,8 +691,12 @@
 					dataType: "jsonbigint",
 					sslVerify: false,
 					success: res => {
-						console.log(res.data.object)
-						let items = res.data.object
+						let rows = []
+						if (res.data && Array.isArray(res.data.object)) {
+							rows = res.data.object
+						}
+						console.log(rows)
+						let items = rows
 						items.forEach((item,index)=>{
 							item.panicBuyingGoods.panic_buying_start_time = item.panicBuyingGoods.panic_buying_start_time.substring(0,10) + " " + item.panicBuyingGoods.panic_buying_start_time.substring(11,19)
 							item.panicBuyingGoods.panic_buying_end_time = item.panicBuyingGoods.panic_buying_end_time.substring(0,10) + " " + item.panicBuyingGoods.panic_buying_end_time.substring(11,19)
@@ -730,8 +738,12 @@
 					dataType: "jsonbigint",
 					sslVerify: false,
 					success: res => {
-						console.log(res.data.rows)
-						let items = res.data.rows
+						let rows = []
+						if (res.data && Array.isArray(res.data.rows)) {
+							rows = res.data.rows
+						}
+						console.log(rows)
+						let items = rows
 						let arrTicket = []
 						let merchant = []
 						items.forEach((item,index)=>{
@@ -771,8 +783,12 @@
 					dataType: "jsonbigint",
 					sslVerify: false,
 					success: res => {
-						console.log(res.data.object)
-						let items = res.data.object
+						let rows = []
+						if (res.data && Array.isArray(res.data.object)) {
+							rows = res.data.object
+						}
+						console.log(rows)
+						let items = rows
 						items.forEach((item,index)=>{
 							//校正时间 (可用correctTime方法)
 							item.panicBuyingCoupons.panic_buying_start_time = item.panicBuyingCoupons.panic_buying_start_time.substring(0,10) + " " + item.panicBuyingCoupons.panic_buying_start_time.substring(11,19)
