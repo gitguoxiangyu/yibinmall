@@ -897,6 +897,7 @@
 		}
 		.body{
 			width: 100vw;
+			padding-bottom: 4.5rem; // 比底栏的高度稍大一些
 			// 轮播图
 			.swiper {
 				height: var(--swiper-height);
