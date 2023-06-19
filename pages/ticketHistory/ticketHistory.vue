@@ -284,7 +284,7 @@
 							cash: item.coupons.market_price, // 按照之前的约定，立减金金额是2的倍数，需要在后台管理系统中做出对应调整
 							order_id: order_id,
 							act_id: "ybApp",
-							task: "test"
+							task: "rw1"
 						}
 						// console.log("rawData", JSON.stringify(rawData))
 
