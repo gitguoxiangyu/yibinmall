@@ -123,7 +123,10 @@
 					dataType: "jsonbigint",
 					sslVerify: false,
 					success: res => {
-						let arr = res.data.object
+						let arr = []
+						if (res.data && Array.isArray(res.data.object)) {
+							arr = res.data.object
+						}
 						this.ticket = []
 						this.goods = []
 						this.displayTicket = []

@@ -38,7 +38,7 @@
 				// 6217212314999999999
 				// 51253419720212703X
 				// 510524200203160384
-				const idReg = /^(\d{14}[0-9Xx]|\d{18})$/
+				const idReg = /^(\d{15}|\d{17}[0-9Xx])$/
 				let reg = /^6217212314/
 				console.log(data.detail.value.ICBC_card_num.length)
 				let errMsg = ""
