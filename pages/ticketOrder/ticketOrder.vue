@@ -37,10 +37,10 @@
 				<!-- 选择团支部分区 -->
 				<view class="uni-list">
 					<view class="option">
-						<view class="uni-list-cell-left" style="width: 20vw;">
+						<view class="uni-list-cell-left">
 							团支部分区
 						</view>
-						<view class="uni-list-cell-db" style="width: 60vw;">
+						<view class="uni-list-cell-db">
 							<picker @change="bindPickerChange" :value="post.volunteer_area" :range="range">
 								<view class="uni-input" style="text-align: right;">
 									<text v-if="post.volunteer_area != -1">{{range[post.volunteer_area]}}</text>
@@ -203,13 +203,14 @@
 							})
 							if (res.data.code !== 200) {
 								this.submitted = false
+							} else {
+								// updatePersonMsg()//更新鲜豆信息
+								setTimeout(()=>{
+									uni.redirectTo({
+										url: '../ticketHistory/ticketHistory'
+									})
+								},1000)
 							}
-							// updatePersonMsg()//更新鲜豆信息
-							setTimeout(()=>{
-								uni.redirectTo({
-									url: '../ticketHistory/ticketHistory'
-								})
-							},1000)
 						},
 						fail: err => {
 							uni.showToast({

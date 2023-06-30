@@ -73,6 +73,12 @@ page{
 	font-size: 15px;
 	padding: 5vw;
 	background-color: white;
+	.uni-list {
+		.uni-list-cell-db {
+			// 团支部分区picker
+			flex-grow: 1;
+		}
+	}
 }
 
 .blockItem {
