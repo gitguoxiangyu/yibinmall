@@ -335,8 +335,8 @@
 			return {
 				swiperHeight: 30,
 				swiperUrls: [
-					"../../static/img/swiper-img.jpg",
-					"../../static/img/swiper-img.jpg",
+					"../../static/img/swiper-img.png",
+					"../../static/img/swiper-img.png",
 				],
 				imageUrl:'http://yibinmall.chenglee.top:81/prod-api/mall/',
 				hasUserInfo: 0,
