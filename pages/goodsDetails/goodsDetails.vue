@@ -22,7 +22,7 @@
 						市场价：￥{{details.market_price}}
 					</view>
 					<view class="goodsSaleInfo">
-						兑换截止日期：
+						兑换截止时间：
 						<view style="color: red">
 							{{details.exchange_deadline}}
 						</view>

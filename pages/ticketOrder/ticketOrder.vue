@@ -78,12 +78,12 @@
 				<!-- <form @submit="formSubmit"> -->
 					<view class="inputItem">
 						<text class="inputLabel">收货人</text>
-						<input v-model="person.real_name" class="input" placeholder-class="inputPlaceholder" type="text" name="name" placeholder="请输入收货人姓名">
+						<input v-model="person.real_name" class="input" placeholder-class="inputPlaceholder" type="text" name="name" placeholder="请输入收货人姓名" maxlength="30">
 					</view>
 					<view class="inputItem">
 						<text class="inputLabel">收货电话</text>
 						<input v-model="person.tel" class="input" placeholder-class="inputPlaceholder" type="tel" name="phone" placeholder="请输入收货电话"
-							@input="(e) => person.tel = e.detail.value.replace(/[^\d+-]/g, '')">
+							@input="(e) => person.tel = e.detail.value.replace(/[^\d+-]/g, '')" maxlength="30">
 					</view>
 					<button @click="closeModal()" class="login" >确定</button>
 				<!-- </form> -->

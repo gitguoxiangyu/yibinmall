@@ -13,8 +13,8 @@
 			<view class="content">
 				<view class="contentHead">投诉详情</view>
 				<view class="uni-textarea">
-					<textarea v-model="advice" placeholder-style="color:#999999" placeholder="请输入投诉内容，不超过200字"
-						maxlength="200" name="advice" />
+					<textarea v-model="advice" placeholder-style="color:#999999" placeholder="请输入投诉内容，不超过500字"
+						maxlength="500" name="advice" />
 				</view>
 				<view class="contentHead">图片 (最多 3 张)</view>
 				<uni-file-picker ref="upload" :limit="3" fileMediatype="image" mode="grid" @select="uploadImage"

@@ -953,7 +953,7 @@
 				}
 				.usr{
 					position: absolute;
-					top: 8vw;
+					top: 6vw;
 					z-index: 2;
 					width: 100vw;
 					height: 18vw;
@@ -979,7 +979,8 @@
 							display: flex;
 							align-items: center;
 							.name{
-								width: 15vw;
+								// width: 15vw;
+								padding: 0 8px 0 0;
 								line-height: 8vw;
 								color: #f53a33;
 								font-weight: bold;
