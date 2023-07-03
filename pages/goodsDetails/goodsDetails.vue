@@ -82,6 +82,7 @@
 	import { getAuthorization } from '../../publicAPI/newToken.js';
 	import { request } from '../../publicAPI/request.js';
 	import { getLoginTask } from '../../publicAPI/userInfo.js';
+	import { correctTime } from '../../utils/common.js';
 	export default {
 		data() {
 			return {
@@ -129,7 +130,7 @@
 					console.log("商品评价列表", res.data)
 					if (Array.isArray(res.data.object)) {
 						res.data.object.forEach(item => {
-							item.createTime= item.createTime.substring(0,10) + " " + item.createTime.substring(11,19)
+							item.createTime = correctTime(item.createTime)
 							item.userAvatar = item.params.userAvatar
 							item.userName = item.params.userName
 							if (!item.userName) {
@@ -148,6 +149,7 @@
 			})
 		},
 		methods: {
+			/** 跳转到商品评价页面 */
 			goToEvaluation() {
 				if (!Array.isArray(this.evaluationList) || this.evaluationList.length === 0) {
 					return
@@ -157,6 +159,7 @@
 					url: "/pages/evaluatePage/evaluatePage?list=" + list,
 				})
 			},
+			/** 点击立即兑换 */
 			buy(){
 				getLoginTask().then(() => {
 					if(getApp().globalData.hasUserInfo != 1){

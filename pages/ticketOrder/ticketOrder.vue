@@ -94,7 +94,6 @@
 </template>
 
 <script>
-	import updatePersonMsg from '../../publicAPI/updataPersonMsg.js'
 	import {baseURL} from '../../publicAPI/baseData.js'
 	import { request } from '../../publicAPI/request.js';
 	import { getAuthorization } from '../../publicAPI/newToken.js';
@@ -204,7 +203,6 @@
 							if (res.data.code !== 200) {
 								this.submitted = false
 							} else {
-								// updatePersonMsg()//更新鲜豆信息
 								setTimeout(()=>{
 									uni.redirectTo({
 										url: '../ticketHistory/ticketHistory'

@@ -28,6 +28,7 @@
 			console.log("评价列表", this.list)
 		},
 		methods: {
+			/** 全屏预览图片 */
 			previewImage(urls, currentUrl) {
 				uni.previewImage({
 					current: currentUrl,

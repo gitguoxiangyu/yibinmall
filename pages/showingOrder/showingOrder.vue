@@ -61,8 +61,6 @@
 </template>
 
 <script>
-// import getToken from '../../publicAPI/getToken.js'
-// import updatePersonMsg from '../../publicAPI/updataPersonMsg.js'
 import {baseURL} from '../../publicAPI/baseData.js'
 import { correctTime } from '../../utils/common.js'
 import { request } from '../../publicAPI/request.js'

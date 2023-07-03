@@ -94,8 +94,6 @@
 </template>
 
 <script>
-	// import getToken from '../../publicAPI/getToken.js'
-	// import updatePersonMsg from '../../publicAPI/updataPersonMsg.js'
 	import {baseURL} from '../../publicAPI/baseData.js'
 	import { getAuthorization } from '../../publicAPI/newToken.js';
 	import { request } from '../../publicAPI/request.js'

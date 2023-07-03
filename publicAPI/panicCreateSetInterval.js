@@ -1,3 +1,4 @@
+/** 在前端更新抢购开始时间、抢购截止时间 */
 let panicCreateSetinterval = function(arr){
 	arr.forEach((item,index) => {
 		var beginTimer = setInterval(function(){

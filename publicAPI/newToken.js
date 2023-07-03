@@ -1,6 +1,7 @@
 import { rootURL } from "./baseData"
 import { request } from "./request"
 
+/** 从内存或LocalStorage中获取Authentication */
 export function getAuthorization() {
 	const app = getApp()
 	const authorization0 = app.globalData.Authorization
@@ -19,6 +20,7 @@ export function getAuthorization() {
 
 let currentTask = null
 
+/** 向后端请求一个新的Authentication */
 export function getNewAuthorization() {
 	let msg = {
 		username: "token",

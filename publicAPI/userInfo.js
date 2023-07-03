@@ -15,6 +15,7 @@ export function getUserBeans() {
 	})
 }
 
+/** 自动登录 */
 export async function autoLogin() {
 	const app = getApp()
 	// 根据存储的登录信息自动登录
@@ -30,6 +31,7 @@ export async function autoLogin() {
 	})
 }
 
+/** 获取自动登录的Promise，用于判断自动登录过程是否结束 */
 export async function getLoginTask() {
 	const app = getApp()
 	if (app.globalData.loginTask instanceof Promise) {
@@ -39,6 +41,7 @@ export async function getLoginTask() {
 	}
 }
 
+/** 根据传入的登录信息完成登录 */
 export async function login(loginData) {
 	if (!loginData || !loginData.idCard || !loginData.ICBC_card_num) {
 		throw new Error("loginData为空或数据不完整", loginData)

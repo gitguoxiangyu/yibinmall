@@ -57,7 +57,7 @@
 			}
 		},
 		computed: {
-			// 是否上传结束，包括成功和失败
+			/** 是否上传结束，包括成功和失败 */
 			uploadFinished() {
 				return !this.imageList.find(image => image.status === "pending")
 			},
@@ -66,7 +66,7 @@
 			onAdviceTypeChange(e) {
 				this.index = e.detail.value;
 			},
-			// el-file-picker组件的上传函数，支持一次性上传多张图片
+			/** el-file-picker组件的上传函数，支持一次性上传多张图片 */
 			uploadImage(temp) {
 				console.log("上传图片", temp)
 				for (const file of temp.tempFiles) {
@@ -150,6 +150,7 @@
 					})
 				})
 			},
+			/** 上传失败的回调 */
 			uploadFailed(temp) {
 				console.error("上传失败", temp)
 				uni.showToast({
@@ -157,6 +158,7 @@
 					title: "上传失败，请稍后重试",
 				})
 			},
+			/** 删除图片 */
 			deleteImage(temp) {
 				console.log("deleteImage", temp)
 				const targetIndex = this.imageList.findIndex(image => image.uid === temp.tempFile.uuid)
@@ -171,6 +173,7 @@
 					this.imageList.splice(targetIndex, 1)
 				}
 			},
+			/** 提交 */
 			adviceSubmit() {
 				if (!this.uploadFinished) {
 					uni.showToast({
@@ -317,24 +320,3 @@
 		}
 	}
 </style>
-
-<!-- {
-						name:"商品损坏",
-						typeNum:"1",
-					},
-					{
-						name:"优惠券问题",
-						typeNum:"2",
-					},
-					{
-						name:"商城功能",
-						typeNum:"3",
-					},
-					{
-						name:"用户体验",
-						typeNum:"4",
-					},
-					{
-						name:"其他",
-						typeNum:"5",
-					}, -->

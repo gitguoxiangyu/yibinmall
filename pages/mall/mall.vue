@@ -323,11 +323,11 @@
 <script>
 	import icons from '../../uni_modules/uni-icons/components/uni-icons/uni-icons.vue'
 	import panicCreateSetinterval from '../../publicAPI/panicCreateSetInterval.js'
-	// import updatePersonMsg from '../../publicAPI/updataPersonMsg.js'
 	import {baseURL, rootURL} from '../../publicAPI/baseData.js'
 	import { request } from '../../publicAPI/request'
 	import { getAuthorization } from '../../publicAPI/newToken'
 	import { getLoginTask, getUserBeans, login } from '../../publicAPI/userInfo'
+    import { correctTime } from "../../utils/common.js"
 
 	export default {
 		components:{"uni-icons":icons},
@@ -399,6 +399,7 @@
 			}
 		},
 		methods: {
+			/** 点击底部导航栏 */
 			goToBottomTab(index) {
 				let url = "https://sczyz.org.cn/fzysc/yb/?state=123"
 				if (index === 0) {
@@ -416,7 +417,7 @@
 					location.href = url
 				}
 			},
-			/** 修改第一/第二导航栏的活动视图
+			/** 修改第一导航栏的活动视图
 			 * @param {number} index
 			 * @param {Object} item
 			 */
@@ -429,6 +430,7 @@
 					}
 				}
 			},
+			/** 修改第二导航栏的活动视图 */
 			changeSubNavActive(index,items){
 				//改变样式
 				for (var i = 0; i < items.length; i++) {
@@ -561,9 +563,7 @@
 					this.displayMerchantCoupons = arr
 				}
 			},
-			/** 导航到商品详情页面
-			 * @param {Object} item
-			 */
+			/** 导航到商品详情页面 */
 			toGoodsDetails(item){
 				// console.log("跳转")
 				// 加密传递的对象数据
@@ -573,6 +573,7 @@
 					url:'../goodsDetails/goodsDetails?details='+details
 				})
 			},
+			/** 导航到抢购商品详情页面 */
 			toPanicGood(item){
 				// console.log("跳转")
 				// 加密传递的对象数据
@@ -582,21 +583,21 @@
 					url:'../panicGood/panicGood?details='+details
 				})
 			},
-			/** 导航到优惠券详情页面
-			 * @param {Object} item
-			 */
+			/** 导航到优惠券详情页面 */
 			toTicketDetails(item){
 				let details = encodeURIComponent(JSON.stringify(item))
 				uni.navigateTo({
 					url:'../ticketDetails/ticketDetails?details='+details
 				})
 			},
+			/** 导航到抢购优惠券详情页面 */
 			toPanicTicket(item){
 				let details = encodeURIComponent(JSON.stringify(item))
 				uni.navigateTo({
 					url:'../panicTicket/panicTicket?details='+details
 				})
 			},
+			/** 导航到兑换记录页面 */
 			toTicketHistory() {
 				let app = getApp()
 				if (app.globalData.hasUserInfo == 1){
@@ -610,6 +611,7 @@
 					});
 				}
 			},
+			/** 导航到商城投诉页面 */
 			toAdviceDetails(){
 				let app = getApp()
 				if (app.globalData.hasUserInfo == 1){
@@ -623,6 +625,7 @@
 					});
 				}
 			},
+			/** 导航到鲜豆收支明细页面 */
 			toBeanDetails(item){
 				let app = getApp()
 				if (app.globalData.hasUserInfo == 1){
@@ -637,16 +640,13 @@
 					});
 				}
 			},
+			/** 导航到登录页面 */
 			toLogin(){
 				uni.navigateTo({
 					url:'../login/login'
 				})
 			},
-			//校正时间戳
-			correctTime(time){
-				return time.substring(0,10) + " " + time.substring(11,19)
-			},
-			//获取商品信息
+			/** 获取商品信息 */
 			getGoods(){
 				let app = getApp()
 				request({
@@ -666,7 +666,7 @@
 						console.log(rows)
 						this.goods = rows
 						this.goods.forEach((item,index)=>{
-							item.exchange_deadline = item.exchange_deadline.substring(0,10) + " " + item.exchange_deadline.substring(11,19)
+							item.exchange_deadline = correctTime(item.exchange_deadline)
 						})
 						this.displayGoods = JSON.parse(JSON.stringify(this.goods))
 					},
@@ -678,7 +678,7 @@
 					}
 				})
 			},
-			//获取抢购商品信息
+			/** 获取抢购商品信息 */
 			getPanicGoods(){
 				let app = getApp()
 				request({
@@ -698,10 +698,10 @@
 						console.log(rows)
 						let items = rows
 						items.forEach((item,index)=>{
-							item.panicBuyingGoods.panic_buying_start_time = item.panicBuyingGoods.panic_buying_start_time.substring(0,10) + " " + item.panicBuyingGoods.panic_buying_start_time.substring(11,19)
-							item.panicBuyingGoods.panic_buying_end_time = item.panicBuyingGoods.panic_buying_end_time.substring(0,10) + " " + item.panicBuyingGoods.panic_buying_end_time.substring(11,19)
-							item.goods.exchange_deadline = item.goods.exchange_deadline.substring(0,10) + " " + item.goods.exchange_deadline.substring(11,19)
-							item.goods.update_time = item.goods.update_time.substring(0,10) + " " + item.goods.update_time.substring(11,19)
+							item.panicBuyingGoods.panic_buying_start_time = correctTime(item.panicBuyingGoods.panic_buying_start_time)
+							item.panicBuyingGoods.panic_buying_end_time = correctTime(item.panicBuyingGoods.panic_buying_end_time)
+							item.goods.exchange_deadline = correctTime(item.goods.exchange_deadline)
+							item.goods.update_time = correctTime(item.goods.update_time)
 						})
 						this.panicBuyingGoods = items
 						panicCreateSetinterval(this.panicBuyingGoods)
@@ -725,7 +725,7 @@
 					}
 				})
 			},
-			//获取优惠券信息
+			/** 获取优惠券信息 */
 			getCoupons(){
 				let app = getApp()
 				request({
@@ -748,9 +748,9 @@
 						let merchant = []
 						items.forEach((item,index)=>{
 							//分割 timestamp字符串，使其成为正常显示的时间
-							item.date_use_begin = item.date_use_begin.substring(0,10) + " " + item.date_use_begin.substring(11,19)
-							item.date_use_end = item.date_use_end.substring(0,10) + " " + item.date_use_end.substring(11,19)
-							item.exchange_deadline = item.exchange_deadline.substring(0,10) + " " + item.exchange_deadline.substring(11,19)
+							item.date_use_begin = correctTime(item.date_use_begin)
+							item.date_use_end = correctTime(item.date_use_end)
+							item.exchange_deadline = correctTime(item.exchange_deadline)
 							if (item.place_of_use == "全部商家"){
 								arrTicket.push(item)
 							}else {
@@ -770,7 +770,7 @@
 					}
 				})
 			},
-			//获取抢购优惠券信息
+			/** 获取抢购优惠券信息 */
 			getPanicCoupons(){
 				let app = getApp()
 				request({
@@ -791,12 +791,12 @@
 						let items = rows
 						items.forEach((item,index)=>{
 							//校正时间 (可用correctTime方法)
-							item.panicBuyingCoupons.panic_buying_start_time = item.panicBuyingCoupons.panic_buying_start_time.substring(0,10) + " " + item.panicBuyingCoupons.panic_buying_start_time.substring(11,19)
-							item.panicBuyingCoupons.panic_buying_end_time = item.panicBuyingCoupons.panic_buying_end_time.substring(0,10) + " " + item.panicBuyingCoupons.panic_buying_end_time.substring(11,19)
-							item.coupons.date_use_begin = item.coupons.date_use_begin.substring(0,10) + " " + item.coupons.date_use_begin.substring(11,19)
-							item.coupons.date_use_end = item.coupons.date_use_end.substring(0,10) + " " + item.coupons.date_use_end.substring(11,19)
-							item.coupons.exchange_deadline = item.coupons.exchange_deadline.substring(0,10) + " " + item.coupons.exchange_deadline.substring(11,19)
-							item.coupons.update_time = item.coupons.update_time.substring(0,10) + " " + item.coupons.update_time.substring(11,19)
+							item.panicBuyingCoupons.panic_buying_start_time = correctTime(item.panicBuyingCoupons.panic_buying_start_time)
+							item.panicBuyingCoupons.panic_buying_end_time = correctTime(item.panicBuyingCoupons.panic_buying_end_time)
+							item.coupons.date_use_begin = correctTime(item.coupons.date_use_begin)
+							item.coupons.date_use_end = correctTime(item.coupons.date_use_end)
+							item.coupons.exchange_deadline = correctTime(item.coupons.exchange_deadline)
+							item.coupons.update_time = correctTime(item.coupons.update_time)
 						})
 						this.panicBuyingCoupons = items
 						panicCreateSetinterval(this.panicBuyingCoupons)
@@ -1344,106 +1344,3 @@
 		}
 	}
 </style>
-<!-- 	{
-	describe:'（Dyson）AM07 无叶电风 扇 落地扇 强劲稳定气流 进xxxx扇 落地扇 强劲稳定气流 进扇 落地扇 强劲稳定气流 进',
-	price:255,
-	markPrice:999,
-	bean:108,
-	num:3,
-	star:3,
-	isFlashSale:1,//是否为限时抢购
-	flashTime:'2022-04-16 18:00:00',
-	exchangeDDL:'2022-04-28 18:00:00',
-	url:'../../static/img/goods.png',
-	recommedUrl:'../../static/img/recommendReason.png'
-	},
-	{
-	describe:'科沃斯 Ecovacs 地宝N9+ 拖地拖洗一体智能扫地机免...xxxx拖地拖洗一体智能扫地机免..拖地拖洗一体智能扫地机免..拖地拖洗一体智能扫地机免..',
-	price:255,
-	markPrice:999,
-	bean:108,
-	num:3,
-	star:3,
-	isFlashSale:1,//是否为限时抢购
-	flashTime:'2022-04-16 18:00:00',
-	exchangeDDL:'2022-04-28 18:00:00',
-	url:'../../static/img/goods.png',
-	recommedUrl:'../../static/img/recommendReason.png'
-	},
-	{
-	describe:'（Dyson）AM07 无叶电风 扇 落地扇 强劲稳定气流 进xxxx科沃斯 Ecovacs 地宝N9+ 拖地拖洗一体智能扫地机免...xxxx拖地拖洗一体智能扫地机免..拖地拖洗一体智能扫地机免..拖地拖洗一体智能扫地机免..',
-	price:255,
-	markPrice:999,
-	bean:108,
-	num:3,
-	star:0,
-	isFlashSale:1,//是否为限时抢购
-	flashTime:'2022-04-16 18:00:00',
-	exchangeDDL:'2022-04-28 18:00:00',
-	url:'../../static/img/goods.png',
-	recommedUrl:'../../static/img/recommendReason.png'
-	},
-	{
-	describe:'科沃斯 Ecovacs 地宝N9+ 拖地拖洗一体智能扫地机免...xxxx科沃斯 Ecovacs 地宝N9+ 拖地拖洗一体智能扫地机免...xxxx拖地拖洗一体智能扫地机免..拖地拖洗一体智能扫地机免..拖地拖洗一体智能扫地机免..',
-	price:255,
-	markPrice:999,
-	bean:108,
-	num:3,
-	star:3,
-	isFlashSale:1,//是否为限时抢购
-	flashTime:'2022-04-16 18:00:00',
-	exchangeDDL:'2022-04-28 18:00:00',
-	url:'../../static/img/goods.png',
-	recommedUrl:'../../static/img/recommendReason.png'
-	} -->
-
-<!-- {
-	mallName:'万达广场',
-	money:100,
-	markPrice:100,
-	bean:100,
-	num:3,
-	star:3,
-	isFlashSale:1,//是否为限时抢购
-	flashTime:'2022-04-16 18:00:00',
-	useTime:'2022-04-16 19:00:00-2022-04-28 18:00:00',
-	exchangeDDL:'2022-04-28 18:00:00',
-	url:'../../static/img/wanda100.jpg'
-},
-{
-	mallName:'莱茵春天',
-	money:100,
-	markPrice:100,
-	bean:100,
-	num:3,
-	star:3,
-	isFlashSale:1,//是否为限时抢购
-	flashTime:'2022-04-16 18:00:00',
-	useTime:'2022-04-16 19:00:00-2022-04-28 18:00:00',
-	exchangeDDL:'2022-04-28 18:00:00',
-	url:'../../static/img/rhine100.jpg'
-},
-{
-	mallName:'万达广场',
-	markPrice:100,
-	bean:100,
-	num:3,
-	star:3,
-	isFlashSale:1,//是否为限时抢购
-	flashTime:'2022-04-16 18:00:00',
-	useTime:'2022-04-16 19:00:00-2022-04-28 18:00:00',
-	exchangeDDL:'2022-04-28 18:00:00',
-	url:'../../static/img/wanda50.jpg'
-},
-{
-	mallName:'莱茵春天',
-	markPrice:100,
-	bean:100,
-	num:3,
-	star:3,
-	isFlashSale:1,//是否为限时抢购
-	flashTime:'2022-04-16 18:00:00',
-	useTime:'2022-04-16 19:00:00-2022-04-28 18:00:00',
-	exchangeDDL:'2022-04-28 18:00:00',
-	url:'../../static/img/rhine50.jpg'
-} -->

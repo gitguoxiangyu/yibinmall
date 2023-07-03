@@ -88,6 +88,7 @@
 import { baseURL } from '../../publicAPI/baseData';
 import { getAuthorization } from '../../publicAPI/newToken';
 import { request } from '../../publicAPI/request';
+import { correctTime } from '../../utils/common';
 	export default {
 		data() {
 			return {
@@ -135,7 +136,7 @@ import { request } from '../../publicAPI/request';
 					console.log("商品评价列表", res.data)
 					if (Array.isArray(res.data.object)) {
 						res.data.object.forEach(item => {
-							item.createTime= item.createTime.substring(0,10) + " " + item.createTime.substring(11,19)
+							item.createTime = correctTime(item.createTime)
 							item.userAvatar = item.params.userAvatar
 							item.userName = item.params.userName
 							if (!item.userName) {

@@ -183,6 +183,7 @@
 					})
 				}
 			},
+			/** 切换显示 */
 			onNavItemClicked(index) {
 				this.navActiveIndex = index;
 				if(index === 0){
@@ -420,7 +421,6 @@
 				})
 			},
 			change(){
-				console.log("000")
 				this.showPop = true
 			},
 			closeModal(){

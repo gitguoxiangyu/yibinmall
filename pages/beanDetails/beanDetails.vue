@@ -26,6 +26,7 @@
 	import { getAuthorization } from '../../publicAPI/newToken.js'
 	import { request } from '../../publicAPI/request.js'
 	import { getLoginTask } from '../../publicAPI/userInfo.js'
+	import { correctTime } from '../../utils/common.js'
 	export default {
 		data() {
 			return {
@@ -70,7 +71,7 @@
 						console.log(res)
 						let arr = res.data.object
 						arr.forEach((item,index)=>{
-							item.beans_action_time = item.beans_action_time.substring(0,10) + " " + item.beans_action_time.substring(11,19)
+							item.beans_action_time = correctTime(item.beans_action_time)
 						})
 						arr.reverse()
 						this.msg = arr
@@ -86,6 +87,7 @@
 			})
 		},
 		methods: {
+			/** 切换标签 */
 			change(index){
 				this.nav.forEach((item,index) => {
 					item.active = false

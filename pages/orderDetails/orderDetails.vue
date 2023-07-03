@@ -113,7 +113,6 @@
 </template>
 
 <script>
-	// import updatePersonMsg from '../../publicAPI/updataPersonMsg.js'
 	import {baseURL} from '../../publicAPI/baseData.js'
 	import { getAuthorization } from '../../publicAPI/newToken.js';
 	import { request } from '../../publicAPI/request.js';
@@ -249,12 +248,15 @@
 					// })
 				})
 			},
+			/** 弹出修改订单信息弹框 */
 			change(){
 				this.showPop = true
 			},
+			/** 关闭弹框 */
 			closeModal(){
 				this.showPop = false
 			},
+			/** 修改团支部分区 */
 			bindPickerChange(e){
 				this.post.volunteer_area = e.detail.value
 			}
